@@ -11,6 +11,7 @@ RECURRING_KINDS = frozenset({"server", "hosting", "llm"})
 # One-off spending the agent chooses; capped per day by the guardrails.
 DISCRETIONARY_KINDS = frozenset({"build", "marketing", "improve", "research", "spawn", "funding_out"})
 COST_KINDS = RECURRING_KINDS | {"build", "marketing", "improve", "research", "spawn", "fulfillment", "fee"}
+PROFIT_KINDS = COST_KINDS | {"sale"}
 
 
 def usdc(amount: float) -> int:
@@ -59,7 +60,14 @@ class Wallet:
         return True
 
     def sum(self, kinds=None, since: int = 0) -> int:
-        return sum(t.amount for t in self.txs if t.hour >= since and (kinds is None or t.kind in kinds))
+        # Transactions are booked in time order, so scan backwards and stop early.
+        total = 0
+        for t in reversed(self.txs):
+            if t.hour < since:
+                break
+            if kinds is None or t.kind in kinds:
+                total += t.amount
+        return total
 
     def _book(self, hour: int, amount: int, kind: str, memo: str) -> None:
         if amount:

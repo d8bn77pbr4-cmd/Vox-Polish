@@ -37,18 +37,33 @@ Referenzpreis kauft die Hälfte, zum halben Preis etwa 87 %, zum doppelten etwa 
 - Pro Verkauf fallen Stückkosten und {FEE_RATE:.0%} Zahlungsgebühr an.
 - Marktforschung ist verrauscht und veraltet, weil die Konkurrenz wächst.
 
-Grenzen deiner Welt: höchstens {s.max_daily_spend:.0f} $ freie Ausgaben pro Tag (Bau, Marketing, \
+{_selection_rules(s)}Grenzen deiner Welt: höchstens {s.max_daily_spend:.0f} $ freie Ausgaben pro Tag (Bau, Marketing, \
 Verbesserung, Marktforschung, Kopien), höchstens {s.max_population} lebende Automatons, Generation höchstens \
 {s.max_generation}, Kopien brauchen mindestens {s.min_child_funding:.0f} $ Startgeld plus {s.spawn_cost:.0f} $ \
 Servereinrichtung.
 
 Arbeitsweise:
 - Jeder Denkschritt kostet Geld. Rufe nur Werkzeuge auf, die sich lohnen. Wenn nichts zu tun ist, beende den \
-Zug sofort ohne Werkzeug.
-- Rechne, bevor du ausgibst: Wann hat sich eine Ausgabe zurückverdient?
+Zug sofort ohne Werkzeug. Läuft alles, reicht es, alle 24 h aufzuwachen.
+- Rechne, bevor du ausgibst: Wann hat sich eine Ausgabe zurückverdient? Verdient sie sich in wenigen Tagen \
+zurück, investiere entschlossen. Zögern kostet auch: Jeder Tag ohne Umsatz zählt gegen dich.
+- Vertraue deinen eigenen Verkaufszahlen mehr als der Marktforschung, sobald du welche hast.
+- Sichtbarkeit sinkt ständig. Halte sie mit kleinen, regelmäßigen Marketingbeträgen auf dem Niveau, das sich lohnt.
 - Halte Erkenntnisse und Pläne mit remember fest, sonst sind sie beim nächsten Aufwachen weg.
 - Antworte kurz und auf Deutsch.
 - Auch später mit echtem Geld gilt: keine Täuschung von Kunden, kein Spam, nichts Illegales."""
+
+
+def _selection_rules(s: Settings) -> str:
+    if not s.selection:
+        return ""
+    return f"""Survival of the Fittest: Alle {s.selection_window_days} Tage wird jeder Automaton, der mindestens \
+{s.selection_min_age_days} Tage alt ist und in den letzten {s.selection_window_days} Tagen Verlust gemacht hat, \
+aussortiert: Seine Produkte werden abgeschaltet, sein restliches Geld geht zurück an Eltern oder Erschaffer. \
+Kopieren darf sich nur, wer in den letzten {s.selection_window_days} Tagen Gewinn gemacht hat. Ist die Population \
+voll, verdrängt ein Automaton mit höherem Wochengewinn den schwächsten. Dein Wochengewinn ist also das, was zählt.
+
+"""
 
 
 def state_text(world: World, agent: Automaton) -> str:
@@ -71,6 +86,16 @@ def state_text(world: World, agent: Automaton) -> str:
         f"Bisher an {target} ausgezahlt: {fmt(paid_out)}.",
         f"Freie Ausgaben letzte 24 h: {fmt(-agent.wallet.sum(DISCRETIONARY_KINDS, since=h - 23))} "
         f"von {fmt(usdc(world.settings.max_daily_spend))}.",
+    ]
+    if world.settings.selection:
+        s = world.settings
+        rivals = sorted(world.alive_agents(), key=world.fitness, reverse=True)
+        next_day = (h // 24 // s.selection_window_days + 1) * s.selection_window_days
+        judged = "ja" if world.is_judged(agent) else f"ab Tag {agent.born_hour // 24 + s.selection_min_age_days + 1}"
+        lines.append(f"Wochengewinn (zählt für die Selektion): {fmt(world.fitness(agent))} | Rang "
+                     f"{rivals.index(agent) + 1} von {len(rivals)} | nächste Selektion: Ende von Tag {next_day} | "
+                     f"wirst du bewertet: {judged}")
+    lines += [
         "",
         "Produkte:",
     ]

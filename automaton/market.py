@@ -5,7 +5,8 @@ from __future__ import annotations
 import math
 import random
 from collections import defaultdict
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
+from typing import NamedTuple
 
 
 @dataclass(frozen=True)
@@ -48,6 +49,36 @@ SATURATION_DAYS = 30  # competition closes ~63 % of the gap to saturation in thi
 MAX_QUALITY = 1.5
 
 
+def adjusted_niches(rng: random.Random, demand: float = 1.0, price: float = 1.0, competition: float = 1.0,
+                    cost: float = 1.0, uncertainty: float = 0.0, niches=NICHES) -> tuple[Niche, ...]:
+    """Apply scenario factors, then random per-run deviations from the assumptions.
+
+    uncertainty=1 means: demand per niche off by about ±40 %, the whole market by about ±30 %,
+    prices and unit costs by about ±25 %, competition by about ±40 %. The deviations average out to the
+    assumptions, so lucky worlds cannot lift the average above them."""
+
+    def jitter(spread: float) -> float:
+        sigma = spread * uncertainty
+        return math.exp(rng.gauss(-sigma * sigma / 2, sigma)) if uncertainty else 1.0
+
+    mood = jitter(0.3)
+    adjusted = []
+    for n in niches:
+        comp = competition * jitter(0.4)
+        start = n.competition * comp
+        adjusted.append(replace(
+            n,
+            demand_per_hour=n.demand_per_hour * demand * mood * jitter(0.4),
+            ref_price=n.ref_price * price * jitter(0.25),
+            unit_cost=n.unit_cost * cost * jitter(0.25),
+            build_cost=n.build_cost * cost,
+            hosting_per_hour=n.hosting_per_hour * cost,
+            competition=start,
+            competition_max=max(start, n.competition_max * comp * jitter(0.3)),
+        ))
+    return tuple(adjusted)
+
+
 def acceptance(price: float, ref_price: float) -> float:
     """Share of buyers whose willingness to pay is at least `price`."""
     if price <= 0:
@@ -69,6 +100,15 @@ def poisson(rng: random.Random, lam: float) -> int:
         k += 1
 
 
+class Hour(NamedTuple):
+    hour: int
+    units: int
+    revenue: int
+    cost: int  # hosting, fulfillment and fees
+    price: float
+    visibility: float
+
+
 @dataclass
 class Product:
     id: str
@@ -82,21 +122,27 @@ class Product:
     visibility: float = START_VISIBILITY
     active: bool = True
     invested: int = 0  # build, marketing and improvements (micro-USDC)
-    history: list[tuple[int, int, int, int]] = field(default_factory=list)  # hour, units, revenue, cost
+    history: list[Hour] = field(default_factory=list)
 
     @property
     def rating(self) -> float:
         return round(min(5.0, max(1.0, 1 + 3 * self.quality)), 1)
 
+    def since(self, hour: int):
+        for row in reversed(self.history):
+            if row.hour < hour:
+                break
+            yield row
+
     def units(self, since: int) -> int:
-        return sum(u for h, u, _, _ in self.history if h >= since)
+        return sum(r.units for r in self.since(since))
 
     def revenue(self, since: int = 0) -> int:
-        return sum(r for h, _, r, _ in self.history if h >= since)
+        return sum(r.revenue for r in self.since(since))
 
     def profit(self, since: int = 0) -> int:
         """Operating profit: sales minus hosting, fulfillment and fees (sunk investment excluded)."""
-        return sum(r - c for h, _, r, c in self.history if h >= since)
+        return sum(r.revenue - r.cost for r in self.since(since))
 
 
 class Market:

@@ -33,16 +33,22 @@ def summary(world: World) -> str:
 
     walk(world.genesis, 0)
     payouts = world.creator.sum({"payout_in"})
+    refunds = world.creator.sum({"refund_in"})
     in_wallets = sum(a.wallet.balance for a in world.alive_agents())
-    lines += [
-        "",
-        f"Dein Startgeld:            {fmt(usdc(world.settings.seed_capital))}",
-        f"An dich ausgezahlt:        {fmt(payouts)}",
-        f"Dein Ergebnis:             {fmt(world.creator.balance)}",
-        f"Noch in lebenden Wallets:  {fmt(in_wallets)}",
+    days = world.days
+    rows = [
+        ("Dein Startgeld:", fmt(usdc(world.settings.seed_capital))),
+        ("An dich ausgezahlt (Gewinn):", fmt(payouts)),
+        ("Zurück von Aussortierten:", fmt(refunds)),
+        ("Dein Ergebnis:", fmt(world.creator.balance)),
+        ("Noch in lebenden Wallets:", fmt(in_wallets)),
     ]
+    if days:
+        rows.append(("Tage mit Gewinn:", f"{sum(d.profit > 0 for d in days)} von {len(days)}, "
+                                         f"mit Auszahlung an dich: {sum(d.payout > 0 for d in days)}"))
     if world.api_cost:
-        lines.append(f"Echte API-Kosten:          {fmt(world.api_cost)}")
+        rows.append(("Echte API-Kosten:", fmt(world.api_cost)))
+    lines += [""] + [f"{label:<30}{value}" for label, value in rows]
     return "\n".join(lines)
 
 
@@ -53,6 +59,8 @@ def to_dict(world: World) -> dict:
         "settings": vars(world.settings),
         "creator_result_usdc": world.creator.balance / 1e6,
         "payouts_usdc": world.creator.sum({"payout_in"}) / 1e6,
+        "refunds_usdc": world.creator.sum({"refund_in"}) / 1e6,
+        "days": [d._asdict() for d in world.days],
         "api_cost_usd": world.api_cost / 1e6,
         "agents": [{
             "id": a.id, "name": a.name, "generation": a.generation, "parent": a.parent_id,

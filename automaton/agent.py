@@ -19,6 +19,7 @@ class Automaton:
     mission: str
     born_hour: int
     focus: str | None = None  # niche a copy was created for
+    genome: object | None = None  # strategy the brain uses for this automaton, inherited with mutations
     heartbeat_hours: int = 6
     next_wake: int = 0
     alive: bool = True
