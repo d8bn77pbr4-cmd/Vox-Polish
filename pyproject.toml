@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "automaton"
+version = "0.1.0"
+description = "Ein KI-Agent mit eigenem Wallet, der sein Überleben verdienen muss – zuerst mit Spielgeld."
+requires-python = ">=3.10"
+dependencies = ["anthropic>=2.0"]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.scripts]
+automaton = "automaton.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["automaton*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
