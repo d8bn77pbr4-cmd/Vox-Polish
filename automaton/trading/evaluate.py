@@ -11,7 +11,7 @@ import statistics
 from dataclasses import dataclass, fields, replace
 from typing import Callable, NamedTuple
 
-from .data import Bar
+from .data import BARS_PER_DAY, Bar
 from .desk import Desk, DeskSettings
 from .strategy import Market
 
@@ -52,19 +52,23 @@ def run_desk(market: Market, settings: DeskSettings, first_day: int, last_day: i
     )
 
 
-def shuffled(market: Market, rng: random.Random) -> Market:
-    """Random-walk control: the same bars in random order (one order for all coins), so returns,
-    candle shapes and cross-coin moves stay real while every pattern in time disappears."""
-    order = list(range(1, market.n))
+def shuffled(market: Market, rng: random.Random, first_day: int = 0, last_day: int | None = None) -> Market:
+    """Random-walk control: the bars of [first_day, last_day) in random order (one order for all coins), so
+    returns, candle shapes, volumes and cross-coin moves stay real while every pattern in time disappears."""
+    start = max(1, first_day * BARS_PER_DAY)
+    end = market.n if last_day is None else last_day * BARS_PER_DAY
+    order = list(range(start, end))
     rng.shuffle(order)
+    order = list(range(start)) + order + list(range(end, market.n))
     series = {}
     for s in market.symbols:
-        o, h, lo, c = market.open[s], market.high[s], market.low[s], market.close[s]
-        price = c[0]
-        bars = [Bar(market.t[0], o[0], h[0], lo[0], c[0])]
-        for k, j in enumerate(order, start=1):
+        o, h, lo, c, v = market.open[s], market.high[s], market.low[s], market.close[s], market.volume[s]
+        bars = [Bar(market.t[k], o[k], h[k], lo[k], c[k], v[k]) for k in range(start)]
+        price = c[start - 1]
+        for k in range(start, market.n):
+            j = order[k]
             price *= c[j] / c[j - 1]
-            bars.append(Bar(market.t[k], price * o[j] / c[j], price * h[j] / c[j], price * lo[j] / c[j], price))
+            bars.append(Bar(market.t[k], price * o[j] / c[j], price * h[j] / c[j], price * lo[j] / c[j], price, v[j]))
         series[s] = bars
     return Market(series)
 

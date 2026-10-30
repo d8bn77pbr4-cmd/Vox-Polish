@@ -71,7 +71,9 @@ class Market:
         self.high = {s: [b.high for b in bars] for s, bars in series.items()}
         self.low = {s: [b.low for b in bars] for s, bars in series.items()}
         self.close = {s: [b.close for b in bars] for s, bars in series.items()}
+        self.volume = {s: [b.volume for b in bars] for s, bars in series.items()}
         self._stats: dict[tuple[str, int], tuple[list[float], list[float]]] = {}
+        self.cache: dict[tuple, list[float]] = {}  # indicators, see indicators.py
 
     @property
     def days(self) -> int:
@@ -233,10 +235,11 @@ class Exam:
     profit_factor: float
     max_drawdown: float
     win_days: float
+    t_stat: float = 0.0  # mean daily result divided by its standard error
 
-    def passed(self, min_trades: int, min_profit_factor: float, max_drawdown: float) -> bool:
+    def passed(self, min_trades: int, min_profit_factor: float, max_drawdown: float, min_t: float = 0.0) -> bool:
         return (self.pnl > 0 and self.trades >= min_trades and self.profit_factor >= min_profit_factor
-                and self.max_drawdown <= max_drawdown)
+                and self.max_drawdown <= max_drawdown and self.t_stat >= min_t)
 
 
 def backtest(genome: TraderGenome, market: Market, first_day: int, last_day: int, cost_per_side: float,

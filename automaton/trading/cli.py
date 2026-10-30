@@ -37,6 +37,10 @@ def add_parser(sub) -> None:
     tune.add_argument("--population", type=int, default=16)
     tune.add_argument("--out", default="desk.json")
 
+    profi = tsub.add_parser("profi", help="Profi-Trader: lernen (2022-2024), auswählen (2024/25), "
+                                          "einmal testen (2025/26)")
+    profi.add_argument("--relearn", action="store_true", help="Playbook neu erforschen statt das gespeicherte nehmen")
+
 
 def _period(p) -> None:
     p.add_argument("--start", default="2024-10", help="erster Monat (JJJJ-MM)")
@@ -52,6 +56,8 @@ def main(args) -> None:
     if args.trade_command == "download":
         download(start=args.start, end=args.end)
         return
+    if args.trade_command == "profi":
+        return _profi(args.relearn)
     market = Market(align({s: load(s, args.start, args.end) for s in SYMBOLS}))
     settings = DeskSettings(capital=args.capital)
     if args.settings:
@@ -144,3 +150,53 @@ def _tune(market: Market, settings: DeskSettings, args) -> None:
           f"typisch {money(test.median_result, True)}, Gewinntage {test.profit_days:.0%}")
     Path(args.out).write_text(json.dumps(settings_dict(best), indent=2), encoding="utf-8")
     print(f"Regeln gespeichert: {args.out}")
+
+
+def _profi(relearn: bool) -> None:
+    import statistics
+
+    from .evaluate import Lab as DeskLab
+    from .evaluate import Summary, shuffled
+    from .research import Lab, final_test, learn, load_playbook, period, save_playbook, select
+
+    download(start="2022-01", end="2026-09", log=lambda _: None)
+    market = Market(align({s: load(s, "2022-01", "2026-09") for s in SYMBOLS}))
+    learn_days, select_days, test_days = period(market, "lernen"), period(market, "auswählen"), period(market, "test")
+    markets = {"real": market, **{f"zufall{k}": shuffled(market, random.Random(500 + k), *test_days) for k in range(5)}}
+    with Lab(markets) as lab:
+        playbook = load_playbook()
+        favourites: list = []
+        if relearn or not playbook:
+            print("Lernen (2022 bis September 2024) …")
+            learned = learn(lab, *learn_days)
+            rows, sent = select(lab, learned, *select_days)
+            print(f"{len(learned)} Strategien geprüft, {sent} auf das Auswahljahr geschickt, {len(rows)} bestanden.")
+            save_playbook(rows)
+            playbook = load_playbook()
+            favourites = [g for g, st in sorted(learned.items(), key=lambda kv: kv[1].t, reverse=True)[:5]]
+        if not playbook:
+            print("Keine Strategie hat Lernen und Auswahljahr bestanden. Es gibt nichts zu testen.")
+            return
+        out = final_test(lab, playbook, favourites, *test_days, shuffles=tuple(f"zufall{k}" for k in range(5)))
+    settings = DeskSettings(capital=1000.0, kind="pro", playbook=tuple(playbook), max_traders=3, trader_share=0.33,
+                            exam_days=90, exam_min_trades=5, exam_min_profit_factor=1.1, exam_min_t=0.0,
+                            review_days=30, trader_max_drawdown=0.10, max_same_direction=2, candidates=8)
+    with DeskLab({"real": market}) as dlab:
+        desk = Summary.of(dlab.run([("real", replace(settings, seed=k), *test_days) for k in range(6)]), 1000.0)
+
+    p = out["portfolio"]
+    print(f"\n=== Abschlusstest Oktober 2025 bis September 2026 (nie zum Lernen oder Auswählen benutzt) ===")
+    print(f"Playbook ({len(playbook)} Trader, gleiche Anteile an 100 $): {p['ergebnis']:+.2f} % im Jahr, "
+          f"positive Monate {p['positiv']:.0%}, Ø Monat {p['mittel']:+.2f} %, schlechtester Monat "
+          f"{p['schlechtester']:+.2f} %, t-Wert {p['t']:+.2f}")
+    print("Monate: " + " ".join(f"{v:+.1f}" for v in p["verlauf"]))
+    flips = out["münzwurf"]
+    print(f"Münzwurf-Kontrolle (gleiche Regeln, zufällige Richtung): Median {statistics.median(flips):+.2f} %, "
+          f"{sum(x >= p['ergebnis'] for x in flips)} von {len(flips)} mindestens so gut")
+    print("Zufallskurs-Kontrolle: " + " ".join(f"{x:+.2f} %" for x in out["zufallskurse"]))
+    for row in out["lern_favoriten"]:
+        g, r = row["genome"], row["test"]
+        print(f"Lern-Favorit {g['symbol'][:-4]} {g['setup']}: {r['pnl']:+.2f} % im Testjahr (t {r['t']:+.2f})")
+    print(f"Profi-Desk mit Chef und Prüfer, 1.000 $: im Plus {desk.p_profit:.0%}, typisch "
+          f"{money(desk.median_result, True)}, Handel vor Gebühren {money(desk.trading + desk.fees, True)}, "
+          f"laufende Kosten {money(desk.costs)}")

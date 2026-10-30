@@ -1,0 +1,116 @@
+[
+ {
+  "genome": {
+   "symbol": "ETHUSDT",
+   "setup": "momentum",
+   "session_hour": 13,
+   "window": 8,
+   "entry_k": 2.0,
+   "stop_atr": 1.5,
+   "target_r": 4.0,
+   "breakeven_r": 1.0,
+   "regime": "trend",
+   "htf_filter": true,
+   "min_rvol": 1.0,
+   "maker": true,
+   "allow_short": true,
+   "weekends": true,
+   "max_trades_per_day": 1,
+   "risk": 0.005
+  },
+  "lernen": {
+   "pnl": 13.265484843674843,
+   "trades": 71,
+   "t": 1.8051134063202867,
+   "fees": 3.172132648586853,
+   "win_rate": 0.6056338028169014,
+   "positive_months": 0.6060606060606061,
+   "months": 33
+  },
+  "auswählen": {
+   "pnl": 8.083169218610308,
+   "trades": 25,
+   "t": 1.6182884253273364,
+   "fees": 0.8402514991458107,
+   "win_rate": 0.64,
+   "positive_months": 0.4166666666666667,
+   "months": 12
+  }
+ },
+ {
+  "genome": {
+   "symbol": "ETHUSDT",
+   "setup": "momentum",
+   "session_hour": 13,
+   "window": 8,
+   "entry_k": 2.0,
+   "stop_atr": 1.5,
+   "target_r": 3.0,
+   "breakeven_r": 1.0,
+   "regime": "trend",
+   "htf_filter": true,
+   "min_rvol": 1.0,
+   "maker": true,
+   "allow_short": true,
+   "weekends": true,
+   "max_trades_per_day": 1,
+   "risk": 0.005
+  },
+  "lernen": {
+   "pnl": 14.53870420255723,
+   "trades": 71,
+   "t": 2.033860998850727,
+   "fees": 3.067081821348353,
+   "win_rate": 0.6056338028169014,
+   "positive_months": 0.6060606060606061,
+   "months": 33
+  },
+  "auswählen": {
+   "pnl": 6.552920474781404,
+   "trades": 25,
+   "t": 1.5144936974813943,
+   "fees": 0.8153932732681518,
+   "win_rate": 0.64,
+   "positive_months": 0.4166666666666667,
+   "months": 12
+  }
+ },
+ {
+  "genome": {
+   "symbol": "ETHUSDT",
+   "setup": "momentum",
+   "session_hour": 13,
+   "window": 8,
+   "entry_k": 2.0,
+   "stop_atr": 1.5,
+   "target_r": 3.0,
+   "breakeven_r": 1.0,
+   "regime": "trend",
+   "htf_filter": true,
+   "min_rvol": 1.0,
+   "maker": true,
+   "allow_short": true,
+   "weekends": true,
+   "max_trades_per_day": 2,
+   "risk": 0.005
+  },
+  "lernen": {
+   "pnl": 14.53870420255723,
+   "trades": 71,
+   "t": 2.033860998850727,
+   "fees": 3.067081821348353,
+   "win_rate": 0.6056338028169014,
+   "positive_months": 0.6060606060606061,
+   "months": 33
+  },
+  "auswählen": {
+   "pnl": 6.552920474781404,
+   "trades": 25,
+   "t": 1.5144936974813943,
+   "fees": 0.8153932732681518,
+   "win_rate": 0.64,
+   "positive_months": 0.4166666666666667,
+   "months": 12
+  }
+ }
+]

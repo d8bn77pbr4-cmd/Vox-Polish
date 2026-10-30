@@ -23,6 +23,7 @@ class Bar(NamedTuple):
     high: float
     low: float
     close: float
+    volume: float = 0.0
 
 
 def months(start: str, end: str) -> list[str]:
@@ -71,7 +72,7 @@ def load(symbol: str, start: str, end: str, cache: Path = CACHE) -> list[Bar]:
                     continue  # header line in some archives
                 t = int(row[0])
                 t = t // 1_000_000 if t > 10**14 else t // 1000  # microseconds since 2025, milliseconds before
-                bars.append(Bar(t, float(row[1]), float(row[2]), float(row[3]), float(row[4])))
+                bars.append(Bar(t, float(row[1]), float(row[2]), float(row[3]), float(row[4]), float(row[5])))
     bars.sort(key=lambda b: b.t)
     return bars
 

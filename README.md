@@ -200,6 +200,60 @@ Evolution der Desk-Regeln (Training erstes Jahr, Test zweites Jahr, 10.000 $):
 Nicht berücksichtigt: Finanzierungsgebühren von Futures (bei Positionen unter einem Tag klein),
 Unterschiede zwischen Spot- und Futures-Kursen, niedrigere Maker-Gebühren bei Limit-Orders.
 
+## Profi-Trader
+
+Die Profi-Trader kennen die Werkzeuge, mit denen professionelle Daytrader arbeiten, und halten sich an
+deren Regeln (`automaton/trading/pro.py`):
+
+- **Sechs Setups:** Opening-Range-Breakout zu Sessionbeginn (Asien 0:00, London 8:00, New York 13:00/14:00
+  UTC), Rückkehr zum Session-VWAP im Seitwärtsmarkt, VWAP-Pullback im Trend, Intraday-Momentum,
+  Squeeze-Ausbruch (Bollinger-Bänder), Erschöpfungs-Fade nach Liquidationskerzen mit hohem Volumen.
+- **Filter:** Trend auf höherem Zeitrahmen (EMA 200), Marktregime (Efficiency-Ratio), relatives Volumen zur
+  gleichen Tageszeit, Wochenenden.
+- **Risiko:** fester Anteil des Kapitals pro Trade (0,5 %), Positionsgröße aus der Stop-Distanz,
+  Stop in ATR, Gewinnziel in R-Vielfachen, Stop auf Einstand nach einem Teilgewinn, höchstens 3-facher Hebel.
+- **Ausführung:** Limit-Orders (Maker-Gebühr 0,02 %), gefüllt nur, wenn der Kurs durch das Limit läuft.
+  Trades, deren Ziel nicht mindestens das Sechsfache der Gebühren bringt, werden ausgelassen.
+- **Disziplin:** Tagesstopp nach 3 R Verlust, zwei Stunden Pause nach zwei Verlusten in Folge, keine neuen
+  Trades in der letzten Stunde, abends flach.
+- **Prüfer** verlangen zusätzlich einen positiven t-Wert. Der **Chef** begrenzt Positionen in dieselbe
+  Richtung, weil Bitcoin, Ethereum und Solana stark zusammenlaufen.
+
+Geforscht wird wie in einem Profi-Desk, in drei getrennten Zeiträumen von echten Binance-Kursen:
+
+1. **Lernen** (Januar 2022 bis September 2024): Ein genetischer Algorithmus prüft Setup, Coin, Session und
+   alle Parameter. Bewertet wird nach t-Wert der Tagesergebnisse, nicht nach dem höchsten Gewinn.
+2. **Auswählen** (Oktober 2024 bis September 2025): Ins Playbook kommt nur, was auch hier im Plus und
+   signifikant ist (`automaton/trading/playbook.json`).
+3. **Abschlusstest** (Oktober 2025 bis September 2026), einmal, mit Kontrollen.
+
+```bash
+.venv/bin/python -m automaton trade profi            # Abschlusstest mit dem gespeicherten Playbook
+.venv/bin/python -m automaton trade profi --relearn  # alles neu erforschen (ca. 1 Minute)
+```
+
+Ergebnis:
+
+| Schritt | Ergebnis |
+|---|---|
+| Lernen | 984 Strategien geprüft. Bester Kandidat: Solana VWAP-Pullback, +37,7 % bei t = 3,3 |
+| Auswählen | 15 Kandidaten mit t ≥ 1,5 geprüft, 3 bestehen, alle Ethereum Intraday-Momentum zur US-Eröffnung |
+| Abschlusstest, Playbook | **+0,52 % im Jahr**, 6 von 12 Monaten positiv, schlechtester Monat −2,13 %, t = 0,13 |
+| Münzwurf-Kontrolle | Gleiche Regeln, zufällige Richtung: 8 von 20 Läufen mindestens so gut |
+| Zufallskurs-Kontrolle | +0,44 %, +0,30 %, +0,85 %, −5,75 %, +0,67 % |
+| Lern-Favorit im Abschlusstest | Solana VWAP-Pullback: −4 % bis −6 % |
+| Profi-Desk mit Chef und Prüfer, 1.000 $ | in 0 von 6 Läufen im Plus, typisch −113 $ (laufende Kosten 119 $, Handel vor Gebühren +13 $) |
+
+**So liest du das:**
+
+1. **Auch Profi-Wissen bringt hier keinen verlässlichen Vorteil.** Das beste, zweifach geprüfte Playbook
+   liegt im Abschlussjahr bei null und ist von Münzwurf und Zufallskursen nicht zu unterscheiden.
+2. **Der glänzendste Kandidat aus dem Lernen war reine Überanpassung.** Er verlor im Abschlussjahr.
+   Genau so sehen Backtests aus, mit denen Trading-Systeme verkauft werden.
+3. **Monatlich sicher im Plus ist mit diesen Mitteln nicht erreichbar.** Die Setups, Indikatoren und Regeln
+   sind allgemein bekannt. Wer damit verdient, hat meist etwas anderes: Geschwindigkeit, Gebührenrabatte
+   als Market-Maker, Informationen oder sehr viel Kapital.
+
 ## Nächste Schritte
 
 1. Claude-Läufe mit Spielgeld gegen das Regel-Gehirn vergleichen (braucht einen API-Schlüssel).
@@ -227,7 +281,9 @@ gelten deshalb immer.
 ```
 automaton/
   trading/          Daytrading-Desk: data.py (echte Kurse), strategy.py (Trader-Erbgut, Handelsmotor),
-                    desk.py (Trader, Prüfer, Chef), evaluate.py (Zufallskontrolle, Evolution, Prognose)
+                    desk.py (Trader, Prüfer, Chef), evaluate.py (Zufallskontrolle, Evolution, Prognose),
+                    indicators.py, pro.py (Profi-Setups und -Regeln), research.py (Lernen, Auswählen,
+                    Abschlusstest), playbook.json (das ausgewählte Playbook)
   wallet.py         Spielgeld-Wallet (Mikro-USDC wie echtes USDC)
   market.py         simulierter Markt, alle Annahmen, Szenarien und Unsicherheit
   world.py          Stundentakt, Kosten, Verkäufe, Tod, Auszahlungen, Kopien, Selektion

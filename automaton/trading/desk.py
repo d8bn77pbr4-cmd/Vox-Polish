@@ -34,6 +34,11 @@ class DeskSettings:
     exam_max_drawdown: float = 0.10
     candidates: int = 12  # genomes examined per hiring round
     styles: tuple[str, ...] = ("breakout", "meanrev", "trend")  # trading styles the desk may hire
+    # Professional desk: kind "pro" hires ProTraders, drawing candidates from a researched playbook.
+    kind: str = "basic"
+    playbook: tuple = ()
+    exam_min_t: float = 0.0  # Prüfer: required t-statistic of the exam's daily results
+    max_same_direction: int = 99  # Chef: open positions on the same side across coins (they move together)
     trader_daily_loss: float = 0.03  # a trader may not open new positions after losing this share today
     desk_daily_loss: float = 0.04  # all traders stop for the day after the desk lost this share today
     # Chef (boss)
@@ -126,14 +131,21 @@ class Desk:
         """Risk check before every new position."""
         if self.halted_today:
             return False
+        if trader.pending and sum(1 for t in self.traders if t.position and t.position.side == trader.pending) \
+                >= self.settings.max_same_direction:
+            return False
         return trader.day_pnl > -self.settings.trader_daily_loss * trader.allocation
 
     def pruefer_exam(self, genome: TraderGenome, day: int):
         s = self.settings
         self.exams += 1
-        exam = backtest(genome, self.market, day - s.exam_days, day, self.cost_per_side,
-                        daily_loss_limit=s.trader_daily_loss)
-        ok = exam.passed(s.exam_min_trades, self.exam_profit_factor, s.exam_max_drawdown)
+        if s.kind == "pro":
+            from .pro import pro_exam
+            exam = pro_exam(genome, self.market, day - s.exam_days, day)
+        else:
+            exam = backtest(genome, self.market, day - s.exam_days, day, self.cost_per_side,
+                            daily_loss_limit=s.trader_daily_loss)
+        ok = exam.passed(s.exam_min_trades, self.exam_profit_factor, s.exam_max_drawdown, s.exam_min_t)
         self.exams_passed += ok
         return exam, ok
 
@@ -154,7 +166,7 @@ class Desk:
             _, genome, exam = max(passed, key=lambda p: p[0])
             allocation = min(self.pool, self.equity * s.trader_share)
             self.pool -= allocation
-            trader = Trader(f"T{self.next_id}", genome, allocation, allocation, day, self.cost_per_side)
+            trader = self._make_trader(f"T{self.next_id}", genome, allocation, day)
             self.next_id += 1
             self.traders.append(trader)
             self.hired += 1
@@ -163,10 +175,18 @@ class Desk:
                                    f"(Prüfung: {exam.pnl:+.1f} % in {s.exam_days} Tagen, {exam.trades} Trades)")
         return hired
 
-    def _candidate(self) -> TraderGenome:
+    def _make_trader(self, name: str, genome, allocation: float, day: int):
+        if self.settings.kind == "pro":
+            from .pro import ProTrader, Tools
+            return ProTrader(name, genome, allocation, allocation, day, Tools(self.market, genome))
+        return Trader(name, genome, allocation, allocation, day, self.cost_per_side)
+
+    def _candidate(self):
         """Mostly offspring of the best traders so far, sometimes a newcomer."""
         parents = sorted(self.alumni + [(t.total, t.genome) for t in self.traders], key=lambda a: a[0], reverse=True)
         good = [g for score, g in parents[:5] if score > 0]
+        if self.settings.kind == "pro":
+            return self._pro_candidate(good)
         for _ in range(50):
             if good and self.rng.random() < 0.7:
                 genome = mutate_genome(self.rng.choice(good), self.rng, self.rng.choice((1, 2)))
@@ -176,6 +196,16 @@ class Desk:
                 return genome
         return replace(genome, style=self.rng.choice(self.settings.styles),
                        symbol=self.rng.choice(self.market.symbols))
+
+    def _pro_candidate(self, good: list):
+        from .pro import mutate_pro, random_pro
+        playbook = list(self.settings.playbook)
+        roll = self.rng.random()
+        if playbook and roll < 0.5:
+            return self.rng.choice(playbook)
+        if playbook + good and roll < 0.85:
+            return mutate_pro(self.rng.choice(playbook + good), self.rng)
+        return random_pro(self.rng, self.market.symbols)
 
     def chef_review(self, day: int) -> int:
         s = self.settings
