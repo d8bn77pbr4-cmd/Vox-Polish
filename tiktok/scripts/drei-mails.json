@@ -1,0 +1,48 @@
+{
+ "title": "3 Mails, die du nie wieder selbst schreibst",
+ "accent": "#4DD0E1",
+ "bg_top": "#0f1b24",
+ "bg_bottom": "#1c2f4a",
+ "caption": "Diese drei Mails schreibt dir die KI in Sekunden. Lies sie kurz durch, bevor du sendest.",
+ "hashtags": [
+  "#kitipps",
+  "#ki",
+  "#chatgpt",
+  "#prompt",
+  "#lifehack"
+ ],
+ "slides": [
+  {
+   "type": "hook",
+   "text": "3 Mails, die du *nie wieder* selbst schreibst"
+  },
+  {
+   "type": "tip",
+   "number": 1,
+   "title": "Die höfliche *Absage*",
+   "text": "Freundlich und klar, ohne dir eine Ausrede auszudenken."
+  },
+  {
+   "type": "tip",
+   "number": 2,
+   "title": "Die *Reklamation*",
+   "text": "Sachlich, mit Frist. Statt einer Wut-Mail."
+  },
+  {
+   "type": "tip",
+   "number": 3,
+   "title": "Die *Zahlungserinnerung*",
+   "text": "Beim ersten Mal freundlich, beim zweiten bestimmt."
+  },
+  {
+   "type": "prompt",
+   "label": "Zum Beispiel:",
+   "text": "Schreibe eine freundliche Zahlungserinnerung an einen Kunden. Rechnung 1042, seit 14 Tagen fällig, max. 60 Wörter."
+  },
+  {
+   "type": "cta",
+   "text": "Folge für mehr *KI-Tipps*",
+   "sub": "Lies jede KI-Mail kurz durch, bevor du sendest."
+  }
+ ]
+}

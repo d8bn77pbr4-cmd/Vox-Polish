@@ -1,0 +1,49 @@
+{
+ "title": "So lernst du mit KI",
+ "accent": "#7CE38B",
+ "bg_top": "#10201a",
+ "bg_bottom": "#1d3b33",
+ "caption": "Lass dir nicht die Hausaufgaben schreiben, lass dich abfragen. So bleibt wirklich etwas hängen.",
+ "hashtags": [
+  "#kitipps",
+  "#ki",
+  "#chatgpt",
+  "#prompt",
+  "#lifehack",
+  "#lernen"
+ ],
+ "slides": [
+  {
+   "type": "hook",
+   "text": "So lernst du mit KI, statt nur *abzuschreiben*"
+  },
+  {
+   "type": "tip",
+   "number": 1,
+   "title": "Lass es dir *erklären*",
+   "text": "Erkläre mir das Thema wie einem 12-Jährigen."
+  },
+  {
+   "type": "tip",
+   "number": 2,
+   "title": "Lass dich *abfragen*",
+   "text": "Stell mir fünf Fragen, eine nach der anderen."
+  },
+  {
+   "type": "tip",
+   "number": 3,
+   "title": "Lass dich *korrigieren*",
+   "text": "Sag, was du verstanden hast. Die KI sucht deine Lücken."
+  },
+  {
+   "type": "prompt",
+   "label": "Probier das:",
+   "text": "Erkläre mir die Photosynthese wie einem 12-Jährigen. Frag mich danach fünf Fragen, eine nach der anderen."
+  },
+  {
+   "type": "cta",
+   "text": "Folge für mehr *KI-Tipps*",
+   "sub": "Speichern für die nächste Klausur."
+  }
+ ]
+}

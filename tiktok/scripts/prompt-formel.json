@@ -1,0 +1,54 @@
+{
+ "title": "So fragst du die KI richtig",
+ "accent": "#FFD23F",
+ "bg_top": "#12131f",
+ "bg_bottom": "#2a1b3d",
+ "caption": "Schlechte KI-Antworten liegen meist an der Frage. Speicher dir die Formel: Rolle, Aufgabe, Kontext, Format.",
+ "hashtags": [
+  "#kitipps",
+  "#ki",
+  "#chatgpt",
+  "#prompt",
+  "#lifehack"
+ ],
+ "slides": [
+  {
+   "type": "hook",
+   "text": "Warum die KI dir *Mist* antwortet"
+  },
+  {
+   "type": "tip",
+   "number": 1,
+   "title": "Gib ihr eine *Rolle*",
+   "text": "Zum Beispiel: Du bist ein erfahrener Karriereberater."
+  },
+  {
+   "type": "tip",
+   "number": 2,
+   "title": "Sag die *Aufgabe*",
+   "text": "Schreibe eine Absage. Nicht: Hilf mir mal."
+  },
+  {
+   "type": "tip",
+   "number": 3,
+   "title": "Gib *Kontext*",
+   "text": "Wer liest es? Wofür? Je mehr du verrätst, desto besser."
+  },
+  {
+   "type": "tip",
+   "number": 4,
+   "title": "Wähle das *Format*",
+   "text": "Tabelle, drei Stichpunkte oder 80 Wörter?"
+  },
+  {
+   "type": "prompt",
+   "label": "Alles zusammen:",
+   "text": "Du bist Karriereberater. Schreibe eine höfliche Absage auf ein Jobangebot, max. 80 Wörter, in der Sie-Form."
+  },
+  {
+   "type": "cta",
+   "text": "Folge für *täglich* einen KI-Tipp",
+   "sub": "Speichern, damit du die Formel nicht vergisst."
+  }
+ ]
+}
