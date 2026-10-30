@@ -58,7 +58,13 @@ def main(argv: list[str] | None = None) -> None:
     fc.add_argument("--json", default=None, help="Ergebnis zusätzlich als JSON speichern")
     _blueprint_arg(fc)
 
+    from .trading.cli import add_parser as add_trade_parser
+    add_trade_parser(sub)
+
     args = parser.parse_args(argv)
+    if args.command == "trade":
+        from .trading.cli import main as trade_main
+        return trade_main(args)
     blueprint = Blueprint.load(Path(args.blueprint)) if args.blueprint else Blueprint()
     overrides = {"selection": True} if args.selection else {}
     if args.founders:

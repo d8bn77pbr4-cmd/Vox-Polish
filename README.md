@@ -70,15 +70,16 @@ Direkter Vergleich auf 300 neuen Welten (60 Tage):
 
 | Variante | Startgeld | im Plus | Tage mit Gewinn | typisches Ergebnis | Ø Verlust |
 |---|---|---|---|---|---|
-| Bester Bauplan | 20 $ | 87 % | 66 % | +346 $ | 2,41 $ |
-| + Aussortieren (`--selection`) | 20 $ | 86 % | 63 % | +339 $ | 2,11 $ |
+| Bester Bauplan | 20 $ | 87 % | 66 % | +349 $ | 2,48 $ |
+| + Aussortieren (`--selection`) | 20 $ | 86 % | 64 % | +346 $ | 2,19 $ |
 | + 3 Gründer, Geld an den Stärksten | 20 $ | 0 % | 0 % | -20 $ | 20,00 $ |
-| Bester Bauplan | 50 $ | 90 % | 70 % | +360 $ | 3,70 $ |
-| + Aussortieren (`--selection`) | 50 $ | 93 % | 66 % | +330 $ | 1,34 $ |
+| Bester Bauplan | 50 $ | 93 % | 71 % | +349 $ | 2,67 $ |
+| + Aussortieren (`--selection`) | 50 $ | 95 % | 68 % | +347 $ | 0,75 $ |
 | + 3 Gründer, Geld an den Stärksten | 50 $ | 85 % | 65 % | +388 $ | 4,80 $ |
 
-Aussortieren ist eine Verlustbremse: weniger Verlust, etwas weniger Gewinn. Mehrere Gründer brauchen
-genug Kapital; 20 $ geteilt durch 3 reicht für kein Produkt.
+Aussortieren ist eine Verlustbremse: Bei 50 $ sinkt der durchschnittliche Verlust von 2,67 $ auf
+0,75 $, dafür gibt es etwas weniger Gewinntage. Mehrere Gründer brauchen genug Kapital; 20 $ geteilt
+durch 3 reicht für kein Produkt.
 
 ## Prognose ohne API
 
@@ -127,6 +128,78 @@ Wie viel Nachfrage braucht es?
 3. **Eine sichere Prognose ist nicht möglich.** Wie viele Menschen oder Firmen einem unbekannten
    KI-Agenten Geld zahlen, kann keine Simulation wissen. Das misst nur ein echter Test.
 
+## Daytrading-Desk (echte Kurse, Spielgeld)
+
+Ein Desk aus drei Gruppen von KIs handelt Bitcoin, Ethereum und Solana auf echten 15-Minuten-Kursen
+(Binance, Oktober 2024 bis September 2026, 730 Handelstage) mit Spielgeld:
+
+- **Trader** handeln. Jeder hat ein Erbgut: Coin, Stil (Ausbruch, Rückkehr zum Mittel, Trend),
+  Zeitfenster, Schwelle, Stop-Loss, Gewinnziel, Positionsgröße, Long/Short, maximale Trades pro Tag.
+  Am Tagesende ist jede Position geschlossen.
+- **Prüfer** lassen einen neuen Trader nur zu, wenn er auf den letzten 30 Tagen im Plus war, genug
+  Trades hatte, einen Gewinnfaktor über der Schwelle und einen begrenzten Drawdown. Vor jeder Order
+  prüfen sie die Risikogrenzen: Verliert ein Trader heute 3 % oder der ganze Desk 4 %, gibt es keine
+  neuen Positionen mehr.
+- **Chef** bewertet jeden Abend. Trader ohne Gewinn in den letzten 7 Tagen oder mit mehr als 8 %
+  Drawdown werden abgeschaltet, ihr Geld geht zurück. Neue Kandidaten sind meist Mutationen der
+  bisher besten Trader. Scheitern zu viele Zugelassene schnell, macht der Chef die Prüfung strenger.
+  Er schöpft Gewinne ab, zahlt dir täglich 30 % des offenen Gewinns aus und stoppt alles, wenn der Desk
+  25 % verloren hat.
+
+So ist der Test aufgebaut, damit er nichts schönrechnet:
+
+- Signale nur auf abgeschlossenen Kerzen, Ausführung zur nächsten Kerze.
+- Gebühr 0,05 % plus Schlupf 0,02 % pro Order (Binance-Futures, Taker, Basisstufe).
+- Stop vor Gewinnziel, wenn beides in derselben Kerze liegt.
+- Laufende Kosten: Server 0,24 $ pro Tag plus 0,02 $ pro KI.
+- **Zufallskontrolle:** dieselben Kerzen in zufälliger Reihenfolge. Schneidet der Desk auf echten Kursen
+  nicht klar besser ab, war ein Gewinn Glück.
+- **Erstes gegen zweites Jahr**, und eine Evolution der Desk-Regeln, die nur das erste Jahr sieht.
+
+```bash
+.venv/bin/python -m automaton trade download              # Kurse laden (ca. 1 Minute)
+.venv/bin/python -m automaton trade run --capital 1000    # einen Desk laufen lassen und mitlesen
+.venv/bin/python -m automaton trade test --capital 1000   # der ehrliche Test (ca. 1 Minute)
+.venv/bin/python -m automaton trade tune --capital 10000  # Desk-Regeln züchten (ca. 8 Minuten)
+```
+
+Ergebnis von `trade test` (je 6 Desks pro Zeile):
+
+| Fall | Kapital | im Plus | typisches Ergebnis | Handel vor Gebühren | Gebühren | laufende Kosten |
+|---|---|---|---|---|---|---|
+| Echte Kurse, 2 Jahre | 1.000 $ | 0 % | −246 $ (Chef stoppt) | +12 $ | 99 $ | 141 $ |
+| Zufallskontrolle | 1.000 $ | 0 % | −237 $ (Chef stoppt) | +28 $ | 110 $ | 124 $ |
+| Echte Kurse, 2 Jahre | 10.000 $ | 0 % | −1.436 $ | +259 $ | 1.530 $ | 218 $ |
+| Zufallskontrolle | 10.000 $ | 0 % | −1.981 $ | +126 $ | 1.451 $ | 202 $ |
+| Echte Kurse, erstes Jahr | 10.000 $ | 17 % | −1.291 $ | +29 $ | 978 $ | 112 $ |
+| Echte Kurse, zweites Jahr | 10.000 $ | 0 % | −878 $ | +46 $ | 881 $ | 113 $ |
+
+Gewinntage: etwa 15 % aller Handelstage. Prognose für 90 Tage aus echten Desk-Tagen: bei 1.000 $ in
+13 % der Fälle im Plus (typisch −51 $), bei 10.000 $ in 32 % (typisch −205 $).
+
+Evolution der Desk-Regeln (Training erstes Jahr, Test zweites Jahr, 10.000 $):
+
+| Regeln | Training: im Plus | Test: im Plus | Test: typisches Ergebnis | Zufallskontrolle im Test |
+|---|---|---|---|---|
+| gezüchtet, Platz 1 | 67 % | 0 % | −1.045 $ | −912 $ |
+| gezüchtet, Platz 2 | 67 % | 0 % | −686 $ | −1.144 $ |
+| Standard | – | 0 % | −878 $ | −1.189 $ |
+
+**So liest du das:**
+
+1. **Kein Vorteil vor Gebühren.** Der Handel liegt vor Gebühren nahe null und nicht klar über der
+   Zufallskontrolle. Die Gebühren machen daraus einen sicheren Verlust, bei kleinem Kapital zusätzlich
+   die laufenden Kosten.
+2. **Optimieren macht es nicht besser.** Gezüchtete Regeln sehen im Trainingsjahr gut aus und verlieren
+   im Testjahr wie der Zufall. Das ist Überanpassung, das Hauptrisiko jeder Trading-Optimierung.
+3. **Der Chef begrenzt Verluste, erzeugt aber keine Gewinne.** Abschalten und Verlustgrenze stoppen das
+   Bluten. Aus Strategien ohne Vorteil kann keine Auswahl einen Vorteil machen.
+4. **Der Desk ist ein Prüfstand.** Wer eine neue Handelsidee hat, kann sie als Stil einbauen und mit
+   `trade test` gegen die Zufallskontrolle prüfen, bevor echtes Geld fließt.
+
+Nicht berücksichtigt: Finanzierungsgebühren von Futures (bei Positionen unter einem Tag klein),
+Unterschiede zwischen Spot- und Futures-Kursen, niedrigere Maker-Gebühren bei Limit-Orders.
+
 ## Nächste Schritte
 
 1. Claude-Läufe mit Spielgeld gegen das Regel-Gehirn vergleichen (braucht einen API-Schlüssel).
@@ -153,6 +226,8 @@ gelten deshalb immer.
 
 ```
 automaton/
+  trading/          Daytrading-Desk: data.py (echte Kurse), strategy.py (Trader-Erbgut, Handelsmotor),
+                    desk.py (Trader, Prüfer, Chef), evaluate.py (Zufallskontrolle, Evolution, Prognose)
   wallet.py         Spielgeld-Wallet (Mikro-USDC wie echtes USDC)
   market.py         simulierter Markt, alle Annahmen, Szenarien und Unsicherheit
   world.py          Stundentakt, Kosten, Verkäufe, Tod, Auszahlungen, Kopien, Selektion
