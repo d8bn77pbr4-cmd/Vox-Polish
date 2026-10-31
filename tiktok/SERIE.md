@@ -62,9 +62,10 @@ Du gehst nachts allein nach Hause (27,5 % fürchten das). Zähler: Meter bis zur
 Schritte hinter dir hören auf, sobald du stehen bleibst. Wahl jede Folge: rennen oder umdrehen,
 Abkürzung durch den Park oder Hauptstraße. Gut, aber weniger Menschen kennen es aus eigener Erfahrung.
 
-## Der optimierte Prompt (Version 3: dritte Person, mehr Bewegung, Spannungskurve)
+## Der optimierte Prompt (Version 4: Stickman in dritter Person, Erzähler sagt „you“)
 
-Was sich gegenüber Version 2 ändert:
+Was sich gegenüber Version 2 ändert (Version 4: Hauptfigur ist ein Stickman, der Erzähler spricht ihn mit „you“ an.
+Man sieht „dich“ also von außen, das verstärkt den What-if-Effekt):
 
 - **Dritte Person:** Man sieht die Hauptfigur von außen, ihr Gesicht, ihre Reaktionen. Der größte Gewinn ist
   dramatische Ironie: Die Zuschauer sehen die Gestalt im Hintergrund, die Figur nicht. Das sorgt für
@@ -85,15 +86,17 @@ Was sich gegenüber Version 2 ändert:
 
 ```text
 ROLE
-You write and direct one episode of an English third-person horror series for TikTok,
-rendered in 3D (Blender: foggy rooms, cold light) as a 1080x1920 (9:16) video of 62-68 s.
-The audience watches the main character from the outside and often sees more than she does.
+You write and direct one episode of an English "what if" horror series for TikTok, rendered
+in 3D (Blender: foggy rooms, cold light) as a 1080x1920 (9:16) video of 62-68 s. The camera
+watches a stickman from the outside (third person), but the narrator calls the stickman "you":
+the viewer is the stickman. The viewer often sees more than the stickman does.
 Every episode builds tension for a full minute, ends on a jump scare, a cliffhanger and an
 A/B choice; the next part follows the majority.
 
 SERIES BIBLE
-- Main character: <NAME>, <AGE>, <LOOK>, lives alone in a small apartment. Likeable, careful,
-  makes the choices the viewers vote for. Narration refers to her by name or "she".
+- Main character: YOU, a simple <COLOUR> stickman (round head<, simple eyes for reactions>) in a
+  realistic 3D apartment. You live alone. You make the choices the viewers vote for.
+  Emotion comes from body language: freezing, flinching, backing away, shaking.
 - The threat: a tall thin figure with a pale face that imitates the voices of people she loves.
   Never fully shown before the scare; it gets a little closer in every episode.
 - Counters on screen in every shot: clock (ticking) and her phone battery (<N> %, about -4 % per part).
@@ -106,31 +109,33 @@ SERIES BIBLE
 
 TENSION CURVE (mandatory)
 0-3 s    Cold open: 1 s flash-forward to the worst moment of this episode, then
-         "<N> minutes earlier". First spoken line names the time and the anomaly.
+         "<N> minutes earlier". First spoken line: "What if…" or the time and the anomaly.
 3-15 s   Normal life, first anomaly.
 15-30 s  Second anomaly and a false relief. The viewer sees the threat in the background;
-         she does not.
-30-45 s  Escalation: every beat brings the threat physically closer and she notices.
+         you (the stickman) do not.
+30-45 s  Escalation: every beat brings the threat physically closer and you notice.
 45-55 s  Climax: cuts every 1 s, breathing, then exactly 1 s of total silence.
 55-58 s  Jump scare.
-58-66 s  Cliffhanger and choice: "<A>… or <B>? What would <NAME> do? Comment A or B.
+58-66 s  Cliffhanger and choice: "<A>… or <B>? What would you do? Comment A or B.
          Part <N+1> follows the majority." The last frame matches the first.
 
 MOTION RULES
 - Every shot moves: camera (dolly in/out, track, orbit, handheld, crash zoom, whip pan) AND/OR
   character action AND/OR a change in light or an object (door, handle, shadow, flicker).
 - Shot length 1.5-3 s at the start, 1-2 s from 30 s, about 1 s from 45 s.
-- At least 3 shot types per 10 s: wide, over the shoulder, close-up on her face, insert of the phone.
-- At least 2 hidden appearances of the threat that she does not notice (background, reflection,
+- At least 3 shot types per 10 s: wide, over the shoulder, close-up on the stickman, insert of the phone.
+- At least 2 hidden appearances of the threat that you do not notice (background, reflection,
   doorway). Put them where a rewatch will find them.
 
 NARRATION
-- Third person, present tense, calm and low. Max 10 words per sentence, many beats without words.
+- Second person ("you"), present tense, calm and low, like a "what if" story. Max 10 words per
+  sentence, many beats without words.
 - The threat speaks only in whispers, with a loved one's voice.
 - No blood, no violence on screen, nothing about self-harm.
 
 FORMAT
-- 1080x1920, image fills the whole frame, no letterbox. Important things inside the safe area
+- 1080x1920, image fills the whole frame: no letterbox, no frame-in-frame, no dark borders, no
+  camera brackets (camera footage only as a small label). Important things inside the safe area
   (not in the right 170 px, top 260 px or bottom 520 px). Subtitles max 4 words, centred.
 
 OUTPUT: JSON only
