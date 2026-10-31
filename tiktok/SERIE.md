@@ -1,92 +1,124 @@
-# Serie: zusammenhängende 1-Minuten-„What if“-Videos
+# Serie: Horror in Du-Perspektive, 1 Minute pro Teil, Wahl am Ende
 
-## Was die Beispielvideos gemeinsam haben
+Vorbild ist die U-Bahn-Serie von @swan9863 (Teil 1: 2,2 Mio. Aufrufe, Teil 2: 1,2 Mio.):
+eine 3D-Szene mit Nebel und kaltem Licht, ein ruhiger Erzähler sagt „du“, jede Folge endet mit
+einem Cliffhanger und der Frage „Was würdest du tun?“. Teil 2 löst beide Antworten auf.
 
-| Muster | Woher | Warum es wirkt |
-|---|---|---|
-| Die Frage steht in den ersten 2 Sekunden | @vibecodingiseasy, What-if-Beispiele | Wer nicht sofort weiß, worum es geht, wischt weiter |
-| Eine Zahl läuft die ganze Zeit mit | @vibecodingiseasy | Man will wissen, wo sie endet, also bleibt man |
-| Alle 4–6 Sekunden ein neuer Schritt, jeder schlimmer als der davor | alle | Kein Moment zum Wegwischen |
-| Echte Zahlen mit einem Haken | @vibecodingiseasy | Leute streiten in den Kommentaren, das pusht das Video |
-| „Du“-Perspektive, ruhiger Erzähler | @swan9863 (U-Bahn) | Man fühlt sich gemeint |
-| Ende mit Cliffhanger und Wahl A/B | @swan9863 Teil 1 → Teil 2 | Kommentare („B!“) und Folgen-Abos; Teil 2 hatte trotzdem 1,2 Mio. Aufrufe |
-| „Teil N“ im Titel | @swan9863 | Wer Teil 2 sieht, sucht Teil 1, und umgekehrt |
+## Recherche: Wovor Menschen am meisten Angst haben
 
-Für die Creator Rewards zählen nur Videos **über 1 Minute**, deshalb sind 62–70 Sekunden das Ziel.
+| Angst | Wie verbreitet | Quelle | Was die Serie daraus macht |
+|---|---|---|---|
+| Das Unbekannte | gilt als die grundlegendste Angst; in einer Studie mit 373 Personen der stärkste Einzelprädiktor für Angst | Carleton 2016 (Journal of Anxiety Disorders), Folgestudie 2021 | Die Bedrohung wird nie ganz gezeigt und nie erklärt |
+| Geliebte Menschen sterben oder werden schwer krank | 55,3 % / 58,9 % | Chapman Survey of American Fears 2025 | Mama ist Teil der Geschichte, ihre Stimme wird zur Falle |
+| Überwacht werden | 52,7 % (Staat), 50,7 % (Firmen) | Chapman 2025 | Das eigene Handy und die eigene Kamera wissen mehr als du |
+| Einbruch / Mord durch Fremde | 37,5 % / 33,5 % | Chapman 2025 | Jemand ist in deiner Wohnung |
+| Höhe / enge Räume / nachts allein draußen | 34,3 % / 25,4 % / 27,5 % | Chapman 2025 | Stoff für spätere Staffeln |
+| Nächtliche Ängste in der Kindheit | 64 % der Kinder und Jugendlichen, am häufigsten: Einbrecher | Studie zu nächtlichen Ängsten bei Kindern | Jeder kennt das Gefühl aus der eigenen Kindheit |
 
-## Der verbesserte Prompt
+Folgerung: **Eigene Wohnung, nachts, Handy, ein geliebter Mensch, keine Erklärung** trifft die
+stärksten persönlichen Ängste gleichzeitig. Anders als eine U-Bahn hat jeder Zuschauer genau
+diese Situation selbst: ein Bett, einen dunklen Flur, ein Handy auf dem Nachttisch.
 
-Dieser Prompt erzeugt eine Folge als JSON, die der Renderer direkt in ein Video umsetzt. Platzhalter in `<…>`.
+## Konzept A (empfohlen): „PERSON DETECTED“
+
+Du wohnst allein. Um 3:12 Uhr weckt dich dein Handy: Die Kamera im Flur meldet
+„Person detected“. Der laufende Zähler ist dein **Akku**: 23 % in Teil 1. Er sinkt mit jeder Folge,
+bei 0 % kommt das Staffelfinale. Jeder kennt die Panik bei leerem Akku, und sie verbindet die Folgen.
+
+**Teil 1 (Entwurf, ca. 63 s)**
+
+| s | Bild (3D) | Erzähler | Untertitel |
+|---|---|---|---|
+| 0 | Schwarz, Handy auf dem Nachttisch leuchtet auf: „Person detected · Hallway“ | „3:12 a.m. Your phone wakes you up.“ | 3:12 AM |
+| 3 | Handy-Benachrichtigung groß | „Person detected. Hallway.“ | PERSON DETECTED |
+| 6 | Dunkles Schlafzimmer, Tür einen Spalt offen | „You live alone.“ | YOU LIVE ALONE |
+| 9 | Handy: Kamerabild vom Flur, leer, Licht an | „You open the camera. The hallway is empty.“ | EMPTY |
+| 13 | Kamerabild, Deckenlampe | „But the light is on. You turned it off. You're sure.“ | THE LIGHT IS ON |
+| 18 | Türspalt, Knarren | „Then the floor creaks. Right outside your door.“ | *creak* |
+| 22 | Neue Benachrichtigung: „Person detected · Bedroom door“ | „Your phone buzzes again. Bedroom door.“ | BEDROOM DOOR |
+| 26 | Kamerafahrt auf den Türspalt, Flurlicht geht aus | „Through the gap, the hallway light goes out.“ | |
+| 31 | Schwarz, nur Türspalt | Flüstern: „Sweetie? Are you awake?“ | |
+| 35 | Handy: Nachricht von Mom, 23:04 „Landed in Lisbon ❤️ call you tomorrow“ | „That's your mom's voice. But your mom is in Lisbon.“ | MOM IS IN LISBON |
+| 42 | Türspalt, Atmen | Flüstern: „Open the door, sweetie. It's cold out here.“ | |
+| 48 | Nahaufnahme: Türklinke geht langsam nach unten | „The handle… slowly… goes down.“ | |
+| 54 | Schnitt auf Schwarz, Wahl auf dem Bildschirm | „Hold the door shut… or hide in the wardrobe? Comment A or B. Part 2 follows the majority.“ | A: HOLD THE DOOR · B: HIDE |
+| 62 | Handy leuchtet wieder auf (Loop zum Anfang) | | |
+
+**Bogen der Staffel** (Details entscheiden eure Wahlen):
+
+| Teil | Akku | Kern | Cliffhanger |
+|---|---|---|---|
+| 1 | 23 % | Kamera meldet jemanden, Mamas Stimme vor der Tür | Türklinke geht runter |
+| 2 | 19 % | A: Du hältst die Tür. Die App zeigt einen Clip von 23:58 Uhr: Du kommst nach Hause, und jemand geht hinter dir rein. B: Im Schrank siehst du durch den Spalt nichts, aber die Kamera zeigt eine Gestalt direkt vor deinem Schrank | Polizei anrufen oder Mama anrufen? |
+| 3 | 14 % | Der Anruf: Mama nimmt ab und flüstert aus dem Flur mit | … |
+| 4 | 9 % | Stromausfall, nur noch das Handylicht | … |
+| 5 | 4 % | Wohnungstür: Durch den Spion ist niemand zu sehen. Die App meldet „Front door · inside“ | … |
+| Finale | 1 % | Die Kamera erkennt das Gesicht: „Recognized: You.“ | Staffel 2 |
+
+## Konzept B: „1.4 KM“
+
+Du gehst nachts allein nach Hause (27,5 % fürchten das). Zähler: Meter bis zur Haustür und 4 % Akku.
+Schritte hinter dir hören auf, sobald du stehen bleibst. Wahl jede Folge: rennen oder umdrehen,
+Abkürzung durch den Park oder Hauptstraße. Gut, aber weniger Menschen kennen es aus eigener Erfahrung.
+
+## Der optimierte Prompt
+
+Er erzeugt eine Folge als JSON, aus der Renderer, Stimme und Sound gebaut werden. Platzhalter in `<…>`.
 
 ```text
 ROLE
-You write and storyboard one episode of a TikTok series of English "What if" simulation videos
-with a narrator. The series must feel like one continuous story, not separate videos.
+You write one episode of an English second-person horror series for TikTok, rendered as a
+3D scene (Blender, foggy, cold light, slow camera) with a calm narrator. Every episode ends
+on a cliffhanger and an A/B choice; the next part follows the majority.
 
 SERIES BIBLE
-- Series: <SERIES NAME>. Season rule: <THE ONE DUMB RULE, e.g. "Gary only ever eats half of what is left">.
-- Recurring character: Gary, a confident, likeable idiot. He follows the rule with total
-  conviction and wrong logic that almost sounds right. He never learns.
-- Running gag: <e.g. after every beat Gary says "Still hungry.">
-- A counter (<e.g. BITE #>) runs through the WHOLE season. Each episode starts exactly where
-  the previous one ended. Season arc: <episode list with counter ranges>.
-- This is part <N>. Previously: <one sentence>. Viewers chose: <A/B + what it was>.
+- Series: <NAME>. Premise: <ONE SENTENCE>. Season location: <e.g. your small apartment at night>.
+- Recurring elements: <e.g. the camera app notification "Person detected · <room>", Mom's voice>.
+- Running counter on screen in every shot: <e.g. phone battery %, starts at 23 %, about -4 % per part>.
+- Fixed set and shot list (only use these): <e.g. BED_POV, PHONE_CLOSE, DOOR_GAP, HALLWAY_CAM,
+  HANDLE_CLOSE, WARDROBE_SLIT, BLACK>.
+- This is part <N>. Previously: <one sentence>. Majority chose: <A/B>: <what it was>.
+  Also write the opening for the losing choice, so both versions of part <N> can be rendered.
 
-LENGTH AND RHYTHM (62-70 s, vertical 9:16)
-0-2 s    The question is the first spoken line and on screen. Counter already visible.
-         From part 2 on: "Part N. You chose <X>." (max 2 s, then straight into the action)
-2-10 s   Gary states his plan with full confidence.
-10-52 s  7-9 beats, one every 4-6 s. Each beat: new counter value, one real number,
-         one everyday comparison object, one short Gary line. Each beat is bigger,
-         worse or weirder than the one before. Never a calm beat.
-52-60 s  Twist: science stops cooperating. Gary does not care.
-60-68 s  Cliffhanger and a choice: "A: <...> or B: <...>? Comment A or B.
-         Part <N+1> follows the majority." The last frame mirrors the first so the video loops.
+LENGTH AND RHYTHM (60-68 s, 9:16)
+0-3 s    First line = time + the anomaly. No intro, no title card.
+         From part 2: "Part <N>. You chose <X>." in under 2 s, then straight into the scene.
+3-50 s   8-10 beats, one every 4-6 s. Each beat adds exactly one new thing you can hear,
+         see or read on the phone. Every beat is worse than the one before. No calm beat.
+50-56 s  The worst moment. Hard cut to black.
+56-64 s  The choice, on screen and spoken: "<A>… or <B>? Comment A or B. Part <N+1> follows
+         the majority." The last frame matches the first so the video loops.
 
-HUMOR
-- The joke is Gary's logic, never an insult. Dumb but lovable, like a confident toddler.
-- Max 12 words per spoken sentence. Plain words a 10-year-old understands.
-- Every science fact gets an everyday comparison ("about the weight of a grape").
+FEAR RULES
+- Second person, present tense, everyday details (battery %, unread message, a creak).
+- The threat is never fully shown and never explained. Show less in every episode, not more.
+- One familiar rule of safety breaks per episode (the camera, Mom's voice, the locked door).
+- At most one loud scare per episode. No blood, no violence on screen, nothing about self-harm.
+- Spoken sentences max 10 words. Whispered lines for the threat, calm lines for the narrator.
 
-SCIENCE
-- Every number is real and can be recalculated; put the formula in science_notes.
-- Leave exactly ONE point people can argue about in the comments: debatable, never false.
-
-VISUALS (2D, readable on a phone)
-- Dark background, one bold accent colour, big counter in the upper third,
-  caption below it (max 6 words), comparison object next to the subject.
-- The camera zooms so the subject always fills the screen, however small it gets.
-- Nothing important in the right 170 px or the bottom 520 px (TikTok buttons and caption).
-
-VOICE
-- Deep, calm, deadpan documentary narrator. Gary's lines in quotes, said completely straight.
-
-ORIGINALITY
-- The idea must not be a common what-if (no "drill through the earth", no "stop spinning").
+VISUAL RULES (3D)
+- Dark, foggy rooms, one cold light source per shot, phone screen as the brightest thing.
+- Camera moves slowly (push-in or drift); a cut every 3-6 s.
+- Big white subtitles, max 4 words, in the middle of the safe area; counter top left.
+- Nothing important in the right 170 px or the bottom 520 px.
 
 OUTPUT: JSON only
-{"part": N, "title": "...", "hook": "...",
- "beats": [{"t": 0.0, "counter": "...", "narration": "...", "caption": "...",
-            "visual": "...", "sfx": "chomp|whoosh|ding|boom|none"}],
+{"part": N, "title": "Part N", "opening_alt": "...",
+ "beats": [{"t": 0.0, "shot": "BED_POV", "camera": "push-in|drift|static",
+            "light": "...", "props": "...", "phone_ui": "...", "narration": "...",
+            "whisper": "...", "subtitle": "...", "sfx": "...", "battery": 23}],
  "cliffhanger": "...", "choice": {"A": "...", "B": "..."},
- "tiktok_caption": "...", "hashtags": ["..."], "science_notes": "..."}
+ "tiktok_caption": "...", "hashtags": ["..."]}
 ```
 
-## Serienidee 1 (empfohlen): „Gary’s Logic“, Staffel 1 „The Infinite Pizza“
+## Technik
 
-Gary isst von seiner Pizza (800 g) immer nur die Hälfte von dem, was übrig ist. „So I never run out.“
-Der Zähler BITE # läuft über alle Folgen. Rest nach Biss n: 800 g / 2ⁿ.
-
-| Teil | Bisse | Was passiert (echte Zahlen) | Cliffhanger |
-|---|---|---|---|
-| 1 | 1–19 | 400 g → ein Stück (100 g, Biss 3) → eine Traube (6 g, Biss 7) → eine Büroklammer (0,8 g, Biss 10) → eine Mücke (1,5 mg, Biss 19) | Gary kann seine Pizza nicht mehr sehen. A: Lupe, B: Mikroskop |
-| 2 | 19–49 | ein Salzkorn (48 µg, Biss 24) → eine menschliche Zelle (1,5 ng, Biss 39) → ein Bakterium (1,4 pg, Biss 49) | Ein Bakterium auf der Pizza ist jetzt so schwer wie die Pizza selbst. A: teilen, B: Krieg |
-| 3 | 49–89 | ein Grippevirus (0,7 fg, Biss 60) → ein Protein (Biss 72) → ein Zuckermolekül (Biss 81) → leichter als ein Wasserstoffatom (Biss 89) | Es gibt nichts Kleineres als ein Atom. Oder? A: weiterbeißen, B: Atom spalten |
-| 4 | 89–120 | leichter als ein Elektron (Biss 100) → leichter als ein Neutrino (Biss 120; davon fliegen jede Sekunde Hunderte Billionen durch dich) | Das Universum sagt Nein. Gary sagt „Still hungry.“ |
-| 5 | Finale | Die Mathematik: alle Hälften zusammen ergeben genau eine Pizza. Gary hat die ganze Pizza gegessen, nur unendlich langsam. | Staffel 2: „Gary only walks half the way to the fridge.“ |
-
-Der Streitpunkt für die Kommentare ist eingebaut: Ab Biss 89 ist „die Hälfte eines Atoms“ physikalisch Unsinn, mathematisch aber sauber.
-
-## Serienidee 2: „Every Lie Makes You Taller“ (Du-Perspektive)
-
-Du wachst auf, und jede Lüge macht dich 10 cm größer. Zähler: deine Körpergröße. Echte Biologie (Quadrat-Würfel-Gesetz): bei 2,72 m bist du größer als der größte Mensch, der je gelebt hat, danach machen Herz, Knie und Knochen nicht mehr mit. Jede Folge ist ein Teil deines Tages (Frühstück mit Mama, Schule/Arbeit, Date) und endet mit einer Wahl: A: die Wahrheit sagen, B: weiterlügen. Näher an der U-Bahn-Serie, aber lustig statt gruselig.
+- **3D:** Blender (Eevee) läuft hier. Ein Bild in voller Qualität dauert etwa 25 Sekunden
+  (Testbild: `look-test-3d.jpg`). 1.900 voll animierte Bilder pro Folge wären über 13 Stunden. Daher:
+  feste 3D-Sets, langsame Kamerafahrten in geringerer Auflösung, echte Animation nur für
+  Schlüsselmomente (Türklinke, Licht geht aus). Etwa 1–2 Stunden Rendern pro Folge.
+- **Stimme:** Kokoro (Apache 2.0, kostenlos, kommerziell nutzbar) läuft hier ohne Internet-Dienst.
+  Hörproben: `stimmproben.mp4`. ElevenLabs geht über einen API-Schlüssel in den
+  Umgebungseinstellungen. Der kostenlose Plan erlaubt keine kommerzielle Nutzung und verlangt
+  Namensnennung; kommerziell ab dem Starter-Plan (etwa 5–6 $ im Monat).
+- **Sound:** Atmo, Knarren, Atmen und Herzschlag erzeuge ich selbst, also keine Rechte-Probleme.
