@@ -120,7 +120,7 @@ def subtitle(text: str, whisper: bool) -> Image.Image:
     """Big centred words; *word* in red. Whispers in pale red, in quotes."""
     layer = blank()
     d = ImageDraw.Draw(layer)
-    size = 84 if whisper else 100
+    size = 60 if whisper else 72
     f = font("anton", size)
     words = []
     for i, part in enumerate(text.split("*")):
@@ -138,13 +138,13 @@ def subtitle(text: str, whisper: bool) -> Image.Image:
         used += (f.getlength(" ") if line else 0) + wlen
         line.append(word)
     lines.append(line)
-    y = 1130 - len(lines) * size * 0.6
+    y = 1395 - len(lines) * size * 1.18   # lower third, last line ends just above TikTok's caption area
     for line in lines:
         total = sum(f.getlength(w) for w, _ in line) + f.getlength(" ") * (len(line) - 1)
         x = SAFE_L + (area - total) / 2
         for w, hi in line:
             color = RED if hi else (WHISPER if whisper else (255, 255, 255))
-            d.text((x, y), w, font=f, fill=color, stroke_width=8, stroke_fill=(0, 0, 0))
+            d.text((x, y), w, font=f, fill=color, stroke_width=6, stroke_fill=(0, 0, 0))
             x += f.getlength(w + " ")
         y += size * 1.18
     return layer
