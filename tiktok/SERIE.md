@@ -62,7 +62,7 @@ Du gehst nachts allein nach Hause (27,5 % fürchten das). Zähler: Meter bis zur
 Schritte hinter dir hören auf, sobald du stehen bleibst. Wahl jede Folge: rennen oder umdrehen,
 Abkürzung durch den Park oder Hauptstraße. Gut, aber weniger Menschen kennen es aus eigener Erfahrung.
 
-## Der optimierte Prompt (Version 4: Stickman in dritter Person, Erzähler sagt „you“)
+## Der optimierte Prompt (Version 5: weißer Stickman, unnatürliche Bedrohung, Musik und Sounddesign)
 
 Was sich gegenüber Version 2 ändert (Version 4: Hauptfigur ist ein Stickman, der Erzähler spricht ihn mit „you“ an.
 Man sieht „dich“ also von außen, das verstärkt den What-if-Effekt):
@@ -94,11 +94,15 @@ Every episode builds tension for a full minute, ends on a jump scare, a cliffhan
 A/B choice; the next part follows the majority.
 
 SERIES BIBLE
-- Main character: YOU, a simple <COLOUR> stickman (round head<, simple eyes for reactions>) in a
+- Main character: YOU, a white stickman with a round head, black dot eyes and a small smile, in a
   realistic 3D apartment. You live alone. You make the choices the viewers vote for.
-  Emotion comes from body language: freezing, flinching, backing away, shaking.
-- The threat: a tall thin figure with a pale face that imitates the voices of people she loves.
-  Never fully shown before the scare; it gets a little closer in every episode.
+  Emotion comes from body language (freezing, flinching, backing away, shaking) and the face:
+  smile -> flat mouth -> wide eyes and an open "O" mouth at the worst moments.
+- The threat is NOT a stickman. It must look unnatural, the opposite of the cute stickman:
+  too tall (2.3 m), arms down to the knees, joints bent slightly the wrong way, head tilted at an
+  impossible angle, pale face with empty black eyes and a mouth that is too long. It imitates the
+  voices of people you love. It never walks on screen: between two cuts it is suddenly closer.
+  Never fully shown before the scare; each episode shows a little more of it.
 - Counters on screen in every shot: clock (ticking) and her phone battery (<N> %, about -4 % per part).
 - Sets and camera positions (only use these): <BEDROOM_WIDE, BED_SIDE, OTS_PHONE, FACE_CLOSE,
   DOOR_LOW, HALLWAY_TRACK, HALLWAY_CCTV, WARDROBE, FRONT_DOOR, ...>.
@@ -127,6 +131,17 @@ MOTION RULES
 - At least 2 hidden appearances of the threat that you do not notice (background, reflection,
   doorway). Put them where a rewatch will find them.
 
+SOUND AND MUSIC (original, synthesized, no copyright)
+- Score follows the tension curve: 0-15 s low drone only; 15-30 s a slow bass pulse (60 bpm) and a
+  clock tick on every second of the on-screen counter; 30-45 s pulse 90 bpm, dissonant string
+  cluster, pitch slowly rising; 45-55 s endlessly rising tone (Shepard riser) and heartbeat 120;
+  then 1 s of total silence; scare stinger; after the scare a high ringing tone; soft drone under
+  the choice.
+- Foley for every action: footsteps, cloth, bed springs, door, handle, phone buzz, breathing.
+- A deep impact hit on every reveal, a reversed swell just before it. Sounds behind a door are
+  muffled. Stereo: sounds come from where they are in the picture.
+- Voice always clearly on top (the music ducks under it), final loudness about -14 LUFS.
+
 NARRATION
 - Second person ("you"), present tense, calm and low, like a "what if" story. Max 10 words per
   sentence, many beats without words.
@@ -143,10 +158,11 @@ OUTPUT: JSON only
  "beats": [{"t": 0.0, "dur": 2.0, "shot": "BED_SIDE",
             "camera": {"move": "dolly_in|track|orbit|handheld|crash_zoom|whip_pan|static",
                        "from": "...", "to": "..."},
-            "actor": {"action": "sit_up", "look_at": "door"},
+            "actor": {"action": "sit_up", "look_at": "door", "face": "smile|flat|terrified"},
             "threat": {"where": "hallway_doorway", "hidden": true},
             "light": "...", "narration": "...", "whisper": "...", "subtitle": "...",
-            "sfx": ["..."], "heartbeat_bpm": 60, "battery": 23}],
+            "sfx": ["..."], "music": "drone|pulse60|pulse90|riser|silence", "heartbeat_bpm": 60,
+            "battery": 23}],
  "scare": {"shot": "...", "dur": 0.8},
  "cliffhanger": "...", "choice": {"A": "...", "B": "..."},
  "tiktok_caption": "...", "hashtags": ["..."]}
