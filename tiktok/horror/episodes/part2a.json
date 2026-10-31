@@ -1,49 +1,1780 @@
 {
-  "id": "part2a",
-  "part": 2,
-  "battery": 19,
-  "clock": "03:14:31",
-  "cover_at": 1.2,
-  "caption": "Part 2 (you chose A): you held the door. It's been inside since midnight. Comment A or B for part 3.",
-  "hashtags": ["#horror", "#scary", "#pov", "#horrorstory", "#creepy", "#whatwouldyoudo", "#part2", "#fyp"],
-  "screens": {
-    "notif_motion": {"time": "3:14", "battery": 19, "cards": [
-      {"app": "HOMECAM", "when": "now", "title": "Motion ended", "body": "Hallway"},
-      {"app": "HOMECAM", "when": "2m ago", "title": "Person detected", "body": "Hallway"}]}
+ "part": 2,
+ "battery": 19,
+ "clock": "03:14:31",
+ "cover_at": 6.0,
+ "hashtags": [
+  "#horror",
+  "#scary",
+  "#pov",
+  "#horrorstory",
+  "#creepy",
+  "#whatwouldyoudo",
+  "#part2",
+  "#fyp"
+ ],
+ "id": "part2a",
+ "caption": "Part 2 (you chose A): you held the door. It has been inside since midnight. Comment A or B for part 3.",
+ "screens": {
+  "notif_motion": {
+   "time": "3:14",
+   "battery": 19,
+   "cards": [
+    {
+     "app": "HOMECAM",
+     "when": "now",
+     "title": "Motion ended",
+     "body": "Hallway"
+    },
+    {
+     "app": "HOMECAM",
+     "when": "2m ago",
+     "title": "Person detected",
+     "body": "Hallway"
+    }
+   ]
+  }
+ },
+ "shots": {
+  "brace": {
+   "state": {
+    "screen": "notif_motion",
+    "phone": "hand"
+   },
+   "anim": {
+    "seconds": 4.4,
+    "keys": [
+     {
+      "at": 0.0,
+      "camera": {
+       "loc": [
+        1.25,
+        1.45,
+        1.55
+       ],
+       "target": [
+        2.85,
+        3.3,
+        1.1
+       ],
+       "lens": 22
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         2.85,
+         2.82,
+         0.95
+        ],
+        "yaw": 180,
+        "torso": [
+         20,
+         0
+        ],
+        "head": [
+         0,
+         -4
+        ],
+        "arm_l": [
+         72,
+         16,
+         30
+        ],
+        "arm_r": [
+         72,
+         16,
+         30
+        ],
+        "leg_l": [
+         -14,
+         4,
+         6
+        ],
+        "leg_r": [
+         22,
+         4,
+         28
+        ],
+        "face": "terrified"
+       }
+      }
+     },
+     {
+      "at": 0.5,
+      "camera": {
+       "loc": [
+        1.35,
+        1.5499999999999998,
+        1.525
+       ],
+       "target": [
+        2.85,
+        3.3,
+        1.125
+       ],
+       "lens": 22
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         2.85,
+         2.82,
+         0.95
+        ],
+        "yaw": 180,
+        "torso": [
+         20,
+         0
+        ],
+        "head": [
+         0,
+         -4
+        ],
+        "arm_l": [
+         72,
+         16,
+         30
+        ],
+        "arm_r": [
+         72,
+         16,
+         30
+        ],
+        "leg_l": [
+         -14,
+         4,
+         6
+        ],
+        "leg_r": [
+         22,
+         4,
+         28
+        ],
+        "face": "terrified"
+       }
+      }
+     },
+     {
+      "at": 1.0,
+      "camera": {
+       "loc": [
+        1.45,
+        1.65,
+        1.5
+       ],
+       "target": [
+        2.85,
+        3.3,
+        1.15
+       ],
+       "lens": 22
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         2.85,
+         2.82,
+         0.95
+        ],
+        "yaw": 180,
+        "torso": [
+         20,
+         0
+        ],
+        "head": [
+         0,
+         -4
+        ],
+        "arm_l": [
+         72,
+         16,
+         30
+        ],
+        "arm_r": [
+         72,
+         16,
+         30
+        ],
+        "leg_l": [
+         -14,
+         4,
+         6
+        ],
+        "leg_r": [
+         22,
+         4,
+         28
+        ],
+        "face": "terrified"
+       }
+      }
+     }
+    ]
+   }
   },
-  "shots": {
-    "door": {"cam": "handle_close", "state": {"glow": 1.0}},
-    "held": {"cam": "door_gap", "state": {"screen": "notif_motion", "phone": "held"}, "dof": 0.19},
-    "cctv_ir": {"cam": "cctv", "state": {"ir": true}, "grade": "ir", "label": "HALLWAY"},
-    "clip_home": {"cam": "cctv", "state": {"hall_light": true, "you": true, "visitor": "front_behind"},
-                  "grade": "cctv", "label": "HALLWAY", "clip": "11:58:12 PM"},
-    "clip_wait": {"cam": "cctv", "state": {"ir": true, "visitor": "hall_door"}, "grade": "ir", "label": "HALLWAY",
-                  "clip": "12:31:40 AM"},
-    "room": {"cam": "wardrobe_view", "state": {"glow": 8}, "gain": 1.5},
-    "wardrobe": {"cam": "wardrobe_view", "state": {"wardrobe": 15, "glow": 14}, "gain": 1.4},
-    "face": {"cam": "wardrobe_close", "state": {"wardrobe": 15, "visitor": "in_wardrobe", "glow": 6}}
+  "push": {
+   "state": {
+    "screen": "notif_motion",
+    "phone": "hand"
+   },
+   "anim": {
+    "seconds": 5.0,
+    "keys": [
+     {
+      "at": 0.0,
+      "camera": {
+       "loc": [
+        2.05,
+        3.05,
+        1.55
+       ],
+       "target": [
+        2.85,
+        3.2,
+        1.35
+       ],
+       "lens": 28
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         2.85,
+         2.82,
+         0.95
+        ],
+        "yaw": 180,
+        "torso": [
+         20,
+         0
+        ],
+        "head": [
+         0,
+         -4
+        ],
+        "arm_l": [
+         72,
+         16,
+         30
+        ],
+        "arm_r": [
+         72,
+         16,
+         30
+        ],
+        "leg_l": [
+         -14,
+         4,
+         6
+        ],
+        "leg_r": [
+         22,
+         4,
+         28
+        ],
+        "face": "terrified"
+       }
+      }
+     },
+     {
+      "at": 0.22,
+      "camera": {
+       "loc": [
+        2.072,
+        3.0566,
+        1.55
+       ],
+       "target": [
+        2.85,
+        3.2,
+        1.35
+       ],
+       "lens": 28
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         2.85,
+         2.82,
+         0.95
+        ],
+        "yaw": 180,
+        "torso": [
+         10,
+         0
+        ],
+        "head": [
+         0,
+         6
+        ],
+        "arm_l": [
+         72,
+         16,
+         30
+        ],
+        "arm_r": [
+         72,
+         16,
+         30
+        ],
+        "leg_l": [
+         -14,
+         4,
+         6
+        ],
+        "leg_r": [
+         22,
+         4,
+         28
+        ],
+        "face": "terrified"
+       }
+      }
+     },
+     {
+      "at": 0.32,
+      "camera": {
+       "loc": [
+        2.082,
+        3.0596,
+        1.55
+       ],
+       "target": [
+        2.85,
+        3.2,
+        1.35
+       ],
+       "lens": 28
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         2.85,
+         2.82,
+         0.95
+        ],
+        "yaw": 180,
+        "torso": [
+         20,
+         0
+        ],
+        "head": [
+         0,
+         -4
+        ],
+        "arm_l": [
+         72,
+         16,
+         30
+        ],
+        "arm_r": [
+         72,
+         16,
+         30
+        ],
+        "leg_l": [
+         -14,
+         4,
+         6
+        ],
+        "leg_r": [
+         22,
+         4,
+         28
+        ],
+        "face": "terrified"
+       }
+      }
+     },
+     {
+      "at": 0.48,
+      "camera": {
+       "loc": [
+        2.098,
+        3.0644,
+        1.55
+       ],
+       "target": [
+        2.85,
+        3.2,
+        1.35
+       ],
+       "lens": 28
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         2.85,
+         2.82,
+         0.95
+        ],
+        "yaw": 180,
+        "torso": [
+         10,
+         0
+        ],
+        "head": [
+         0,
+         6
+        ],
+        "arm_l": [
+         72,
+         16,
+         30
+        ],
+        "arm_r": [
+         72,
+         16,
+         30
+        ],
+        "leg_l": [
+         -14,
+         4,
+         6
+        ],
+        "leg_r": [
+         22,
+         4,
+         28
+        ],
+        "face": "terrified"
+       }
+      }
+     },
+     {
+      "at": 0.6,
+      "camera": {
+       "loc": [
+        2.11,
+        3.068,
+        1.55
+       ],
+       "target": [
+        2.85,
+        3.2,
+        1.35
+       ],
+       "lens": 28
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         2.85,
+         2.82,
+         0.95
+        ],
+        "yaw": 180,
+        "torso": [
+         20,
+         0
+        ],
+        "head": [
+         0,
+         -4
+        ],
+        "arm_l": [
+         72,
+         16,
+         30
+        ],
+        "arm_r": [
+         72,
+         16,
+         30
+        ],
+        "leg_l": [
+         -14,
+         4,
+         6
+        ],
+        "leg_r": [
+         22,
+         4,
+         28
+        ],
+        "face": "terrified"
+       }
+      }
+     },
+     {
+      "at": 1.0,
+      "camera": {
+       "loc": [
+        2.15,
+        3.08,
+        1.55
+       ],
+       "target": [
+        2.85,
+        3.2,
+        1.35
+       ],
+       "lens": 28
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         2.85,
+         2.82,
+         0.95
+        ],
+        "yaw": 180,
+        "torso": [
+         20,
+         0
+        ],
+        "head": [
+         0,
+         -4
+        ],
+        "arm_l": [
+         72,
+         16,
+         30
+        ],
+        "arm_r": [
+         72,
+         16,
+         30
+        ],
+        "leg_l": [
+         -14,
+         4,
+         6
+        ],
+        "leg_r": [
+         22,
+         4,
+         28
+        ],
+        "face": "terrified"
+       }
+      }
+     }
+    ]
+   }
   },
-  "beats": [
-    {"shot": "door", "move": "shake", "pre": 0.35, "sfx": [["slam", 0.0, 1.2]], "title": ["PART 2", "YOU CHOSE: HOLD THE DOOR"],
-     "say": ["You slam the door *shut.*"], "post": 0.9},
-    {"shot": "door", "move": "shake", "sfx": [["thud", 0.9], ["thud", 2.1, 0.8]], "heart": 104,
-     "say": ["You push with all your weight.", "Something pushes *back.*"]},
-    {"shot": "door", "move": "push", "say": ["Then… it *stops.*"], "post": 1.2},
-    {"shot": "held", "sfx": [["buzz", 0.0]], "say": ["Your phone buzzes.", "Motion ended. Hallway."]},
-    {"shot": "cctv_ir", "say": ["The hallway is empty again.", "It's gone. *Right?*"]},
-    {"shot": "clip_home", "say": ["You scroll back through the clips.", ["Eleven fifty-eight P M.", "11:58 PM"],
-                                  "That's you. Coming *home.*"]},
-    {"shot": "clip_home", "move": "push", "heart": 80, "say": ["And right behind you…", "something walks *in.*"]},
-    {"shot": "clip_wait", "say": [["Twelve thirty-one.", "12:31 AM"], "It's standing outside your door.", "Not moving."]},
-    {"shot": "clip_wait", "move": "push", "say": ["For almost *three hours.*"], "post": 0.8},
-    {"shot": "room", "pre": 0.4, "say": ["Where is it *now?*"], "post": 0.8},
-    {"shot": "room", "move": "push", "sfx": [["creak_low", 0.1]], "pre": 1.3, "say": ["Behind you…", "the wardrobe *creaks.*"]},
-    {"shot": "wardrobe", "move": "push", "pre": 0.6, "whisper": ["Sweetie…", "I'm right here."], "heart": 110,
-     "sfx": [["riser", 0.8, 0.8]], "post": 0.3},
-    {"shot": "wardrobe", "dur": 0.7, "silence": true, "move": "static"},
-    {"shot": "face", "dur": 0.8, "scare": true},
-    {"shot": "black", "dur": 0.5}
-  ],
-  "choice": {"A": "Run for the front door", "B": "Call the police", "footer": "PART 3 FOLLOWS THE MAJORITY",
-             "say": "Run for the front door… or call the police? Comment A or B. Part three follows the majority."}
+  "stops": {
+   "state": {
+    "screen": "notif_motion",
+    "phone": "hand"
+   },
+   "anim": {
+    "seconds": 3.6,
+    "keys": [
+     {
+      "at": 0.0,
+      "camera": {
+       "loc": [
+        2.15,
+        3.08,
+        1.55
+       ],
+       "target": [
+        2.85,
+        3.2,
+        1.35
+       ],
+       "lens": 28
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         2.85,
+         2.82,
+         0.95
+        ],
+        "yaw": 180,
+        "torso": [
+         20,
+         0
+        ],
+        "head": [
+         0,
+         -4
+        ],
+        "arm_l": [
+         72,
+         16,
+         30
+        ],
+        "arm_r": [
+         72,
+         16,
+         30
+        ],
+        "leg_l": [
+         -14,
+         4,
+         6
+        ],
+        "leg_r": [
+         22,
+         4,
+         28
+        ],
+        "face": "terrified"
+       }
+      }
+     },
+     {
+      "at": 1.0,
+      "camera": {
+       "loc": [
+        2.15,
+        3.08,
+        1.55
+       ],
+       "target": [
+        2.85,
+        3.2,
+        1.35
+       ],
+       "lens": 28
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         2.85,
+         2.82,
+         0.95
+        ],
+        "yaw": 180,
+        "torso": [
+         14,
+         0
+        ],
+        "head": [
+         0,
+         -4
+        ],
+        "arm_l": [
+         72,
+         16,
+         30
+        ],
+        "arm_r": [
+         72,
+         16,
+         30
+        ],
+        "leg_l": [
+         -14,
+         4,
+         6
+        ],
+        "leg_r": [
+         22,
+         4,
+         28
+        ],
+        "face": "worried",
+        "tremble": true
+       }
+      }
+     }
+    ]
+   }
+  },
+  "read": {
+   "state": {
+    "screen": "notif_motion",
+    "phone": "hand"
+   },
+   "dof": 0.42,
+   "anim": {
+    "seconds": 3.0,
+    "keys": [
+     {
+      "at": 0.0,
+      "camera": {
+       "loc": [
+        2.87,
+        2.641,
+        1.753
+       ],
+       "target": [
+        3.073,
+        3.219,
+        1.528
+       ],
+       "lens": 40
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         2.85,
+         2.75,
+         0.95
+        ],
+        "yaw": 180,
+        "torso": [
+         6,
+         0
+        ],
+        "head": [
+         0,
+         30
+        ],
+        "arm_r": [
+         55,
+         10,
+         85
+        ],
+        "arm_l": [
+         20,
+         15,
+         30
+        ],
+        "leg_l": [
+         0,
+         3,
+         4
+        ],
+        "leg_r": [
+         0,
+         3,
+         4
+        ],
+        "face": "worried"
+       }
+      }
+     },
+     {
+      "at": 1.0,
+      "camera": {
+       "loc": [
+        2.894,
+        2.71,
+        1.726
+       ],
+       "target": [
+        3.073,
+        3.219,
+        1.528
+       ],
+       "lens": 40
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         2.85,
+         2.75,
+         0.95
+        ],
+        "yaw": 180,
+        "torso": [
+         6,
+         0
+        ],
+        "head": [
+         0,
+         30
+        ],
+        "arm_r": [
+         55,
+         10,
+         85
+        ],
+        "arm_l": [
+         20,
+         15,
+         30
+        ],
+        "leg_l": [
+         0,
+         3,
+         4
+        ],
+        "leg_r": [
+         0,
+         3,
+         4
+        ],
+        "face": "worried"
+       }
+      }
+     }
+    ]
+   }
+  },
+  "cctv_ir": {
+   "cam": "cctv",
+   "state": {
+    "ir": true
+   },
+   "grade": "ir",
+   "label": "HALLWAY"
+  },
+  "clip_home": {
+   "cam": "cctv",
+   "state": {
+    "hall_light": true,
+    "stick": {
+     "loc": [
+      3.75,
+      3.95,
+      0.95
+     ],
+     "yaw": -90,
+     "torso": [
+      4,
+      0
+     ],
+     "head": [
+      0,
+      2
+     ],
+     "arm_l": [
+      -15,
+      8,
+      15
+     ],
+     "arm_r": [
+      18,
+      8,
+      20
+     ],
+     "leg_l": [
+      20,
+      3,
+      10
+     ],
+     "leg_r": [
+      -18,
+      3,
+      30
+     ],
+     "face": "smile"
+    },
+    "visitor": "front_behind"
+   },
+   "grade": "cctv",
+   "label": "HALLWAY",
+   "clip": "11:58:12 PM"
+  },
+  "clip_wait": {
+   "cam": "cctv",
+   "state": {
+    "ir": true,
+    "visitor": "hall_door"
+   },
+   "grade": "ir",
+   "label": "HALLWAY",
+   "clip": "12:31:40 AM"
+  },
+  "turn": {
+   "state": {
+    "screen": "notif_motion",
+    "phone": "hand"
+   },
+   "anim": {
+    "seconds": 4.4,
+    "keys": [
+     {
+      "at": 0.0,
+      "camera": {
+       "loc": [
+        2.95,
+        1.25,
+        1.5
+       ],
+       "target": [
+        2.85,
+        2.9,
+        1.35
+       ],
+       "lens": 26
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         2.85,
+         2.75,
+         0.95
+        ],
+        "yaw": 180,
+        "torso": [
+         6,
+         0
+        ],
+        "head": [
+         0,
+         4
+        ],
+        "arm_r": [
+         55,
+         10,
+         85
+        ],
+        "arm_l": [
+         20,
+         15,
+         30
+        ],
+        "leg_l": [
+         0,
+         3,
+         4
+        ],
+        "leg_r": [
+         0,
+         3,
+         4
+        ],
+        "face": "worried"
+       }
+      }
+     },
+     {
+      "at": 0.25,
+      "camera": {
+       "loc": [
+        2.9450000000000003,
+        1.3,
+        1.5
+       ],
+       "target": [
+        2.85,
+        2.9,
+        1.35
+       ],
+       "lens": 26
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         2.85,
+         2.75,
+         0.95
+        ],
+        "yaw": 180,
+        "torso": [
+         6,
+         0
+        ],
+        "head": [
+         0,
+         4
+        ],
+        "arm_r": [
+         55,
+         10,
+         85
+        ],
+        "arm_l": [
+         20,
+         15,
+         30
+        ],
+        "leg_l": [
+         0,
+         3,
+         4
+        ],
+        "leg_r": [
+         0,
+         3,
+         4
+        ],
+        "face": "worried"
+       }
+      }
+     },
+     {
+      "at": 0.85,
+      "camera": {
+       "loc": [
+        2.9330000000000003,
+        1.42,
+        1.5
+       ],
+       "target": [
+        2.85,
+        2.9,
+        1.35
+       ],
+       "lens": 26
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         2.85,
+         2.75,
+         0.95
+        ],
+        "yaw": 0,
+        "torso": [
+         6,
+         0
+        ],
+        "head": [
+         0,
+         4
+        ],
+        "arm_r": [
+         40,
+         10,
+         70
+        ],
+        "arm_l": [
+         20,
+         15,
+         30
+        ],
+        "leg_l": [
+         0,
+         3,
+         4
+        ],
+        "leg_r": [
+         0,
+         3,
+         4
+        ],
+        "face": "worried"
+       }
+      }
+     },
+     {
+      "at": 1.0,
+      "camera": {
+       "loc": [
+        2.93,
+        1.45,
+        1.5
+       ],
+       "target": [
+        2.85,
+        2.9,
+        1.35
+       ],
+       "lens": 26
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         2.85,
+         2.75,
+         0.95
+        ],
+        "yaw": 0,
+        "torso": [
+         6,
+         0
+        ],
+        "head": [
+         0,
+         4
+        ],
+        "arm_r": [
+         40,
+         10,
+         70
+        ],
+        "arm_l": [
+         20,
+         15,
+         30
+        ],
+        "leg_l": [
+         0,
+         3,
+         4
+        ],
+        "leg_r": [
+         0,
+         3,
+         4
+        ],
+        "face": "worried"
+       }
+      }
+     }
+    ]
+   }
+  },
+  "creak": {
+   "state": {
+    "screen": "notif_motion",
+    "phone": "hand"
+   },
+   "anim": {
+    "seconds": 4.2,
+    "keys": [
+     {
+      "at": 0.0,
+      "camera": {
+       "loc": [
+        2.62,
+        3.25,
+        1.68
+       ],
+       "target": [
+        3.05,
+        0.5,
+        1.25
+       ],
+       "lens": 24
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         2.85,
+         2.75,
+         0.95
+        ],
+        "yaw": 0,
+        "torso": [
+         6,
+         0
+        ],
+        "head": [
+         0,
+         4
+        ],
+        "arm_r": [
+         40,
+         10,
+         70
+        ],
+        "arm_l": [
+         20,
+         15,
+         30
+        ],
+        "leg_l": [
+         0,
+         3,
+         4
+        ],
+        "leg_r": [
+         0,
+         3,
+         4
+        ],
+        "face": "worried"
+       },
+       "wardrobe": 0
+      }
+     },
+     {
+      "at": 0.3,
+      "camera": {
+       "loc": [
+        2.632,
+        3.205,
+        1.674
+       ],
+       "target": [
+        3.05,
+        0.5,
+        1.259
+       ],
+       "lens": 24
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         2.85,
+         2.75,
+         0.95
+        ],
+        "yaw": 0,
+        "torso": [
+         6,
+         0
+        ],
+        "head": [
+         0,
+         4
+        ],
+        "arm_r": [
+         40,
+         10,
+         70
+        ],
+        "arm_l": [
+         20,
+         15,
+         30
+        ],
+        "leg_l": [
+         0,
+         3,
+         4
+        ],
+        "leg_r": [
+         0,
+         3,
+         4
+        ],
+        "face": "worried"
+       },
+       "wardrobe": 0
+      }
+     },
+     {
+      "at": 0.75,
+      "camera": {
+       "loc": [
+        2.6500000000000004,
+        3.1375,
+        1.665
+       ],
+       "target": [
+        3.05,
+        0.5,
+        1.2725
+       ],
+       "lens": 24
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         2.85,
+         2.75,
+         0.95
+        ],
+        "yaw": 0,
+        "torso": [
+         6,
+         0
+        ],
+        "head": [
+         0,
+         4
+        ],
+        "arm_r": [
+         40,
+         10,
+         70
+        ],
+        "arm_l": [
+         20,
+         15,
+         30
+        ],
+        "leg_l": [
+         0,
+         3,
+         4
+        ],
+        "leg_r": [
+         0,
+         3,
+         4
+        ],
+        "face": "terrified",
+        "tremble": true
+       },
+       "wardrobe": 14
+      }
+     },
+     {
+      "at": 1.0,
+      "camera": {
+       "loc": [
+        2.66,
+        3.1,
+        1.66
+       ],
+       "target": [
+        3.05,
+        0.5,
+        1.28
+       ],
+       "lens": 24
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         2.85,
+         2.75,
+         0.95
+        ],
+        "yaw": 0,
+        "torso": [
+         6,
+         0
+        ],
+        "head": [
+         0,
+         4
+        ],
+        "arm_r": [
+         40,
+         10,
+         70
+        ],
+        "arm_l": [
+         20,
+         15,
+         30
+        ],
+        "leg_l": [
+         0,
+         3,
+         4
+        ],
+        "leg_r": [
+         0,
+         3,
+         4
+        ],
+        "face": "terrified",
+        "tremble": true
+       },
+       "wardrobe": 15
+      }
+     }
+    ]
+   }
+  },
+  "fear": {
+   "state": {
+    "screen": "notif_motion",
+    "phone": "hand",
+    "wardrobe": 15
+   },
+   "anim": {
+    "seconds": 4.4,
+    "keys": [
+     {
+      "at": 0.0,
+      "camera": {
+       "loc": [
+        2.85,
+        1.972,
+        1.553
+       ],
+       "target": [
+        2.85,
+        2.661,
+        1.675
+       ],
+       "lens": 32
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         2.85,
+         2.75,
+         0.95
+        ],
+        "yaw": 0,
+        "torso": [
+         6,
+         0
+        ],
+        "head": [
+         0,
+         4
+        ],
+        "arm_r": [
+         40,
+         10,
+         70
+        ],
+        "arm_l": [
+         20,
+         15,
+         30
+        ],
+        "leg_l": [
+         0,
+         3,
+         4
+        ],
+        "leg_r": [
+         0,
+         3,
+         4
+        ],
+        "face": "terrified",
+        "tremble": true
+       }
+      }
+     },
+     {
+      "at": 1.0,
+      "camera": {
+       "loc": [
+        2.85,
+        2.11,
+        1.578
+       ],
+       "target": [
+        2.85,
+        2.661,
+        1.675
+       ],
+       "lens": 32
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         2.85,
+         2.75,
+         0.95
+        ],
+        "yaw": 0,
+        "torso": [
+         6,
+         0
+        ],
+        "head": [
+         0,
+         4
+        ],
+        "arm_r": [
+         40,
+         10,
+         70
+        ],
+        "arm_l": [
+         20,
+         15,
+         30
+        ],
+        "leg_l": [
+         0,
+         3,
+         4
+        ],
+        "leg_r": [
+         0,
+         3,
+         4
+        ],
+        "face": "terrified",
+        "tremble": true
+       }
+      }
+     }
+    ]
+   }
+  },
+  "terror": {
+   "state": {
+    "screen": "notif_motion",
+    "phone": "hand",
+    "wardrobe": 15
+   },
+   "anim": {
+    "seconds": 1.2,
+    "keys": [
+     {
+      "at": 0.0,
+      "camera": {
+       "loc": [
+        2.85,
+        2.11,
+        1.578
+       ],
+       "target": [
+        2.85,
+        2.661,
+        1.675
+       ],
+       "lens": 32
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         2.85,
+         2.75,
+         0.95
+        ],
+        "yaw": 0,
+        "torso": [
+         6,
+         0
+        ],
+        "head": [
+         0,
+         4
+        ],
+        "arm_r": [
+         40,
+         10,
+         70
+        ],
+        "arm_l": [
+         20,
+         15,
+         30
+        ],
+        "leg_l": [
+         0,
+         3,
+         4
+        ],
+        "leg_r": [
+         0,
+         3,
+         4
+        ],
+        "face": "terrified",
+        "tremble": true
+       }
+      }
+     },
+     {
+      "at": 1.0,
+      "camera": {
+       "loc": [
+        2.85,
+        2.11,
+        1.578
+       ],
+       "target": [
+        2.85,
+        2.661,
+        1.675
+       ],
+       "lens": 32
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         2.85,
+         2.75,
+         0.95
+        ],
+        "yaw": 0,
+        "torso": [
+         6,
+         0
+        ],
+        "head": [
+         0,
+         4
+        ],
+        "arm_r": [
+         40,
+         10,
+         70
+        ],
+        "arm_l": [
+         20,
+         15,
+         30
+        ],
+        "leg_l": [
+         0,
+         3,
+         4
+        ],
+        "leg_r": [
+         0,
+         3,
+         4
+        ],
+        "face": "terrified",
+        "tremble": true
+       }
+      }
+     }
+    ]
+   }
+  },
+  "face": {
+   "cam": "wardrobe_close",
+   "state": {
+    "wardrobe": 15,
+    "visitor": "in_wardrobe",
+    "glow": 6
+   }
+  }
+ },
+ "beats": [
+  {
+   "shot": "brace",
+   "pre": 0.4,
+   "sfx": [
+    [
+     "slam",
+     0.15,
+     1.2
+    ]
+   ],
+   "title": [
+    "PART 2",
+    "YOU CHOSE: HOLD THE DOOR"
+   ],
+   "music": "pulse90",
+   "heart": 100,
+   "say": [
+    "You slam the door *shut.*"
+   ],
+   "post": 0.8
+  },
+  {
+   "shot": "push",
+   "pre": 0.3,
+   "sfx": [
+    [
+     "thud",
+     1.1
+    ],
+    [
+     "thud",
+     2.4,
+     0.8
+    ]
+   ],
+   "heart": 104,
+   "say": [
+    "You push with all your weight.",
+    "Something pushes *back.*"
+   ],
+   "post": 0.4
+  },
+  {
+   "shot": "stops",
+   "pre": 0.6,
+   "music": "drone",
+   "say": [
+    "Then\u2026 it *stops.*"
+   ],
+   "post": 1.2
+  },
+  {
+   "shot": "read",
+   "sfx": [
+    [
+     "buzz",
+     0.0,
+     0.9
+    ]
+   ],
+   "say": [
+    "Your phone buzzes.",
+    "Motion ended. Hallway."
+   ],
+   "post": 0.5
+  },
+  {
+   "shot": "cctv_ir",
+   "say": [
+    "The hallway is empty again.",
+    "It's gone. *Right?*"
+   ],
+   "post": 0.8
+  },
+  {
+   "shot": "clip_home",
+   "music": "pulse60",
+   "say": [
+    "You scroll back through the clips.",
+    [
+     "Eleven fifty-eight P M.",
+     "11:58 PM"
+    ],
+    "That's you. Coming *home.*"
+   ],
+   "post": 0.5
+  },
+  {
+   "shot": "clip_home",
+   "move": "push",
+   "heart": 80,
+   "say": [
+    "And right behind you\u2026",
+    "something walks *in.*"
+   ],
+   "post": 0.8
+  },
+  {
+   "shot": "clip_wait",
+   "say": [
+    [
+     "Twelve thirty-one.",
+     "12:31 AM"
+    ],
+    "It's standing outside your door.",
+    "Not moving."
+   ],
+   "post": 0.5
+  },
+  {
+   "shot": "clip_wait",
+   "move": "push",
+   "say": [
+    "For almost *three hours.*"
+   ],
+   "post": 1.0
+  },
+  {
+   "shot": "turn",
+   "music": "pulse90",
+   "pre": 0.8,
+   "sfx": [
+    [
+     "step",
+     1.2,
+     0.6
+    ],
+    [
+     "step",
+     1.8,
+     0.6
+    ]
+   ],
+   "say": [
+    "Where is it *now?*"
+   ],
+   "post": 0.9
+  },
+  {
+   "shot": "creak",
+   "pre": 0.9,
+   "sfx": [
+    [
+     "creak_low",
+     1.2,
+     1.0,
+     -0.4
+    ]
+   ],
+   "say": [
+    "Behind you\u2026",
+    "the wardrobe *creaks.*"
+   ],
+   "post": 0.5
+  },
+  {
+   "shot": "fear",
+   "music": "riser",
+   "pre": 0.6,
+   "pan": -0.4,
+   "whisper": [
+    "Sweetie\u2026",
+    "I'm right here."
+   ],
+   "heart": 110,
+   "post": 0.5
+  },
+  {
+   "shot": "terror",
+   "dur": 1.1,
+   "silence": true,
+   "music": "silence"
+  },
+  {
+   "shot": "face",
+   "dur": 0.85,
+   "scare": true
+  },
+  {
+   "shot": "black",
+   "dur": 0.5
+  }
+ ],
+ "choice": {
+  "A": "Run for the front door",
+  "B": "Call the police",
+  "footer": "PART 3 FOLLOWS THE MAJORITY",
+  "say": "Run for the front door\u2026 or call the police? Comment A or B."
+ }
 }
