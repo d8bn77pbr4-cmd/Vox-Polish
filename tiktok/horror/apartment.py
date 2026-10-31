@@ -252,7 +252,7 @@ BODY = {"torso": 0.55, "neck": 0.07, "upper": 0.3, "fore": 0.27, "thigh": 0.43, 
 SEGMENTS = {  # name: (radius x, radius y) of the ellipsoid that fills the bone
     "neck": (0.045, 0.045), "l_upper": (0.05, 0.05), "r_upper": (0.05, 0.05), "l_fore": (0.042, 0.042),
     "r_fore": (0.042, 0.042), "l_thigh": (0.075, 0.075), "r_thigh": (0.075, 0.075), "l_shin": (0.055, 0.055),
-    "r_shin": (0.055, 0.055), "l_hand": (0.045, 0.022), "r_hand": (0.045, 0.022),
+    "r_shin": (0.055, 0.055), "l_hand": (0.05, 0.026), "r_hand": (0.05, 0.026),
 }
 TRUNK = {"chest": ((0, 0, 0.38), (0.155, 0.095, 0.2)), "belly": ((0, 0, 0.19), (0.12, 0.08, 0.12)),
          "pelvis": ((0, 0, 0.02), (0.155, 0.1, 0.1))}
@@ -301,19 +301,23 @@ def stickman(mats):
     mouths["terrified"] = sphere("you_mouth_o", (0, surf(0, -0.058) + 0.004, -0.058), 0.016, (0.8, 0.3, 1.1),
                                  mats["ink"], parent=head, segments=16)
     return {"parts": parts, "head": head, "ball": ball, "eyes": eyes, "pupils": pupils, "brows": brows, "mouths": mouths,
-            "clothes": {name: garment(name, spec, mats) for name, spec in GARMENTS.items()}}
+            "clothes": {name: garment(name, spec, mats) for name, spec in GARMENTS.items()},
+            "hood": sphere("you_hood", (0, 0, 0), 1.0, (1, 1, 1), mats["shirt"])}
 
 
-GARMENTS = {  # loose sleepwear: point -> (radius x, radius y); the points are moved with your pose every frame
-    "shirt": ({"hem": (0.2, 0.14), "waist": (0.17, 0.12), "chest": (0.195, 0.13), "collar": (0.075, 0.065),
-               "l_sh": (0.082, 0.082), "l_sleeve": (0.08, 0.074), "r_sh": (0.082, 0.082), "r_sleeve": (0.08, 0.074)},
-              [("hem", "waist"), ("waist", "chest"), ("chest", "collar"), ("chest", "l_sh"), ("l_sh", "l_sleeve"),
-               ("chest", "r_sh"), ("r_sh", "r_sleeve")], "shirt"),
-    "pants": ({"belt": (0.168, 0.118), "l_hip": (0.108, 0.108), "l_knee": (0.09, 0.09), "l_cuff": (0.082, 0.082),
-               "r_hip": (0.108, 0.108), "r_knee": (0.09, 0.09), "r_cuff": (0.082, 0.082)},
+GARMENTS = {  # loose clothes that cover the whole body: point -> (radius x, radius y), moved with your pose
+    "shirt": ({"hem_in": (0.09, 0.07), "hem": (0.18, 0.13), "waist": (0.185, 0.135), "chest": (0.205, 0.14), "collar": (0.085, 0.075),
+               "l_sh": (0.085, 0.085), "l_elbow": (0.075, 0.075), "l_cuff": (0.058, 0.058),
+               "r_sh": (0.085, 0.085), "r_elbow": (0.075, 0.075), "r_cuff": (0.058, 0.058)},
+              [("hem_in", "hem"), ("hem", "waist"), ("waist", "chest"), ("chest", "collar"), ("chest", "l_sh"), ("l_sh", "l_elbow"),
+               ("l_elbow", "l_cuff"), ("chest", "r_sh"), ("r_sh", "r_elbow"), ("r_elbow", "r_cuff")], "shirt"),
+    "pants": ({"belt": (0.17, 0.12), "l_hip": (0.097, 0.097), "l_knee": (0.08, 0.08), "l_cuff": (0.07, 0.07),
+               "r_hip": (0.097, 0.097), "r_knee": (0.08, 0.08), "r_cuff": (0.07, 0.07)},
               [("belt", "l_hip"), ("l_hip", "l_knee"), ("l_knee", "l_cuff"), ("belt", "r_hip"), ("r_hip", "r_knee"),
                ("r_knee", "r_cuff")], "pants"),
 }
+COVERED = ("chest", "belly", "pelvis", "l_upper", "r_upper", "l_fore", "r_fore", "l_thigh", "r_thigh", "l_shin",
+           "r_shin", "l_shoulder", "r_shoulder", "l_elbow", "r_elbow", "l_knee", "r_knee")
 
 
 def garment(name, spec, mats):
@@ -336,7 +340,7 @@ def pose_stickman(S, spec):
     """spec: loc (hips), yaw, torso [pitch, roll], head [yaw, pitch], arm_l/arm_r/leg_l/leg_r [forward, side, bend],
     face smile|flat|terrified. Facing -y before yaw; positive pitch leans forward; l = +x side."""
     st = S["stick"]
-    objs = [*st["parts"].values(), st["head"], *st["head"].children, *st["clothes"].values()]
+    objs = [*st["parts"].values(), st["head"], *st["head"].children, *st["clothes"].values(), st["hood"]]
     show(objs, spec is not None)
     if spec is None:
         return None
@@ -353,7 +357,7 @@ def pose_stickman(S, spec):
     neck_top = neck + at(RH, (0, 0, B["neck"]))
     center = neck_top + at(RH, (0, 0, B["head"][2] * 0.85))
     J, bones = {}, {"neck": (neck, neck_top)}
-    P = {"hem": H + at(RT, (0, 0, -0.1)), "waist": H + at(RT, (0, 0, 0.2)), "chest": H + at(RT, (0, 0, 0.37)),
+    P = {"hem_in": H + at(RT, (0, 0, -0.16)), "hem": H + at(RT, (0, 0, -0.1)), "waist": H + at(RT, (0, 0, 0.2)), "chest": H + at(RT, (0, 0, 0.37)),
          "collar": H + at(RT, (0, 0, 0.52)), "belt": H + at(R0, (0, 0, 0.05))}
     for side, sx in (("l", 1), ("r", -1)):
         shoulder = H + at(RT, (sx * B["shoulder"], 0, B["torso"] * 0.86))
@@ -364,7 +368,7 @@ def pose_stickman(S, spec):
         wrist = elbow + at(RF, (0, 0, -B["fore"]))
         hand_end = wrist + at(RF, (0, 0, -0.1))
         J[f"{side}_shoulder"], J[f"{side}_elbow"], J[f"{side}_hand"] = shoulder, elbow, (wrist + hand_end) / 2
-        P[f"{side}_sh"], P[f"{side}_sleeve"] = shoulder, shoulder + (elbow - shoulder) * 0.55
+        P[f"{side}_sh"], P[f"{side}_elbow"], P[f"{side}_cuff"] = shoulder, elbow, wrist + (elbow - wrist) * 0.12
         bones[f"{side}_upper"], bones[f"{side}_fore"], bones[f"{side}_hand"] = (shoulder, elbow), (elbow, wrist), \
             (wrist, hand_end)
         hip = H + at(R0, (sx * B["hip"], 0, -0.03))
@@ -374,8 +378,8 @@ def pose_stickman(S, spec):
         RS = RL @ rot("X", bend)
         ankle = knee + at(RS, (0, 0, -B["shin"]))
         J[f"{side}_knee"], J[f"{side}_ankle"] = knee, ankle
-        P[f"{side}_hip"], P[f"{side}_knee"], P[f"{side}_cuff"] = hip + at(R0, (0, 0, -0.04)), knee, \
-            knee + (ankle - knee) * 0.9
+        P[f"{side}_hip"], P[f"{side}_knee"], P[f"p_{side}_cuff"] = hip + at(R0, (0, 0, -0.04)), knee, \
+            knee + (ankle - knee) * 0.96
         bones[f"{side}_thigh"], bones[f"{side}_shin"] = (hip, knee), (knee, ankle)
         foot = st["parts"][f"{side}_foot"]
         foot.matrix_world = Matrix.Translation(ankle + at(RS, (0, -0.06, -0.03))) @ RS @ Matrix.Diagonal(
@@ -395,8 +399,10 @@ def pose_stickman(S, spec):
     for name, obj in st["clothes"].items():
         obj.matrix_world = Matrix.Identity(4)
         for v, key in zip(obj.data.vertices, GARMENTS[name][0]):
-            v.co = P[key]
+            v.co = P[f"p_{key}"] if name == "pants" and key.endswith("cuff") else P[key]
         obj.data.update()
+    st["hood"].matrix_world = Matrix.Translation(H + at(RT, (0, 0.085, 0.5))) @ RT @ Matrix.Diagonal((0.14, 0.075, 0.1, 1))
+    show([st["parts"][name] for name in COVERED], False)   # hidden under the clothes, so nothing pokes through
     face = {"worried": "flat"}.get(g("face", "smile"), g("face", "smile"))
     for kind, o in st["mouths"].items():
         show([o], kind == face)
@@ -439,8 +445,8 @@ def build():
         "you": material("you", (0.12, 0.12, 0.13), 0.9),
         "stair": material("stair", (0.18, 0.18, 0.19), 0.8),
         "chalk": material("chalk", (0.86, 0.86, 0.84), 0.45, emit=(1, 1, 1), strength=0.04),
-        "shirt": material("shirt", (0.16, 0.22, 0.34), 0.95),
-        "pants": material("pants", (0.11, 0.11, 0.12), 0.95),
+        "shirt": material("shirt", (0.38, 0.38, 0.40), 0.95),
+        "pants": material("pants", (0.05, 0.05, 0.055), 0.95),
         "eye": material("eye", (0.97, 0.97, 0.97), 0.3, emit=(1, 1, 1), strength=0.45),
         "ink": material("ink", (0.0, 0.0, 0.0), 1.0),
     }
