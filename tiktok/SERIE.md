@@ -62,52 +62,87 @@ Du gehst nachts allein nach Hause (27,5 % fürchten das). Zähler: Meter bis zur
 Schritte hinter dir hören auf, sobald du stehen bleibst. Wahl jede Folge: rennen oder umdrehen,
 Abkürzung durch den Park oder Hauptstraße. Gut, aber weniger Menschen kennen es aus eigener Erfahrung.
 
-## Der optimierte Prompt
+## Der optimierte Prompt (Version 3: dritte Person, mehr Bewegung, Spannungskurve)
 
-Er erzeugt eine Folge als JSON, aus der Renderer, Stimme und Sound gebaut werden. Platzhalter in `<…>`.
+Was sich gegenüber Version 2 ändert:
+
+- **Dritte Person:** Man sieht die Hauptfigur von außen, ihr Gesicht, ihre Reaktionen. Der größte Gewinn ist
+  dramatische Ironie: Die Zuschauer sehen die Gestalt im Hintergrund, die Figur nicht. Das sorgt für
+  Kommentare wie „Habt ihr sie bei 0:23 gesehen?“ und für mehrmaliges Anschauen.
+- **Bewegung in jeder Einstellung:** Kamera fährt, Figur handelt oder Licht/Objekt verändert sich. Kein Bild
+  steht länger als 1,5 Sekunden still, die Schnitte werden zum Ende hin schneller (3 s → 2 s → 1 s).
+- **Spannungskurve über die ganze Minute** statt gleichmäßiger Erzählung:
+
+| Sekunde | Phase | Was passiert | Ton |
+|---|---|---|---|
+| 0–3 | Hook | 1 Sekunde Vorausblende auf den schlimmsten Moment, dann „3 minutes earlier“ | Schlag, dann Stille |
+| 3–15 | Normal, erste Störung | Figur schläft, Handy leuchtet, erste Meldung | Raumton, Herzschlag 60 |
+| 15–30 | Zweite Störung, falsche Entwarnung | Figur prüft nach, alles scheint gut. Zuschauer sehen die Gestalt im Hintergrund | Herzschlag 75, Brummen steigt |
+| 30–45 | Eskalation | Die Bedrohung kommt mit jedem Schritt näher, die Figur merkt es | Herzschlag 95, kürzere Schnitte |
+| 45–55 | Höhepunkt | Schnitte im Sekundentakt, Atmen, dann 1 Sekunde Stille | Herzschlag 120, dann nichts |
+| 55–58 | Schreckmoment | Gesicht, Blitz, Stinger | laut |
+| 58–65 | Cliffhanger und Wahl | „What would she do?“ A oder B | leise |
 
 ```text
 ROLE
-You write one episode of an English second-person horror series for TikTok, rendered as a
-3D scene (Blender, foggy, cold light, slow camera) with a calm narrator. Every episode ends
-on a cliffhanger and an A/B choice; the next part follows the majority.
+You write and direct one episode of an English third-person horror series for TikTok,
+rendered in 3D (Blender: foggy rooms, cold light) as a 1080x1920 (9:16) video of 62-68 s.
+The audience watches the main character from the outside and often sees more than she does.
+Every episode builds tension for a full minute, ends on a jump scare, a cliffhanger and an
+A/B choice; the next part follows the majority.
 
 SERIES BIBLE
-- Series: <NAME>. Premise: <ONE SENTENCE>. Season location: <e.g. your small apartment at night>.
-- Recurring elements: <e.g. the camera app notification "Person detected · <room>", Mom's voice>.
-- Running counter on screen in every shot: <e.g. phone battery %, starts at 23 %, about -4 % per part>.
-- Fixed set and shot list (only use these): <e.g. BED_POV, PHONE_CLOSE, DOOR_GAP, HALLWAY_CAM,
-  HANDLE_CLOSE, WARDROBE_SLIT, BLACK>.
+- Main character: <NAME>, <AGE>, <LOOK>, lives alone in a small apartment. Likeable, careful,
+  makes the choices the viewers vote for. Narration refers to her by name or "she".
+- The threat: a tall thin figure with a pale face that imitates the voices of people she loves.
+  Never fully shown before the scare; it gets a little closer in every episode.
+- Counters on screen in every shot: clock (ticking) and her phone battery (<N> %, about -4 % per part).
+- Sets and camera positions (only use these): <BEDROOM_WIDE, BED_SIDE, OTS_PHONE, FACE_CLOSE,
+  DOOR_LOW, HALLWAY_TRACK, HALLWAY_CCTV, WARDROBE, FRONT_DOOR, ...>.
+- Character actions available: <sleep, wake_up, sit_up, grab_phone, look_at_phone, freeze,
+  stand_up, walk_to, back_away, hold_door, hide, cover_mouth, turn_around>.
 - This is part <N>. Previously: <one sentence>. Majority chose: <A/B>: <what it was>.
-  Also write the opening for the losing choice, so both versions of part <N> can be rendered.
+  Also write the opening for the losing choice, so both versions can be produced.
 
-LENGTH AND RHYTHM (60-68 s, 9:16)
-0-3 s    First line = time + the anomaly. No intro, no title card.
-         From part 2: "Part <N>. You chose <X>." in under 2 s, then straight into the scene.
-3-50 s   8-10 beats, one every 4-6 s. Each beat adds exactly one new thing you can hear,
-         see or read on the phone. Every beat is worse than the one before. No calm beat.
-50-56 s  The worst moment. Hard cut to black.
-56-64 s  The choice, on screen and spoken: "<A>… or <B>? Comment A or B. Part <N+1> follows
-         the majority." The last frame matches the first so the video loops.
+TENSION CURVE (mandatory)
+0-3 s    Cold open: 1 s flash-forward to the worst moment of this episode, then
+         "<N> minutes earlier". First spoken line names the time and the anomaly.
+3-15 s   Normal life, first anomaly.
+15-30 s  Second anomaly and a false relief. The viewer sees the threat in the background;
+         she does not.
+30-45 s  Escalation: every beat brings the threat physically closer and she notices.
+45-55 s  Climax: cuts every 1 s, breathing, then exactly 1 s of total silence.
+55-58 s  Jump scare.
+58-66 s  Cliffhanger and choice: "<A>… or <B>? What would <NAME> do? Comment A or B.
+         Part <N+1> follows the majority." The last frame matches the first.
 
-FEAR RULES
-- Second person, present tense, everyday details (battery %, unread message, a creak).
-- The threat is never fully shown and never explained. Show less in every episode, not more.
-- One familiar rule of safety breaks per episode (the camera, Mom's voice, the locked door).
-- At most one loud scare per episode. No blood, no violence on screen, nothing about self-harm.
-- Spoken sentences max 10 words. Whispered lines for the threat, calm lines for the narrator.
+MOTION RULES
+- Every shot moves: camera (dolly in/out, track, orbit, handheld, crash zoom, whip pan) AND/OR
+  character action AND/OR a change in light or an object (door, handle, shadow, flicker).
+- Shot length 1.5-3 s at the start, 1-2 s from 30 s, about 1 s from 45 s.
+- At least 3 shot types per 10 s: wide, over the shoulder, close-up on her face, insert of the phone.
+- At least 2 hidden appearances of the threat that she does not notice (background, reflection,
+  doorway). Put them where a rewatch will find them.
 
-VISUAL RULES (3D)
-- Dark, foggy rooms, one cold light source per shot, phone screen as the brightest thing.
-- Camera moves slowly (push-in or drift); a cut every 3-6 s.
-- Big white subtitles, max 4 words, in the middle of the safe area; counter top left.
-- Nothing important in the right 170 px or the bottom 520 px.
+NARRATION
+- Third person, present tense, calm and low. Max 10 words per sentence, many beats without words.
+- The threat speaks only in whispers, with a loved one's voice.
+- No blood, no violence on screen, nothing about self-harm.
+
+FORMAT
+- 1080x1920, image fills the whole frame, no letterbox. Important things inside the safe area
+  (not in the right 170 px, top 260 px or bottom 520 px). Subtitles max 4 words, centred.
 
 OUTPUT: JSON only
-{"part": N, "title": "Part N", "opening_alt": "...",
- "beats": [{"t": 0.0, "shot": "BED_POV", "camera": "push-in|drift|static",
-            "light": "...", "props": "...", "phone_ui": "...", "narration": "...",
-            "whisper": "...", "subtitle": "...", "sfx": "...", "battery": 23}],
+{"part": N, "title": "...", "cold_open": {"shot": "...", "dur": 1.0},
+ "beats": [{"t": 0.0, "dur": 2.0, "shot": "BED_SIDE",
+            "camera": {"move": "dolly_in|track|orbit|handheld|crash_zoom|whip_pan|static",
+                       "from": "...", "to": "..."},
+            "actor": {"action": "sit_up", "look_at": "door"},
+            "threat": {"where": "hallway_doorway", "hidden": true},
+            "light": "...", "narration": "...", "whisper": "...", "subtitle": "...",
+            "sfx": ["..."], "heartbeat_bpm": 60, "battery": 23}],
+ "scare": {"shot": "...", "dur": 0.8},
  "cliffhanger": "...", "choice": {"A": "...", "B": "..."},
  "tiktok_caption": "...", "hashtags": ["..."]}
 ```
