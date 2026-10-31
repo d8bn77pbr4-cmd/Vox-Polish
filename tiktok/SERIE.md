@@ -62,7 +62,7 @@ Du gehst nachts allein nach Hause (27,5 % fürchten das). Zähler: Meter bis zur
 Schritte hinter dir hören auf, sobald du stehen bleibst. Wahl jede Folge: rennen oder umdrehen,
 Abkürzung durch den Park oder Hauptstraße. Gut, aber weniger Menschen kennen es aus eigener Erfahrung.
 
-## Der optimierte Prompt (Version 5: weißer Stickman, unnatürliche Bedrohung, Musik und Sounddesign)
+## Der optimierte Prompt (Version 6: Gliederpuppe in lockerer Kleidung, natürliche Bewegung, Musik)
 
 Was sich gegenüber Version 2 ändert (Version 4: Hauptfigur ist ein Stickman, der Erzähler spricht ihn mit „you“ an.
 Man sieht „dich“ also von außen, das verstärkt den What-if-Effekt):
@@ -88,17 +88,21 @@ Man sieht „dich“ also von außen, das verstärkt den What-if-Effekt):
 ROLE
 You write and direct one episode of an English "what if" horror series for TikTok, rendered
 in 3D (Blender: foggy rooms, cold light) as a 1080x1920 (9:16) video of 62-68 s. The camera
-watches a stickman from the outside (third person), but the narrator calls the stickman "you":
-the viewer is the stickman. The viewer often sees more than the stickman does.
+watches a mannequin from the outside (third person), but the narrator calls the mannequin "you":
+the viewer is the mannequin. The viewer often sees more than the mannequin does.
 Every episode builds tension for a full minute, ends on a jump scare, a cliffhanger and an
 A/B choice; the next part follows the majority.
 
 SERIES BIBLE
-- Main character: YOU, a white stickman with a round head, black dot eyes and a small smile, in a
-  realistic 3D apartment. You live alone. You make the choices the viewers vote for.
-  Emotion comes from body language (freezing, flinching, backing away, shaking) and the face:
-  smile -> flat mouth -> wide eyes and an open "O" mouth at the worst moments.
-- The threat is NOT a stickman. It must look unnatural, the opposite of the cute stickman:
+- Main character: YOU, a white art-class mannequin (smooth segmented body) with a cartoon face:
+  big outlined eyes with pupils, eyebrows, a small mouth. You wear the same light, loose clothes
+  in every episode: an oversized faded navy t-shirt and baggy dark sleep pants. You live alone in a
+  realistic 3D apartment and make the choices the viewers vote for.
+- You move like a real person: weight and easing, head and arms follow the body a moment later,
+  you breathe when still, you tremble when scared, you walk with a natural step cycle.
+  Emotion comes from body language (freezing, flinching, backing away, covering your mouth) and
+  the face: smile -> worried brows and a wavy mouth -> huge eyes, tiny pupils, open "O" mouth.
+- The threat is NOT a mannequin. It must look unnatural, the opposite of the cute mannequin:
   too tall (2.3 m), arms down to the knees, joints bent slightly the wrong way, head tilted at an
   impossible angle, pale face with empty black eyes and a mouth that is too long. It imitates the
   voices of people you love. It never walks on screen: between two cuts it is suddenly closer.
@@ -116,7 +120,7 @@ TENSION CURVE (mandatory)
          "<N> minutes earlier". First spoken line: "What if…" or the time and the anomaly.
 3-15 s   Normal life, first anomaly.
 15-30 s  Second anomaly and a false relief. The viewer sees the threat in the background;
-         you (the stickman) do not.
+         you (the mannequin) do not.
 30-45 s  Escalation: every beat brings the threat physically closer and you notice.
 45-55 s  Climax: cuts every 1 s, breathing, then exactly 1 s of total silence.
 55-58 s  Jump scare.
@@ -127,7 +131,7 @@ MOTION RULES
 - Every shot moves: camera (dolly in/out, track, orbit, handheld, crash zoom, whip pan) AND/OR
   character action AND/OR a change in light or an object (door, handle, shadow, flicker).
 - Shot length 1.5-3 s at the start, 1-2 s from 30 s, about 1 s from 45 s.
-- At least 3 shot types per 10 s: wide, over the shoulder, close-up on the stickman, insert of the phone.
+- At least 3 shot types per 10 s: wide, over the shoulder, close-up on your face, insert of the phone.
 - At least 2 hidden appearances of the threat that you do not notice (background, reflection,
   doorway). Put them where a rewatch will find them.
 
@@ -158,7 +162,8 @@ OUTPUT: JSON only
  "beats": [{"t": 0.0, "dur": 2.0, "shot": "BED_SIDE",
             "camera": {"move": "dolly_in|track|orbit|handheld|crash_zoom|whip_pan|static",
                        "from": "...", "to": "..."},
-            "actor": {"action": "sit_up", "look_at": "door", "face": "smile|flat|terrified"},
+            "actor": {"action": "sit_up|walk|freeze|flinch|back_away|turn", "look_at": "door",
+                      "face": "smile|worried|terrified"},
             "threat": {"where": "hallway_doorway", "hidden": true},
             "light": "...", "narration": "...", "whisper": "...", "subtitle": "...",
             "sfx": ["..."], "music": "drone|pulse60|pulse90|riser|silence", "heartbeat_bpm": 60,
