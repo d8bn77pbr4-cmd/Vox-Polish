@@ -302,20 +302,51 @@ def stickman(mats):
                                  mats["ink"], parent=head, segments=16)
     return {"parts": parts, "head": head, "ball": ball, "eyes": eyes, "pupils": pupils, "brows": brows, "mouths": mouths,
             "clothes": {name: garment(name, spec, mats) for name, spec in GARMENTS.items()},
-            "hood": sphere("you_hood", (0, 0, 0), 1.0, (1, 1, 1), mats["shirt"])}
+            "hood": sphere("you_hood", (0, 0, 0), 1.0, (1, 1, 1), mats["shirt"]), "body": hoodie_body(mats)}
 
 
-GARMENTS = {  # loose clothes that cover the whole body: point -> (radius x, radius y), moved with your pose
-    "shirt": ({"hem_in": (0.09, 0.07), "hem": (0.18, 0.13), "waist": (0.185, 0.135), "chest": (0.205, 0.14), "collar": (0.085, 0.075),
-               "l_sh": (0.085, 0.085), "l_elbow": (0.075, 0.075), "l_cuff": (0.058, 0.058),
-               "r_sh": (0.085, 0.085), "r_elbow": (0.075, 0.075), "r_cuff": (0.058, 0.058)},
-              [("hem_in", "hem"), ("hem", "waist"), ("waist", "chest"), ("chest", "collar"), ("chest", "l_sh"), ("l_sh", "l_elbow"),
-               ("l_elbow", "l_cuff"), ("chest", "r_sh"), ("r_sh", "r_elbow"), ("r_elbow", "r_cuff")], "shirt"),
-    "pants": ({"belt": (0.17, 0.12), "l_hip": (0.097, 0.097), "l_knee": (0.08, 0.08), "l_cuff": (0.07, 0.07),
+GARMENTS = {  # sleeves and trousers: point -> (radius x, radius y), moved with your pose every frame
+    "sleeve_l": ({"l_sh": (0.085, 0.085), "l_elbow": (0.075, 0.075), "l_cuff": (0.058, 0.058)},
+                 [("l_sh", "l_elbow"), ("l_elbow", "l_cuff")], "shirt"),
+    "sleeve_r": ({"r_sh": (0.085, 0.085), "r_elbow": (0.075, 0.075), "r_cuff": (0.058, 0.058)},
+                 [("r_sh", "r_elbow"), ("r_elbow", "r_cuff")], "shirt"),
+    "pants": ({"belt": (0.168, 0.118), "l_hip": (0.097, 0.097), "l_knee": (0.08, 0.08), "l_cuff": (0.07, 0.07),
                "r_hip": (0.097, 0.097), "r_knee": (0.08, 0.08), "r_cuff": (0.07, 0.07)},
               [("belt", "l_hip"), ("l_hip", "l_knee"), ("l_knee", "l_cuff"), ("belt", "r_hip"), ("r_hip", "r_knee"),
                ("r_knee", "r_cuff")], "pants"),
 }
+HOODIE = [  # body of the hoodie: (height above the hips, radius x, radius y); open at the bottom and the collar
+    (-0.08, 0.176, 0.128), (-0.04, 0.184, 0.134), (0.01, 0.198, 0.144), (0.13, 0.19, 0.138), (0.27, 0.186, 0.134),
+    (0.38, 0.2, 0.136), (0.46, 0.205, 0.132), (0.52, 0.15, 0.105), (0.555, 0.085, 0.072), (0.575, 0.072, 0.064)]
+
+
+def hoodie_body(mats):
+    """An open fabric tube from hip to collar: the hem with its band hangs naturally over the trousers."""
+    n = 40
+    verts, faces = [], []
+    for z, rx, ry in HOODIE:
+        verts += [(rx * math.cos(2 * math.pi * i / n), ry * math.sin(2 * math.pi * i / n), z) for i in range(n)]
+    for r in range(len(HOODIE) - 1):
+        for i in range(n):
+            a, b = r * n + i, r * n + (i + 1) % n
+            faces.append((a, b, b + n, a + n))
+    mesh = bpy.data.meshes.new("hoodie")
+    mesh.from_pydata(verts, [], faces)
+    o = bpy.data.objects.new("you_hoodie", mesh)
+    bpy.context.collection.objects.link(o)
+    mesh.materials.append(mats["shirt"])
+    o.modifiers.new("thickness", "SOLIDIFY").thickness = 0.012
+    sub = o.modifiers.new("smooth", "SUBSURF")
+    sub.levels = sub.render_levels = 2
+    tex = bpy.data.textures.new("hoodie_wrinkles", "CLOUDS")
+    tex.noise_scale = 0.06
+    disp = o.modifiers.new("wrinkles", "DISPLACE")
+    disp.texture, disp.strength, disp.mid_level = tex, 0.006, 0.5
+    for poly in mesh.polygons:
+        poly.use_smooth = True
+    return o
+
+
 COVERED = ("chest", "belly", "pelvis", "l_upper", "r_upper", "l_fore", "r_fore", "l_thigh", "r_thigh", "l_shin",
            "r_shin", "l_shoulder", "r_shoulder", "l_elbow", "r_elbow", "l_knee", "r_knee")
 
@@ -328,7 +359,7 @@ def garment(name, spec, mats):
     tex = bpy.data.textures.new(name + "_wrinkles", "CLOUDS")
     tex.noise_scale = 0.06
     disp = o.modifiers.new("wrinkles", "DISPLACE")
-    disp.texture, disp.strength, disp.mid_level = tex, 0.012, 0.5
+    disp.texture, disp.strength, disp.mid_level = tex, 0.007, 0.5
     return o
 
 
@@ -340,7 +371,8 @@ def pose_stickman(S, spec):
     """spec: loc (hips), yaw, torso [pitch, roll], head [yaw, pitch], arm_l/arm_r/leg_l/leg_r [forward, side, bend],
     face smile|flat|terrified. Facing -y before yaw; positive pitch leans forward; l = +x side."""
     st = S["stick"]
-    objs = [*st["parts"].values(), st["head"], *st["head"].children, *st["clothes"].values(), st["hood"]]
+    objs = [*st["parts"].values(), st["head"], *st["head"].children, *st["clothes"].values(), st["hood"],
+            st["body"]]
     show(objs, spec is not None)
     if spec is None:
         return None
@@ -357,7 +389,7 @@ def pose_stickman(S, spec):
     neck_top = neck + at(RH, (0, 0, B["neck"]))
     center = neck_top + at(RH, (0, 0, B["head"][2] * 0.85))
     J, bones = {}, {"neck": (neck, neck_top)}
-    P = {"hem_in": H + at(RT, (0, 0, -0.16)), "hem": H + at(RT, (0, 0, -0.1)), "waist": H + at(RT, (0, 0, 0.2)), "chest": H + at(RT, (0, 0, 0.37)),
+    P = {"hem": H + at(RT, (0, 0, -0.01)), "waist": H + at(RT, (0, 0, 0.2)), "chest": H + at(RT, (0, 0, 0.37)),
          "collar": H + at(RT, (0, 0, 0.52)), "belt": H + at(R0, (0, 0, 0.05))}
     for side, sx in (("l", 1), ("r", -1)):
         shoulder = H + at(RT, (sx * B["shoulder"], 0, B["torso"] * 0.86))
@@ -401,6 +433,7 @@ def pose_stickman(S, spec):
         for v, key in zip(obj.data.vertices, GARMENTS[name][0]):
             v.co = P[f"p_{key}"] if name == "pants" and key.endswith("cuff") else P[key]
         obj.data.update()
+    st["body"].matrix_world = Matrix.Translation(H) @ RT
     st["hood"].matrix_world = Matrix.Translation(H + at(RT, (0, 0.085, 0.5))) @ RT @ Matrix.Diagonal((0.14, 0.075, 0.1, 1))
     show([st["parts"][name] for name in COVERED], False)   # hidden under the clothes, so nothing pokes through
     face = {"worried": "flat"}.get(g("face", "smile"), g("face", "smile"))
@@ -447,6 +480,7 @@ def build():
         "chalk": material("chalk", (0.86, 0.86, 0.84), 0.45, emit=(1, 1, 1), strength=0.04),
         "shirt": material("shirt", (0.38, 0.38, 0.40), 0.95),
         "pants": material("pants", (0.05, 0.05, 0.055), 0.95),
+        "band": material("band", (0.3, 0.3, 0.32), 0.95),
         "eye": material("eye", (0.97, 0.97, 0.97), 0.3, emit=(1, 1, 1), strength=0.45),
         "ink": material("ink", (0.0, 0.0, 0.0), 1.0),
     }
