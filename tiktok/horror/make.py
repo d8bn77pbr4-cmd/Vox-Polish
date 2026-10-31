@@ -29,7 +29,7 @@ ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "data" / "horror"
 OUT = ROOT / "tiktok" / "videos"
 FPS, W, H = 24, 1080, 1920
-LINE_GAP = 0.32
+LINE_GAP = 0.45   # a breath between two spoken lines
 
 
 # ---------------------------------------------------------------- 3D renders

@@ -62,7 +62,7 @@ Du gehst nachts allein nach Hause (27,5 % fürchten das). Zähler: Meter bis zur
 Schritte hinter dir hören auf, sobald du stehen bleibst. Wahl jede Folge: rennen oder umdrehen,
 Abkürzung durch den Park oder Hauptstraße. Gut, aber weniger Menschen kennen es aus eigener Erfahrung.
 
-## Der optimierte Prompt (Version 6: Gliederpuppe in lockerer Kleidung, natürliche Bewegung, Musik)
+## Der optimierte Prompt (Version 7: ruhiges Tempo, Spannung baut sich langsam auf)
 
 Was sich gegenüber Version 2 ändert (Version 4: Hauptfigur ist ein Stickman, der Erzähler spricht ihn mit „you“ an.
 Man sieht „dich“ also von außen, das verstärkt den What-if-Effekt):
@@ -70,19 +70,20 @@ Man sieht „dich“ also von außen, das verstärkt den What-if-Effekt):
 - **Dritte Person:** Man sieht die Hauptfigur von außen, ihr Gesicht, ihre Reaktionen. Der größte Gewinn ist
   dramatische Ironie: Die Zuschauer sehen die Gestalt im Hintergrund, die Figur nicht. Das sorgt für
   Kommentare wie „Habt ihr sie bei 0:23 gesehen?“ und für mehrmaliges Anschauen.
-- **Bewegung in jeder Einstellung:** Kamera fährt, Figur handelt oder Licht/Objekt verändert sich. Kein Bild
-  steht länger als 1,5 Sekunden still, die Schnitte werden zum Ende hin schneller (3 s → 2 s → 1 s).
-- **Spannungskurve über die ganze Minute** statt gleichmäßiger Erzählung:
+- **Tempo wie in der ersten Version:** Einstellungen von 3–6 Sekunden (im Schnitt 4), langsame Kamerafahrten,
+  geschnitten wird nur, wenn es etwas Neues gibt. Zwischen den Sätzen bleibt Luft, gut ein Drittel der Zeit
+  wird nicht gesprochen. Keine Vorausblende am Anfang: Der Haken ist der erste gesprochene Satz.
+- **Spannung baut sich langsam auf:** Die Bedrohung ist erst zu hören und zu ahnen (Meldung, Knarren,
+  Schatten, Stimme), zu sehen ist sie erst beim Schreckmoment ganz am Ende.
 
-| Sekunde | Phase | Was passiert | Ton |
+| Sekunde | Phase | Was passiert | Musik |
 |---|---|---|---|
-| 0–3 | Hook | 1 Sekunde Vorausblende auf den schlimmsten Moment, dann „3 minutes earlier“ | Schlag, dann Stille |
-| 3–15 | Normal, erste Störung | Figur schläft, Handy leuchtet, erste Meldung | Raumton, Herzschlag 60 |
-| 15–30 | Zweite Störung, falsche Entwarnung | Figur prüft nach, alles scheint gut. Zuschauer sehen die Gestalt im Hintergrund | Herzschlag 75, Brummen steigt |
-| 30–45 | Eskalation | Die Bedrohung kommt mit jedem Schritt näher, die Figur merkt es | Herzschlag 95, kürzere Schnitte |
-| 45–55 | Höhepunkt | Schnitte im Sekundentakt, Atmen, dann 1 Sekunde Stille | Herzschlag 120, dann nichts |
-| 55–58 | Schreckmoment | Gesicht, Blitz, Stinger | laut |
-| 58–65 | Cliffhanger und Wahl | „What would she do?“ A oder B | leise |
+| 0–10 | Ruhe, erste Störung | Du schläfst, das Handy weckt dich: „Person detected“ | nur Brummen |
+| 10–25 | Nachsehen | Du setzt dich auf, die Kamera zeigt einen leeren Flur, aber das Licht brennt | Brummen |
+| 25–45 | Es kommt näher (nur Geräusche und Zeichen) | Knarren vor der Tür, Schatten von Füßen, die Kamera zeigt trotzdem niemanden, Licht geht aus | Puls 60, Uhr tickt |
+| 45–60 | Es wird persönlich | Mamas Stimme flüstert, Mama ist aber verreist, du weichst zurück | Puls 90, Streicher |
+| 60–64 | Höhepunkt | Türklinke geht langsam runter, 1 Sekunde Stille, Schreckmoment | steigender Ton, dann Stille |
+| 64–72 | Cliffhanger und Wahl | „A… or B? Comment A or B.“ | leise |
 
 ```text
 ROLE
@@ -116,29 +117,31 @@ SERIES BIBLE
   Also write the opening for the losing choice, so both versions can be produced.
 
 TENSION CURVE (mandatory)
-0-3 s    Cold open: 1 s flash-forward to the worst moment of this episode, then
-         "<N> minutes earlier". First spoken line: "What if…" or the time and the anomaly.
-3-15 s   Normal life, first anomaly.
-15-30 s  Second anomaly and a false relief. The viewer sees the threat in the background;
-         you (the mannequin) do not.
-30-45 s  Escalation: every beat brings the threat physically closer and you notice.
-45-55 s  Climax: cuts every 1 s, breathing, then exactly 1 s of total silence.
-55-58 s  Jump scare.
+No cold open, no flash-forward. The hook is the first spoken line (the time and the anomaly)
+within the first 2 seconds.
+0-10 s   Calm, first anomaly (a notification, a sound).
+10-25 s  You check. It seems fine, but one detail is wrong.
+25-45 s  It comes closer, but only as sounds and signs (creak, shadow, light, the camera that shows
+         nobody). Never shown.
+45-60 s  It gets personal (the voice of someone you love) and physical (a handle, a door).
+60-64 s  Climax: the slowest shot of the episode, then exactly 1 s of total silence, then the
+         jump scare: the first time the threat is really seen.
 58-66 s  Cliffhanger and choice: "<A>… or <B>? What would you do? Comment A or B.
          Part <N+1> follows the majority." The last frame matches the first.
 
-MOTION RULES
-- Every shot moves: camera (dolly in/out, track, orbit, handheld, crash zoom, whip pan) AND/OR
-  character action AND/OR a change in light or an object (door, handle, shadow, flicker).
-- Shot length 1.5-3 s at the start, 1-2 s from 30 s, about 1 s from 45 s.
-- At least 3 shot types per 10 s: wide, over the shoulder, close-up on your face, insert of the phone.
-- At least 2 hidden appearances of the threat that you do not notice (background, reflection,
-  doorway). Put them where a rewatch will find them.
+PACING AND MOTION RULES
+- Shots 3-6 s, about 4 s on average. Cut only when there is something new to see or hear.
+- One new piece of information per beat. Leave 0.4-1 s of silence between spoken lines and before
+  each reveal; about a third of the episode has no words.
+- Slow camera moves (gentle push-in, slow drift); your movements are calm and real (sitting up,
+  turning your head, freezing, backing away). Fast moves are saved for the scare.
+- The threat is heard before it is seen. At most one barely visible hint after 40 s; the first
+  clear look is the scare.
 
 SOUND AND MUSIC (original, synthesized, no copyright)
-- Score follows the tension curve: 0-15 s low drone only; 15-30 s a slow bass pulse (60 bpm) and a
-  clock tick on every second of the on-screen counter; 30-45 s pulse 90 bpm, dissonant string
-  cluster, pitch slowly rising; 45-55 s endlessly rising tone (Shepard riser) and heartbeat 120;
+- Score follows the tension curve: 0-25 s low drone only; 25-45 s a slow bass pulse (60 bpm) and a
+  clock tick on every second of the on-screen counter; 45-60 s pulse 90 bpm, dissonant string
+  cluster, pitch slowly rising; 60-64 s endlessly rising tone (Shepard riser) and heartbeat 100+;
   then 1 s of total silence; scare stinger; after the scare a high ringing tone; soft drone under
   the choice.
 - Foley for every action: footsteps, cloth, bed springs, door, handle, phone buzz, breathing.
@@ -158,7 +161,7 @@ FORMAT
   (not in the right 170 px, top 260 px or bottom 520 px). Subtitles max 4 words, centred.
 
 OUTPUT: JSON only
-{"part": N, "title": "...", "cold_open": {"shot": "...", "dur": 1.0},
+{"part": N, "title": "...",
  "beats": [{"t": 0.0, "dur": 2.0, "shot": "BED_SIDE",
             "camera": {"move": "dolly_in|track|orbit|handheld|crash_zoom|whip_pan|static",
                        "from": "...", "to": "..."},

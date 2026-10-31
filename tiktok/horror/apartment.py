@@ -436,16 +436,17 @@ def pose_stickman(S, spec):
     st["body"].matrix_world = Matrix.Translation(H) @ RT
     st["hood"].matrix_world = Matrix.Translation(H + at(RT, (0, 0.085, 0.5))) @ RT @ Matrix.Diagonal((0.14, 0.075, 0.1, 1))
     show([st["parts"][name] for name in COVERED], False)   # hidden under the clothes, so nothing pokes through
-    face = {"worried": "flat"}.get(g("face", "smile"), g("face", "smile"))
+    expression = g("face", "smile")             # smile | worried (flat) | terrified | sleep
+    face = {"worried": "flat", "sleep": "flat"}.get(expression, expression)
     for kind, o in st["mouths"].items():
         show([o], kind == face)
-    scared = face == "terrified"
-    for e in st["eyes"]:
-        e.scale = (1.25, 0.3, 1.5) if scared else (1, 0.3, 1.25)   # eye and its black rim
+    scared, asleep = face == "terrified", expression == "sleep"
+    for e in st["eyes"]:                        # eye and its black rim
+        e.scale = (1.25, 0.3, 1.5) if scared else ((1.1, 0.3, 0.12) if asleep else (1, 0.3, 1.25))
     for pu in st["pupils"]:
-        pu.scale = (0.65, 0.4, 0.7) if scared else (1, 0.4, 1.1)
+        pu.scale = (0.65, 0.4, 0.7) if scared else ((0.01, 0.01, 0.01) if asleep else (1, 0.4, 1.1))
     for b, sx in zip(st["brows"], (-1, 1)):   # worried brows: inner ends up
-        angle = {"smile": 0, "flat": 18, "terrified": 28}[face]
+        angle = 0 if asleep else {"smile": 0, "flat": 18, "terrified": 28}[face]
         b.rotation_euler = (0, math.pi / 2, 0)
         b.rotation_euler.rotate_axis("X", math.radians(-sx * angle))
         b.location.z = 0.07 + (0.012 if scared else 0)

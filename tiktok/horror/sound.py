@@ -13,7 +13,7 @@ SR = 48000
 ROOT = Path(__file__).resolve().parents[2]
 KOKORO = ROOT / "data" / "kokoro"
 CACHE = ROOT / "data" / "horror" / "tts"
-NARRATOR = ("am_michael", 0.93)   # calm, low US male voice
+NARRATOR = ("am_michael", 0.9)    # calm, low US male voice, unhurried
 MOM = ("af_heart", 0.86)          # the best-rated Kokoro voice, turned into a whisper
 RNG = np.random.default_rng(7)
 
