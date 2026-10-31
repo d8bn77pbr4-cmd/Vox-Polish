@@ -1,0 +1,48 @@
+{
+  "id": "part2b",
+  "part": 2,
+  "battery": 19,
+  "clock": "03:14:31",
+  "cover_at": 1.2,
+  "caption": "Part 2 (you chose B): you hid in the wardrobe. Bad idea? Comment A or B for part 3.",
+  "hashtags": ["#horror", "#scary", "#pov", "#horrorstory", "#creepy", "#whatwouldyoudo", "#part2", "#fyp"],
+  "screens": {
+    "notif_door": {"time": "3:14", "battery": 19, "cards": [
+      {"app": "HOMECAM", "when": "now", "title": "Person detected", "body": "Bedroom door"},
+      {"app": "HOMECAM", "when": "2m ago", "title": "Person detected", "body": "Hallway"}]}
+  },
+  "shots": {
+    "slit": {"cam": "wardrobe_slit", "state": {}, "gain": 1.3},
+    "slit_door": {"cam": "wardrobe_slit", "state": {}, "gain": 1.3,
+                  "anim": {"param": "door", "from": 0, "to": 70, "frames": 40}},
+    "slit_open": {"cam": "wardrobe_slit", "state": {"door": 70}, "gain": 1.3},
+    "held": {"cam": "wardrobe_slit", "state": {"screen": "notif_door", "phone": "held", "door": 70}, "dof": 0.19},
+    "clip_enter": {"cam": "cctv", "state": {"ir": true, "visitor": "entering", "door": 70}, "grade": "ir",
+                   "label": "HALLWAY", "clip": "3:14:21 AM"},
+    "slit_dark": {"cam": "wardrobe_slit", "state": {"door": 70, "visitor": "front_of_wardrobe", "glow": 0.6}, "gain": 1.2},
+    "eye": {"cam": "wardrobe_slit", "state": {"door": 70, "visitor": "eye_slit", "glow": 4}}
+  },
+  "beats": [
+    {"shot": "slit", "pre": 0.35, "sfx": [["creak", 0.0, 0.5], ["breath", 1.6, 0.9]], "title": ["PART 2", "YOU CHOSE: HIDE"],
+     "say": ["You slip into the wardrobe.", "You hold your *breath.*"], "post": 0.8},
+    {"shot": "slit_door", "pre": 0.5, "anim_dur": 3.4, "sfx": [["creak_low", 0.4]], "heart": 84,
+     "say": ["Your bedroom door…", "*opens.*"], "post": 1.0},
+    {"shot": "slit_open", "move": "push", "say": ["Nobody comes *in.*"], "post": 0.6},
+    {"shot": "slit_open", "say": ["The hallway is dark.", "Silent."], "post": 0.6},
+    {"shot": "slit_open", "move": "push", "heart": 72, "say": ["You wait.", "One minute.", "Two."], "post": 0.8},
+    {"shot": "held", "sfx": [["buzz", 0.0, 1.5]], "say": ["Then your phone buzzes.", "*Loud.*"]},
+    {"shot": "held", "move": "push", "say": ["You press it against your chest.", "Person detected.", "*Bedroom door.*"]},
+    {"shot": "clip_enter", "say": ["You open the clip.", "Ten seconds ago."]},
+    {"shot": "clip_enter", "move": "push", "heart": 96, "say": ["Something tall…", "walks into your *room.*"]},
+    {"shot": "clip_enter", "move": "push", "say": ["And it never walks back *out.*"], "post": 0.6},
+    {"shot": "slit_open", "move": "push", "say": ["But your room is empty.", "Isn't it?"], "post": 1.2},
+    {"shot": "slit_dark", "sfx": [["breath", 0.0, 1.0]], "say": ["Then the gap goes *dark.*"], "post": 0.6},
+    {"shot": "slit_dark", "move": "push", "whisper": ["Found you, sweetie."], "heart": 112, "sfx": [["riser", 0.3, 0.8]],
+     "post": 0.4},
+    {"shot": "slit_dark", "dur": 0.7, "silence": true, "move": "static"},
+    {"shot": "eye", "dur": 0.8, "scare": true},
+    {"shot": "black", "dur": 0.5}
+  ],
+  "choice": {"A": "Run for the front door", "B": "Call the police", "footer": "PART 3 FOLLOWS THE MAJORITY",
+             "say": "Run for the front door… or call the police? Comment A or B. Part three follows the majority."}
+}

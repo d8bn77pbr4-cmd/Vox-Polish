@@ -19,13 +19,13 @@ Folgerung: **Eigene Wohnung, nachts, Handy, ein geliebter Mensch, keine Erkläru
 stärksten persönlichen Ängste gleichzeitig. Anders als eine U-Bahn hat jeder Zuschauer genau
 diese Situation selbst: ein Bett, einen dunklen Flur, ein Handy auf dem Nachttisch.
 
-## Konzept A (empfohlen): „PERSON DETECTED“
+## Gewählt: „PERSON DETECTED“ (6 Folgen: Teil 1–5 und Finale)
 
 Du wohnst allein. Um 3:12 Uhr weckt dich dein Handy: Die Kamera im Flur meldet
 „Person detected“. Der laufende Zähler ist dein **Akku**: 23 % in Teil 1. Er sinkt mit jeder Folge,
 bei 0 % kommt das Staffelfinale. Jeder kennt die Panik bei leerem Akku, und sie verbindet die Folgen.
 
-**Teil 1 (Entwurf, ca. 63 s)**
+**Teil 1 (erster Entwurf; das fertige Drehbuch steht in `horror/episodes/part1.json`)**
 
 | s | Bild (3D) | Erzähler | Untertitel |
 |---|---|---|---|
@@ -49,8 +49,9 @@ bei 0 % kommt das Staffelfinale. Jeder kennt die Panik bei leerem Akku, und sie 
 | Teil | Akku | Kern | Cliffhanger |
 |---|---|---|---|
 | 1 | 23 % | Kamera meldet jemanden, Mamas Stimme vor der Tür | Türklinke geht runter |
-| 2 | 19 % | A: Du hältst die Tür. Die App zeigt einen Clip von 23:58 Uhr: Du kommst nach Hause, und jemand geht hinter dir rein. B: Im Schrank siehst du durch den Spalt nichts, aber die Kamera zeigt eine Gestalt direkt vor deinem Schrank | Polizei anrufen oder Mama anrufen? |
-| 3 | 14 % | Der Anruf: Mama nimmt ab und flüstert aus dem Flur mit | … |
+| 2A | 19 % | Du hältst die Tür. Die App zeigt einen Clip von 23:58 Uhr: Du kommst nach Hause, und etwas Großes geht direkt hinter dir rein. Um 0:31 Uhr steht es vor deiner Tür, fast drei Stunden lang. Dann knarrt hinter dir der Schrank | Gesicht im Schrank. A: zur Wohnungstür rennen, B: Polizei rufen |
+| 2B | 19 % | Du versteckst dich im Schrank. Die Tür geht auf, niemand kommt rein. Dein Handy vibriert laut, der Clip zeigt etwas Großes, das in dein Zimmer geht und nie wieder rauskommt. Dann wird der Spalt dunkel | Gesicht im Spalt. Gleiche Wahl wie 2A |
+| 3 | 14 % | A: Flur und Wohnungstür. B: Der Notruf, und aus dem Flur flüstert jemand mit | … |
 | 4 | 9 % | Stromausfall, nur noch das Handylicht | … |
 | 5 | 4 % | Wohnungstür: Durch den Spion ist niemand zu sehen. Die App meldet „Front door · inside“ | … |
 | Finale | 1 % | Die Kamera erkennt das Gesicht: „Recognized: You.“ | Staffel 2 |
@@ -110,6 +111,21 @@ OUTPUT: JSON only
  "cliffhanger": "...", "choice": {"A": "...", "B": "..."},
  "tiktok_caption": "...", "hashtags": ["..."]}
 ```
+
+## Produktion
+
+Alles liegt in `tiktok/horror/`: `apartment.py` (3D-Wohnung in Blender), `sound.py` (Stimmen und Geräusche),
+`ui.py` (Handy-Bildschirme, Untertitel, Kamera-Einblendungen), `make.py` (Schnitt) und die Drehbücher in
+`episodes/*.json`. Eine Folge bauen:
+
+    .venv/bin/python tiktok/horror/make.py tiktok/horror/episodes/part1.json --preview --stills auto  # Kontaktbogen
+    .venv/bin/python tiktok/horror/make.py tiktok/horror/episodes/part1.json                           # fertiges Video
+
+- Jede Folge endet mit einem Schreckmoment (Gesicht, weißer Blitz, lauter Stinger nach einer Sekunde Stille)
+  und der Wahl A/B. Von jedem nächsten Teil werden beide Varianten produziert; gepostet wird die Gewinner-Variante.
+- **Erzähler:** Kokoro `am_michael` (ruhige, tiefe US-Stimme, unter den Männerstimmen am besten bewertet).
+  **„Mom“:** Kokoro `af_heart` (am besten bewertete Stimme), als Flüstern verfremdet.
+- Videos landen in `tiktok/videos/person-detected-*.mp4` mit Cover und Caption-Text.
 
 ## Technik
 

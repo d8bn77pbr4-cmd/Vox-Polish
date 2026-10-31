@@ -1,0 +1,53 @@
+{
+  "id": "part1",
+  "part": 1,
+  "battery": 23,
+  "clock": "03:12:04",
+  "cover_at": 1.5,
+  "caption": "You live alone. So who is in your hallway? 👀 Part 1 — comment A or B, part 2 follows the majority.",
+  "hashtags": ["#horror", "#scary", "#pov", "#horrorstory", "#creepy", "#whatwouldyoudo", "#3am", "#fyp"],
+  "screens": {
+    "notif_hallway": {"time": "3:12", "battery": 23, "cards": [
+      {"app": "HOMECAM", "when": "now", "title": "Person detected", "body": "Hallway"}]},
+    "msg_mom": {"time": "3:13", "battery": 23, "cards": [
+      {"app": "HOMECAM", "when": "1m ago", "title": "Person detected", "body": "Hallway"},
+      {"app": "MESSAGES", "when": "11:04 PM", "title": "Mom", "body": "Landed in Lisbon! ♥ Love you, call you tomorrow"}]}
+  },
+  "shots": {
+    "phone": {"cam": "phone_nightstand", "state": {"screen": "notif_hallway"}, "dof": 0.36},
+    "phone_mom": {"cam": "phone_nightstand", "state": {"screen": "msg_mom"}, "dof": 0.36},
+    "bed_on": {"cam": "bed_pov", "state": {"hall_light": true}, "gain": 1.25},
+    "bed_off": {"cam": "bed_pov", "state": {}, "gain": 1.35},
+    "cctv": {"cam": "cctv", "state": {"hall_light": true}, "grade": "cctv", "label": "HALLWAY"},
+    "feet": {"cam": "door_bottom", "state": {"hall_light": true, "feet": true}},
+    "dark_floor": {"cam": "door_bottom", "state": {}, "gain": 1.6},
+    "handle": {"cam": "handle_close", "state": {"glow": 1.0},
+               "anim": {"param": "handle", "from": 0, "to": -45, "frames": 40}},
+    "face": {"cam": "door_gap", "state": {"door": 18, "visitor": "door_gap", "glow": 6}}
+  },
+  "beats": [
+    {"shot": "phone", "fade_in": 0.4, "pre": 0.5, "sfx": [["buzz", 0.0]],
+     "say": [["Three twelve A M.", "3:12 AM"], "Your phone wakes you up.", "Person detected. *Hallway.*"]},
+    {"shot": "bed_on", "say": ["You live *alone.*"], "post": 0.7},
+    {"shot": "cctv", "sfx": [["click", 0.0, 0.6]], "say": ["You open the camera.", "The hallway is *empty.*"]},
+    {"shot": "cctv", "move": "push", "say": ["But the light is *on.*", "You turned it off.", "You're sure."]},
+    {"shot": "bed_on", "move": "push", "sfx": [["creak", 0.1]], "pre": 1.0,
+     "say": ["Then the floor *creaks.*", "Right outside your door."]},
+    {"shot": "feet", "move": "push", "pre": 0.5, "say": ["Under your door…", "two *shadows.*", "Like *feet.*"], "heart": 70},
+    {"shot": "cctv", "say": ["But the camera…", "still shows *nobody.*"], "heart": 76},
+    {"shot": "feet", "say": ["Then the light goes *out.*"], "switch": [{"at": 1.15, "shot": "dark_floor"}],
+     "sfx": [["light_off", 1.15]], "post": 0.8},
+    {"shot": "bed_off", "move": "push", "pre": 0.9, "sfx": [["breath", 0.0, 0.8]],
+     "whisper": ["Sweetie? Are you awake?"], "post": 0.6},
+    {"shot": "phone_mom", "say": ["That's your mom's voice.", "But Mom is in *Lisbon.*", "She texted you at eleven."]},
+    {"shot": "bed_off", "move": "push", "pre": 0.6, "whisper": ["Open the door, sweetie.", "It's cold out here."],
+     "heart": 92, "post": 0.5},
+    {"shot": "handle", "pre": 0.3, "anim_dur": 4.2, "sfx": [["squeak", 0.4], ["riser", 2.4, 0.8]],
+     "say": ["The handle…", "slowly…", "goes *down.*"], "heart": 100, "post": 0.6},
+    {"shot": "handle", "dur": 0.75, "silence": true, "move": "static", "frame": "last"},
+    {"shot": "face", "dur": 0.8, "scare": true},
+    {"shot": "black", "dur": 0.5}
+  ],
+  "choice": {"A": "Hold the door shut", "B": "Hide in the wardrobe", "footer": "PART 2 FOLLOWS THE MAJORITY",
+             "say": "Hold the door shut… or hide in the wardrobe? Comment A or B. Part two follows the majority."}
+}

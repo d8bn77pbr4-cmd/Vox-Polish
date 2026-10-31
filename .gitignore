@@ -6,3 +6,4 @@ runs/
 STOP
 data/
 tiktok/preview/
+tiktok/videos/*-preview*

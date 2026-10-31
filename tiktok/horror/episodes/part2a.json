@@ -1,0 +1,49 @@
+{
+  "id": "part2a",
+  "part": 2,
+  "battery": 19,
+  "clock": "03:14:31",
+  "cover_at": 1.2,
+  "caption": "Part 2 (you chose A): you held the door. It's been inside since midnight. Comment A or B for part 3.",
+  "hashtags": ["#horror", "#scary", "#pov", "#horrorstory", "#creepy", "#whatwouldyoudo", "#part2", "#fyp"],
+  "screens": {
+    "notif_motion": {"time": "3:14", "battery": 19, "cards": [
+      {"app": "HOMECAM", "when": "now", "title": "Motion ended", "body": "Hallway"},
+      {"app": "HOMECAM", "when": "2m ago", "title": "Person detected", "body": "Hallway"}]}
+  },
+  "shots": {
+    "door": {"cam": "handle_close", "state": {"glow": 1.0}},
+    "held": {"cam": "door_gap", "state": {"screen": "notif_motion", "phone": "held"}, "dof": 0.19},
+    "cctv_ir": {"cam": "cctv", "state": {"ir": true}, "grade": "ir", "label": "HALLWAY"},
+    "clip_home": {"cam": "cctv", "state": {"hall_light": true, "you": true, "visitor": "front_behind"},
+                  "grade": "cctv", "label": "HALLWAY", "clip": "11:58:12 PM"},
+    "clip_wait": {"cam": "cctv", "state": {"ir": true, "visitor": "hall_door"}, "grade": "ir", "label": "HALLWAY",
+                  "clip": "12:31:40 AM"},
+    "room": {"cam": "wardrobe_view", "state": {"glow": 8}, "gain": 1.5},
+    "wardrobe": {"cam": "wardrobe_view", "state": {"wardrobe": 15, "glow": 14}, "gain": 1.4},
+    "face": {"cam": "wardrobe_close", "state": {"wardrobe": 15, "visitor": "in_wardrobe", "glow": 6}}
+  },
+  "beats": [
+    {"shot": "door", "move": "shake", "pre": 0.35, "sfx": [["slam", 0.0, 1.2]], "title": ["PART 2", "YOU CHOSE: HOLD THE DOOR"],
+     "say": ["You slam the door *shut.*"], "post": 0.9},
+    {"shot": "door", "move": "shake", "sfx": [["thud", 0.9], ["thud", 2.1, 0.8]], "heart": 104,
+     "say": ["You push with all your weight.", "Something pushes *back.*"]},
+    {"shot": "door", "move": "push", "say": ["Then… it *stops.*"], "post": 1.2},
+    {"shot": "held", "sfx": [["buzz", 0.0]], "say": ["Your phone buzzes.", "Motion ended. Hallway."]},
+    {"shot": "cctv_ir", "say": ["The hallway is empty again.", "It's gone. *Right?*"]},
+    {"shot": "clip_home", "say": ["You scroll back through the clips.", ["Eleven fifty-eight P M.", "11:58 PM"],
+                                  "That's you. Coming *home.*"]},
+    {"shot": "clip_home", "move": "push", "heart": 80, "say": ["And right behind you…", "something walks *in.*"]},
+    {"shot": "clip_wait", "say": [["Twelve thirty-one.", "12:31 AM"], "It's standing outside your door.", "Not moving."]},
+    {"shot": "clip_wait", "move": "push", "say": ["For almost *three hours.*"], "post": 0.8},
+    {"shot": "room", "pre": 0.4, "say": ["Where is it *now?*"], "post": 0.8},
+    {"shot": "room", "move": "push", "sfx": [["creak_low", 0.1]], "pre": 1.3, "say": ["Behind you…", "the wardrobe *creaks.*"]},
+    {"shot": "wardrobe", "move": "push", "pre": 0.6, "whisper": ["Sweetie…", "I'm right here."], "heart": 110,
+     "sfx": [["riser", 0.8, 0.8]], "post": 0.3},
+    {"shot": "wardrobe", "dur": 0.7, "silence": true, "move": "static"},
+    {"shot": "face", "dur": 0.8, "scare": true},
+    {"shot": "black", "dur": 0.5}
+  ],
+  "choice": {"A": "Run for the front door", "B": "Call the police", "footer": "PART 3 FOLLOWS THE MAJORITY",
+             "say": "Run for the front door… or call the police? Comment A or B. Part three follows the majority."}
+}
