@@ -28,7 +28,7 @@ import ui  # noqa: E402
 ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "data" / "horror"
 OUT = ROOT / "tiktok" / "videos"
-FPS, W, H = 30, 1080, 1920
+FPS, W, H = 24, 1080, 1920
 LINE_GAP = 0.32
 
 
@@ -37,20 +37,87 @@ LINE_GAP = 0.32
 SCENE_VERSION = hashlib.sha1((Path(__file__).parent / "apartment.py").read_bytes()).hexdigest()[:8]
 
 
+def lerp(a, b, k):
+    """Interpolate numbers, lists and dicts of numbers; anything else switches at k >= 0.5."""
+    if isinstance(a, (int, float)) and isinstance(b, (int, float)) and not isinstance(a, bool):
+        return a + (b - a) * k
+    if isinstance(a, list) and isinstance(b, list) and len(a) == len(b):
+        return [lerp(x, y, k) for x, y in zip(a, b)]
+    if isinstance(a, dict) and isinstance(b, dict):
+        return {key: lerp(a.get(key, b.get(key)), b.get(key, a.get(key)), k) for key in {*a, *b}}
+    return b if k >= 0.5 else a
+
+
+def at_keys(keys, k):
+    """State of a keyframed shot at k in 0..1 (smooth in and out between neighbouring keys)."""
+    prev = keys[0]
+    for nxt in keys[1:]:
+        if k <= nxt["at"]:
+            span = max(1e-6, nxt["at"] - prev["at"])
+            u = min(1.0, max(0.0, (k - prev["at"]) / span))
+            u = u * u * (3 - 2 * u) if nxt.get("ease", True) else u
+            return lerp({kk: v for kk, v in prev.items() if kk != "at"}, {kk: v for kk, v in nxt.items() if kk != "at"}, u)
+        prev = nxt
+    return {kk: v for kk, v in prev.items() if kk != "at"}
+
+
+def humanize(keys, k, t, stick):
+    """Natural motion for you (the mannequin): head and arms follow the body a moment later, breathing and small
+    idle movements, trembling when scared, and a walk cycle when stick has "walk": steps per second."""
+    if not stick:
+        return stick
+    stick = dict(stick)
+    for part, lag in (("head", 0.05), ("arm_l", 0.09), ("arm_r", 0.09)):
+        late = (at_keys(keys, max(0.0, k - lag)).get("state", {}).get("stick") or {}) if keys else {}
+        if part in late:
+            stick[part] = late[part]
+    wave = lambda period, phase=0.0: math.sin(2 * math.pi * t / period + phase)
+    torso = list(stick.get("torso", [0, 0]))
+    head = list(stick.get("head", [0, 0]))
+    torso[0] += 1.3 * wave(3.6)
+    torso[1] += 0.7 * wave(5.3, 1.0)
+    head[0] += 1.8 * wave(4.7, 1.0)
+    head[1] += 1.2 * wave(3.9, 2.0)
+    arms = {side: list(stick.get(side, [0, 8, 10])) for side in ("arm_l", "arm_r")}
+    for n, side in enumerate(arms):
+        arms[side][2] += 3 * wave(3.6, n)
+    if stick.get("face") == "terrified" or stick.get("tremble"):
+        shake = lambda ph: 1.4 * (math.sin(t * 47 + ph) + 0.6 * math.sin(t * 71 + 2 * ph))
+        head = [head[0] + shake(0), head[1] + shake(1)]
+        for n, side in enumerate(arms):
+            arms[side][0] += shake(2 + n)
+            arms[side][2] += shake(4 + n)
+    if stick.get("walk"):
+        phase = 2 * math.pi * t * stick["walk"] / 2
+        swing = math.sin(phase)
+        stick["leg_l"] = [22 * swing, 3, 35 * max(0.0, math.sin(phase + math.pi / 2))]
+        stick["leg_r"] = [-22 * swing, 3, 35 * max(0.0, math.sin(phase - math.pi / 2))]
+        arms["arm_l"][0] -= 14 * swing
+        arms["arm_r"][0] += 14 * swing
+        torso[0] += 4
+        loc = list(stick["loc"])
+        loc[2] += 0.02 * abs(math.cos(phase))
+        stick["loc"] = loc
+    stick.update(torso=torso, head=head, **arms)
+    return stick
+
+
 def render_key(spec: dict, screen: dict | None, quality: tuple) -> str:
     """Cache key of a render; changes whenever the shot, the screen or the 3D scene itself changes."""
-    blob = json.dumps([spec.get("cam"), spec.get("state", {}), spec.get("dof"), screen, quality, SCENE_VERSION],
+    blob = json.dumps([spec.get("cam"), spec.get("camera"), spec.get("state", {}), spec.get("dof"), screen, quality,
+                       SCENE_VERSION],
                       sort_keys=True)
     return hashlib.sha1(blob.encode()).hexdigest()[:14]
 
 
 def plan_renders(ep: dict, preview: bool):
     """Every shot becomes one still or a list of animation frames; returns jobs and shot -> file(s)."""
-    res, samples, anim_samples = ((432, 768), 8, 6) if preview else ((1080, 1920), 32, 24)
+    res, samples, anim_samples = ((432, 768), 8, 6) if preview else ((1080, 1920), 32, 16)
+    anim_res = res if preview else (810, 1440)
     folder = DATA / ("renders-preview" if preview else "renders")
     jobs, files = [], {}
     for name, spec in ep["shots"].items():
-        if spec.get("cam") is None:
+        if spec.get("cam") is None and spec.get("camera") is None and not spec.get("anim", {}).get("keys"):
             continue
         state = dict(spec.get("state", {}))
         screen = ep["screens"].get(state["screen"]) if state.get("screen") else None
@@ -59,21 +126,30 @@ def plan_renders(ep: dict, preview: bool):
         anim = spec.get("anim")
         if anim:
             frames = []
-            for i in range(anim["frames"]):
-                k = i / (anim["frames"] - 1)
-                k = k * k * (3 - 2 * k)  # ease in and out
-                st = {**state, anim["param"]: anim["from"] + (anim["to"] - anim["from"]) * k}
-                key = render_key({**spec, "state": st}, screen, (res, anim_samples))
+            n = anim["frames"] if "frames" in anim else max(2, round(anim["seconds"] * FPS))
+            n = max(2, n // 4) if preview else n
+            for i in range(n):
+                k = i / (n - 1)
+                camera = spec.get("camera")
+                if "keys" in anim:
+                    cur = at_keys(anim["keys"], k)
+                    st = {**state, **cur.get("state", {})}
+                    camera = cur.get("camera", camera)
+                    st["stick"] = humanize(anim["keys"], k, k * anim.get("seconds", n / FPS), st.get("stick"))
+                else:
+                    kk = k * k * (3 - 2 * k)
+                    st = {**state, anim["param"]: anim["from"] + (anim["to"] - anim["from"]) * kk}
+                key = render_key({**spec, "state": st, "camera": camera}, screen, (anim_res, anim_samples))
                 out = folder / f"{key}.png"
-                jobs.append({"out": str(out), "shot": spec["cam"], "state": st, "samples": anim_samples,
-                             "res": res, **({"dof": spec["dof"]} if spec.get("dof") else {})})
+                jobs.append({"out": str(out), "shot": spec.get("cam"), "camera": camera, "state": st,
+                             "samples": anim_samples, "res": anim_res, **({"dof": spec["dof"]} if spec.get("dof") else {})})
                 frames.append(out)
             files[name] = frames
         else:
             key = render_key({**spec, "state": state}, screen, (res, samples))
             out = folder / f"{key}.png"
-            jobs.append({"out": str(out), "shot": spec["cam"], "state": state, "samples": samples, "res": res,
-                         **({"dof": spec["dof"]} if spec.get("dof") else {})})
+            jobs.append({"out": str(out), "shot": spec.get("cam"), "camera": spec.get("camera"), "state": state,
+                         "samples": samples, "res": res, **({"dof": spec["dof"]} if spec.get("dof") else {})})
             files[name] = [out]
     return jobs, files
 
@@ -136,7 +212,9 @@ def build_timeline(ep: dict):
         beat = Beat(spec, lines, t, max(spec.get("dur", 0.0), speech if lines else spec.get("dur", 1.0)))
         beats.append(beat)
         t += beat.dur
-    choice = ep["choice"]
+    choice = ep.get("choice")
+    if not choice:
+        return beats
     say = sound.narrator(choice["say"])
     beats.append(Beat({"shot": "__choice__"}, [Line(choice["say"], "", False, say, 0.5)], t,
                       max(7.5, 0.5 + len(say) / sound.SR + 1.6)))
@@ -171,23 +249,41 @@ def subtitle_chunks(line: Line):
 # ---------------------------------------------------------------- sound
 
 def build_audio(ep, beats, total):
-    events, beds, duck = [], [], []
+    """Voice on top, sound effects where they happen (with stereo pan), and a score that follows the beats'
+    "music" labels (drone -> pulse60 -> pulse90 -> riser -> silence -> outro)."""
+    voice, sfx, silence = [], [], []
+    n = int(total * sound.SR)
+    score = np.zeros(n + sound.SR)
+    groups, label = [], "drone"
     for b in beats:
         for line in b.lines:
-            events.append((b.start + line.start, line.audio, 1.0 if not line.whisper else 1.15))
-        for name, at, *gain in b.spec.get("sfx", []):
-            events.append((b.start + at, sound.SFX[name](), gain[0] if gain else 1.0))
+            pan = b.spec.get("pan", 0.0) if line.whisper else 0.0
+            voice.append((b.start + line.start, line.audio, 1.15 if line.whisper else 1.0, pan))
+        for name, at, *rest in b.spec.get("sfx", []):
+            sfx.append((b.start + at, sound.SFX[name](), rest[0] if rest else 1.0, rest[1] if len(rest) > 1 else 0.0))
         if b.spec.get("silence"):
-            duck.append((b.start, b.start + b.dur))
+            silence.append((b.start, b.start + b.dur))
         if b.spec.get("scare"):
-            events.append((b.start, sound.stinger(), 1.4))
+            sfx += [(b.start, sound.stinger(), 1.4, 0.0), (b.start, sound.impact(), 1.2, 0.0),
+                    (b.start + 0.4, sound.ring(), 1.0, 0.0)]
         if b.spec.get("heart"):
-            beds.append((b.start, b.start + b.dur + 0.1, "heart", b.spec["heart"]))
-    end_scare = next((b.start for b in beats if b.spec.get("scare")), total)
-    beds += [(0, total, "room", 1.0), (0, end_scare, "drone", 1.0)]
-    choice = beats[-1]
-    beds.append((choice.start, total, "drone", 0.6))
-    return sound.mix(events, total, beds=beds, duck=duck)
+            x = sound.heartbeat(b.dur + 0.05, b.spec["heart"])
+            i = int(b.start * sound.SR)
+            score[i:i + len(x)] += x[:len(score) - i]
+        label = "outro" if b.spec["shot"] == "__choice__" else b.spec.get("music", label)
+        if groups and groups[-1][0] == label:
+            groups[-1][2] = b.start + b.dur
+        else:
+            groups.append([label, b.start, b.start + b.dur])
+    fade = int(0.25 * sound.SR)
+    for label, a, e in groups:
+        x = sound.music(label, e - a + 0.25, a)
+        x[:fade] *= np.linspace(0, 1, fade)
+        x[-fade:] *= np.linspace(1, 0, fade)
+        i = int(a * sound.SR)
+        score[i:i + len(x)] += x[:len(score) - i]
+    score[:n] += sound.room_tone(total)[:n]
+    return sound.mix(total, voice, sfx, score[:n], silence)
 
 
 # ---------------------------------------------------------------- picture
@@ -201,7 +297,7 @@ class Shots:
     def _vignette():
         y, x = np.mgrid[0:H, 0:W]
         r = np.sqrt(((x - W / 2) / (W / 2)) ** 2 + ((y - H / 2) / (H / 2)) ** 2)
-        return np.clip(1.15 - 0.45 * r ** 2, 0.35, 1.0)[..., None].astype(np.float32)
+        return np.clip(1.08 - 0.18 * r ** 2, 0.8, 1.0)[..., None].astype(np.float32)
 
     def frame(self, name, index=0):
         key = (name, index)
@@ -209,7 +305,7 @@ class Shots:
             if len(self.cache) > 120:
                 self.cache.clear()
             spec = self.ep["shots"][name]
-            if spec.get("cam") is None:
+            if spec.get("cam") is None and spec.get("camera") is None and not spec.get("anim"):
                 img = np.zeros((H, W, 3), np.float32)
             else:
                 path = self.files[name][min(index, len(self.files[name]) - 1)]
@@ -226,24 +322,10 @@ def grade(img, kind, gain):
             img = np.repeat(gray[..., None], 3, axis=2) * np.array([0.92, 1.0, 0.95], np.float32) * 0.9
         else:
             img = img * 0.35 + gray[..., None] * 0.65
-        img = np.clip((img * gain - 0.03) * 1.25, 0, 1) ** 0.85
-        return barrel(img)
+        return np.clip((img * gain - 0.03) * 1.25, 0, 1) ** 0.85
     img = img * gain
     img = img + np.array([0.008, 0.012, 0.022], np.float32) * (1 - img)  # cold, slightly lifted shadows
     return np.clip(img, 0, 1)
-
-
-def barrel(img, k=0.10):
-    from scipy.ndimage import map_coordinates
-    y, x = np.mgrid[0:H, 0:W].astype(np.float32)
-    nx, ny = (x - W / 2) / (W / 2), (y - H / 2) / (H / 2)
-    r2 = nx * nx * (W / H) ** 2 + ny * ny
-    f = 1 / (1 + k * r2)
-    sx, sy = nx * f * (W / 2) * 1.04 + W / 2, ny * f * (H / 2) * 1.04 + H / 2
-    out = np.empty_like(img)
-    for c in range(3):
-        out[..., c] = map_coordinates(img[..., c], [sy, sx], order=1, mode="nearest")
-    return out
 
 
 def camera(img, t, dur, move, rng_phase, handheld=True):
@@ -284,8 +366,8 @@ class Composer:
         self.grain = [np.asarray(Image.fromarray(((g * 0.15 + 0.5).clip(0, 1) * 255).astype(np.uint8)).resize((W, H)),
                                  np.float32)[..., None] / 255 - 0.5 for g in grain]
         self.clock0 = sum(int(v) * m for v, m in zip(ep["clock"].split(":"), (3600, 60, 1)))
-        self.subs = [(b.start + s0, b.start + s1, text, line.whisper) for b in beats[:-1] for line in b.lines
-                     for s0, s1, text in subtitle_chunks(line)]
+        self.subs = [(b.start + s0, b.start + s1, text, line.whisper) for b in beats for line in b.lines
+                     if b.spec["shot"] != "__choice__" for s0, s1, text in subtitle_chunks(line)]
         self._choice_bg = None
 
     def choice_bg(self):
@@ -300,6 +382,9 @@ class Composer:
         t = i / FPS
         b = next(x for x in reversed(self.beats) if x.start <= t + 1e-9)
         lt = t - b.start
+        if b.spec.get("card"):
+            alpha = min(1.0, lt / 0.15, max(0.0, (b.dur - lt) / 0.15))
+            return finish(ui.card(b.spec["card"], alpha), self.grain[i % 6], 0.03)
         if b.spec["shot"] == "__choice__":
             c = self.ep["choice"]
             return finish(ui.choice_screen(self.choice_bg(), c["A"], c["B"], c["footer"], lt), self.grain[i % 6], 0.02)
@@ -334,7 +419,8 @@ class Composer:
         if spec.get("fade_out") and b.dur - lt < spec["fade_out"]:
             bright *= max(0.0, (b.dur - lt) / spec["fade_out"])
         cctv_shot = sspec.get("grade") in ("cctv", "ir")
-        move = "punch" if spec.get("scare") else spec.get("move", "static" if cctv_shot else "push")
+        moving = cctv_shot or bool(sspec.get("anim"))
+        move = "punch" if spec.get("scare") else spec.get("move", "static" if moving else "push")
         im = camera(img * bright, lt, b.dur, move, (sum(map(ord, name)) % 100) / 10, handheld=not cctv_shot)
         if spec.get("scare") and lt < 2 / FPS:
             im = Image.new("RGB", (W, H), (255, 255, 255))
@@ -388,7 +474,8 @@ def make(path: Path, preview: bool, renders_only: bool, stills=None) -> Path | N
     sound.write_wav(wav, audio)
     out = OUT / f"{stem}.mp4"
     cmd = ["ffmpeg", "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}",
-           "-r", str(FPS), "-i", "-", "-i", str(wav), "-af", "loudnorm=I=-14:TP=-1.5:LRA=11",
+           "-r", str(FPS), "-i", "-", "-i", str(wav), "-af", "loudnorm=I=-14:TP=-1.5:LRA=11", "-vf", "setsar=1",
+           "-aspect", "9:16",
            "-c:v", "libx264", "-preset", "medium", "-crf", "22", "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "160k",
            "-ar", "48000", "-t", f"{total:.3f}", "-movflags", "+faststart", str(out)]
     shots = Shots(ep, files)

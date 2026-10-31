@@ -1,0 +1,783 @@
+{
+ "id": "test",
+ "part": 1,
+ "battery": 23,
+ "clock": "03:12:04",
+ "cover_at": 3.0,
+ "choice": null,
+ "caption": "style test",
+ "hashtags": [],
+ "screens": {
+  "notif_bedroom": {
+   "time": "3:12",
+   "battery": 23,
+   "cards": [
+    {
+     "app": "HOMECAM",
+     "when": "now",
+     "title": "Person detected",
+     "body": "Bedroom"
+    }
+   ]
+  }
+ },
+ "shots": {
+  "cold": {
+   "camera": {
+    "loc": [
+     1.45,
+     2.8,
+     1.45
+    ],
+    "target": [
+     1.1,
+     1.2,
+     1.5
+    ],
+    "lens": 26
+   },
+   "state": {
+    "stick": {
+     "loc": [
+      1.02,
+      1.7,
+      0.68
+     ],
+     "yaw": 90,
+     "torso": [
+      8,
+      0
+     ],
+     "head": [
+      -80,
+      5
+     ],
+     "leg_l": [
+      90,
+      4,
+      0
+     ],
+     "leg_r": [
+      90,
+      4,
+      0
+     ],
+     "arm_l": [
+      20,
+      15,
+      30
+     ],
+     "arm_r": [
+      55,
+      10,
+      85
+     ],
+     "face": "terrified"
+    },
+    "visitor": {
+     "loc": [
+      1.14,
+      0.95,
+      0
+     ],
+     "rot": 180,
+     "lean": 26
+    },
+    "glow": 3,
+    "screen": "notif_bedroom",
+    "phone": "hand"
+   }
+  },
+  "wide": {
+   "state": {
+    "screen": "notif_bedroom",
+    "visitor": {
+     "loc": [
+      1.5,
+      0.22,
+      0
+     ],
+     "rot": 180,
+     "lean": 3
+    }
+   },
+   "anim": {
+    "seconds": 3.2,
+    "keys": [
+     {
+      "at": 0.0,
+      "camera": {
+       "loc": [
+        2.25,
+        3.15,
+        1.6
+       ],
+       "target": [
+        0.95,
+        1.2,
+        0.8
+       ],
+       "lens": 18
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         1.02,
+         1.7,
+         0.68
+        ],
+        "yaw": 90,
+        "torso": [
+         -90,
+         0
+        ],
+        "head": [
+         0,
+         0
+        ],
+        "leg_l": [
+         90,
+         4,
+         0
+        ],
+        "leg_r": [
+         90,
+         4,
+         0
+        ],
+        "arm_l": [
+         0,
+         14,
+         5
+        ],
+        "arm_r": [
+         0,
+         14,
+         5
+        ],
+        "face": "smile"
+       }
+      }
+     },
+     {
+      "at": 0.35,
+      "camera": {
+       "loc": [
+        2.145,
+        3.08,
+        1.5475
+       ],
+       "target": [
+        0.95,
+        1.2,
+        0.8350000000000001
+       ],
+       "lens": 18
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         1.02,
+         1.7,
+         0.68
+        ],
+        "yaw": 90,
+        "torso": [
+         -90,
+         0
+        ],
+        "head": [
+         0,
+         0
+        ],
+        "leg_l": [
+         90,
+         4,
+         0
+        ],
+        "leg_r": [
+         90,
+         4,
+         0
+        ],
+        "arm_l": [
+         0,
+         14,
+         5
+        ],
+        "arm_r": [
+         0,
+         14,
+         5
+        ],
+        "face": "smile"
+       }
+      }
+     },
+     {
+      "at": 0.75,
+      "camera": {
+       "loc": [
+        2.025,
+        3.0,
+        1.4875
+       ],
+       "target": [
+        0.95,
+        1.2,
+        0.875
+       ],
+       "lens": 18
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         1.02,
+         1.7,
+         0.68
+        ],
+        "yaw": 90,
+        "torso": [
+         -5,
+         0
+        ],
+        "head": [
+         -95,
+         12
+        ],
+        "leg_l": [
+         90,
+         4,
+         0
+        ],
+        "leg_r": [
+         90,
+         4,
+         0
+        ],
+        "arm_l": [
+         0,
+         14,
+         5
+        ],
+        "arm_r": [
+         0,
+         14,
+         5
+        ],
+        "face": "flat"
+       }
+      }
+     },
+     {
+      "at": 1.0,
+      "camera": {
+       "loc": [
+        1.95,
+        2.95,
+        1.45
+       ],
+       "target": [
+        0.95,
+        1.2,
+        0.9
+       ],
+       "lens": 18
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         1.02,
+         1.7,
+         0.68
+        ],
+        "yaw": 90,
+        "torso": [
+         -5,
+         0
+        ],
+        "head": [
+         -100,
+         14
+        ],
+        "leg_l": [
+         90,
+         4,
+         0
+        ],
+        "leg_r": [
+         90,
+         4,
+         0
+        ],
+        "arm_l": [
+         0,
+         14,
+         5
+        ],
+        "arm_r": [
+         0,
+         14,
+         5
+        ],
+        "face": "flat"
+       }
+      }
+     }
+    ]
+   }
+  },
+  "ots": {
+   "state": {
+    "screen": "notif_bedroom",
+    "phone": "hand"
+   },
+   "dof": 0.42,
+   "anim": {
+    "seconds": 2.2,
+    "keys": [
+     {
+      "at": 0.0,
+      "camera": {
+       "loc": [
+        1.234,
+        1.384,
+        1.474
+       ],
+       "target": [
+        1.507,
+        1.477,
+        1.241
+       ],
+       "lens": 40
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         1.02,
+         1.7,
+         0.68
+        ],
+        "yaw": 90,
+        "torso": [
+         8,
+         0
+        ],
+        "head": [
+         0,
+         32
+        ],
+        "leg_l": [
+         90,
+         4,
+         0
+        ],
+        "leg_r": [
+         90,
+         4,
+         0
+        ],
+        "arm_l": [
+         20,
+         15,
+         30
+        ],
+        "arm_r": [
+         55,
+         10,
+         85
+        ],
+        "face": "flat"
+       }
+      }
+     },
+     {
+      "at": 1.0,
+      "camera": {
+       "loc": [
+        1.275,
+        1.398,
+        1.439
+       ],
+       "target": [
+        1.507,
+        1.477,
+        1.241
+       ],
+       "lens": 40
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         1.02,
+         1.7,
+         0.68
+        ],
+        "yaw": 90,
+        "torso": [
+         8,
+         0
+        ],
+        "head": [
+         0,
+         32
+        ],
+        "leg_l": [
+         90,
+         4,
+         0
+        ],
+        "leg_r": [
+         90,
+         4,
+         0
+        ],
+        "arm_l": [
+         20,
+         15,
+         30
+        ],
+        "arm_r": [
+         55,
+         10,
+         85
+        ],
+        "face": "flat"
+       }
+      }
+     }
+    ]
+   }
+  },
+  "turn": {
+   "state": {
+    "screen": "notif_bedroom",
+    "phone": "hand"
+   },
+   "anim": {
+    "seconds": 2.4,
+    "keys": [
+     {
+      "at": 0.0,
+      "camera": {
+       "loc": [
+        1.75,
+        2.75,
+        1.45
+       ],
+       "target": [
+        1.0,
+        1.2,
+        1.1
+       ],
+       "lens": 22
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         1.02,
+         1.7,
+         0.68
+        ],
+        "yaw": 90,
+        "torso": [
+         8,
+         0
+        ],
+        "head": [
+         0,
+         32
+        ],
+        "leg_l": [
+         90,
+         4,
+         0
+        ],
+        "leg_r": [
+         90,
+         4,
+         0
+        ],
+        "arm_l": [
+         20,
+         15,
+         30
+        ],
+        "arm_r": [
+         55,
+         10,
+         85
+        ],
+        "face": "flat"
+       }
+      }
+     },
+     {
+      "at": 0.45,
+      "camera": {
+       "loc": [
+        1.6825,
+        2.6825,
+        1.4364999999999999
+       ],
+       "target": [
+        1.0,
+        1.2,
+        1.1
+       ],
+       "lens": 22
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         1.02,
+         1.7,
+         0.68
+        ],
+        "yaw": 90,
+        "torso": [
+         8,
+         0
+        ],
+        "head": [
+         0,
+         32
+        ],
+        "leg_l": [
+         90,
+         4,
+         0
+        ],
+        "leg_r": [
+         90,
+         4,
+         0
+        ],
+        "arm_l": [
+         20,
+         15,
+         30
+        ],
+        "arm_r": [
+         55,
+         10,
+         85
+        ],
+        "face": "flat"
+       }
+      }
+     },
+     {
+      "at": 1.0,
+      "camera": {
+       "loc": [
+        1.6,
+        2.6,
+        1.42
+       ],
+       "target": [
+        1.0,
+        1.2,
+        1.1
+       ],
+       "lens": 22
+      },
+      "state": {
+       "stick": {
+        "loc": [
+         1.02,
+         1.7,
+         0.68
+        ],
+        "yaw": 90,
+        "torso": [
+         8,
+         0
+        ],
+        "head": [
+         -80,
+         5
+        ],
+        "leg_l": [
+         90,
+         4,
+         0
+        ],
+        "leg_r": [
+         90,
+         4,
+         0
+        ],
+        "arm_l": [
+         20,
+         15,
+         30
+        ],
+        "arm_r": [
+         55,
+         10,
+         85
+        ],
+        "face": "terrified"
+       }
+      }
+     }
+    ]
+   }
+  },
+  "behind": {
+   "camera": {
+    "loc": [
+     1.6,
+     2.6,
+     1.42
+    ],
+    "target": [
+     1.0,
+     1.2,
+     1.1
+    ],
+    "lens": 22
+   },
+   "state": {
+    "stick": {
+     "loc": [
+      1.02,
+      1.7,
+      0.68
+     ],
+     "yaw": 90,
+     "torso": [
+      8,
+      0
+     ],
+     "head": [
+      -80,
+      5
+     ],
+     "leg_l": [
+      90,
+      4,
+      0
+     ],
+     "leg_r": [
+      90,
+      4,
+      0
+     ],
+     "arm_l": [
+      20,
+      15,
+      30
+     ],
+     "arm_r": [
+      55,
+      10,
+      85
+     ],
+     "face": "terrified"
+    },
+    "visitor": {
+     "loc": [
+      1.18,
+      0.95,
+      0
+     ],
+     "rot": 180,
+     "lean": 12
+    },
+    "screen": "notif_bedroom",
+    "phone": "hand"
+   }
+  }
+ },
+ "beats": [
+  {
+   "shot": "cold",
+   "dur": 0.8,
+   "move": "punch",
+   "sfx": [
+    [
+     "impact",
+     0.0,
+     0.8
+    ]
+   ],
+   "music": "silence"
+  },
+  {
+   "shot": "black",
+   "card": "3 MINUTES EARLIER",
+   "dur": 1.1,
+   "sfx": [
+    [
+     "whoosh",
+     0.1
+    ]
+   ],
+   "music": "drone"
+  },
+  {
+   "shot": "wide",
+   "pre": 0.3,
+   "sfx": [
+    [
+     "buzz",
+     0.4,
+     1.0,
+     -0.6
+    ],
+    [
+     "bed",
+     1.3,
+     0.8
+    ],
+    [
+     "cloth",
+     1.4
+    ]
+   ],
+   "say": [
+    [
+     "Three twelve A M.",
+     "3:12 AM"
+    ]
+   ],
+   "dur": 3.0
+  },
+  {
+   "shot": "ots",
+   "music": "pulse60",
+   "say": [
+    "Person detected. *Bedroom.*"
+   ],
+   "dur": 2.2
+  },
+  {
+   "shot": "turn",
+   "music": "riser",
+   "sfx": [
+    [
+     "swell",
+     1.1,
+     0.9
+    ]
+   ],
+   "say": [
+    "You live *alone.*"
+   ],
+   "dur": 2.4,
+   "heart": 110
+  },
+  {
+   "shot": "behind",
+   "dur": 0.9,
+   "scare": true,
+   "music": "silence"
+  },
+  {
+   "shot": "black",
+   "dur": 0.6
+  }
+ ]
+}

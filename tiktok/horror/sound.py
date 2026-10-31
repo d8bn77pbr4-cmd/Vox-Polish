@@ -220,33 +220,148 @@ def stinger(d=1.3):
     return (filt(x, "highpass", 200) * np.exp(-t * 2.2) + sub) * env_adsr(len(t), 0.003, 0.4) * 0.9
 
 
-SFX = {"buzz": buzz, "chime": chime, "creak": creak, "breath": breath, "click": click, "squeak": handle_squeak,
+# ---------------------------------------------------------------- music (follows the tension curve)
+
+def pulse(d, bpm):
+    """Low heart-like bass pulse."""
+    out = np.zeros(int(d * SR))
+    for beat in np.arange(0, d, 60 / bpm):
+        t = secs(0.5)
+        x = np.sin(2 * np.pi * (55 - 18 * t) * t) * np.exp(-t * 7) + filt(noise(0.5), "lowpass", 300) * np.exp(-t * 30) * 0.3
+        i = int(beat * SR)
+        out[i:i + len(x)] += x[:len(out) - i]
+    return out * 0.35
+
+
+def tick(d, offset=0.0):
+    """Clock ticking on every full second (tick / tock)."""
+    out = np.zeros(int(d * SR))
+    for k, sec in enumerate(np.arange(1 - offset % 1, d, 1.0)):
+        t = secs(0.05)
+        f = 2900 if k % 2 == 0 else 2400
+        x = np.sin(2 * np.pi * f * t) * np.exp(-t * 160) + noise(0.05) * np.exp(-t * 300) * 0.4
+        i = int(sec * SR)
+        out[i:i + len(x)] += x[:len(out) - i]
+    return out * 0.11
+
+
+def strings(d, rise=0.0):
+    """Dissonant, slowly swelling string cluster; rise = semitones it slides up over its length."""
+    t = secs(d)
+    bend = 2 ** (rise * (t / d) / 12)
+    x = sum(signal.sawtooth(2 * np.pi * np.cumsum(f * bend * (1 + 0.003 * np.sin(2 * np.pi * (0.2 + i * 0.07) * t))) / SR)
+            for i, f in enumerate((110.0, 116.5, 164.8, 174.6, 233.1)))
+    x = filt(x, "lowpass", 1400) * (0.55 + 0.45 * np.sin(2 * np.pi * 5.5 * t) ** 2)
+    return x * 0.035 * env_adsr(len(t), min(2.0, d / 2), 0.3)
+
+
+def shepard(d, octaves_per_s=0.22):
+    """A tone that seems to rise forever."""
+    t = secs(d)
+    out = np.zeros(len(t))
+    for k in range(7):
+        pos = (k + octaves_per_s * t) % 7
+        f = 40 * 2 ** pos
+        amp = np.exp(-((pos - 3.5) ** 2) / 2.2)
+        out += np.sin(2 * np.pi * np.cumsum(f) / SR) * amp
+    return out * 0.05 * env_adsr(len(t), 0.8, 0.05)
+
+
+def impact():
+    t = secs(2.2)
+    x = np.sin(2 * np.pi * (48 - 22 * t) * t) * np.exp(-t * 2.2) + filt(noise(2.2), "lowpass", 900) * np.exp(-t * 9) * 0.7
+    return reverb(x, 1.6, 0.3) * 0.9
+
+
+def reverse_swell(d=1.4):
+    t = secs(d)
+    x = filt(noise(d), "bandpass", (200, 6000)) * np.exp(-(d - t) * 4)
+    tone = sum(np.sin(2 * np.pi * f * t) for f in (220, 233, 330)) * np.exp(-(d - t) * 3) * 0.2
+    return (x * 0.35 + tone * 0.25) * env_adsr(len(t), 0.05, 0.01)
+
+
+def ring(d=3.0):
+    t = secs(d)
+    return np.sin(2 * np.pi * 3800 * t) * np.exp(-t * 1.1) * 0.05
+
+
+def whoosh(d=0.7):
+    t = secs(d)
+    x = noise(d)
+    lo = filt(x, "bandpass", (300, 1200)) * np.sin(np.pi * t / d) ** 2
+    hi = filt(x, "bandpass", (1500, 6000)) * np.sin(np.pi * np.clip(t / d * 1.2, 0, 1)) ** 4
+    return (lo + hi * 0.6) * 0.4
+
+
+def footstep():
+    t = secs(0.25)
+    return (filt(noise(0.25), "lowpass", 500) * np.exp(-t * 40) + np.sin(2 * np.pi * 70 * t) * np.exp(-t * 30)) * 0.5
+
+
+def cloth(d=0.6):
+    t = secs(d)
+    return filt(noise(d), "bandpass", (800, 5000)) * np.sin(np.pi * t / d) ** 2 * 0.12
+
+
+def music(label, d, t0=0.0):
+    """One stretch of score; labels: drone, pulse60, pulse90, riser, silence, outro."""
+    if label == "silence":
+        return np.zeros(int(d * SR))
+    if label == "drone":
+        return drone(d, 0.9)
+    if label == "outro":
+        return drone(d, 0.5) + strings(d) * 0.5
+    if label == "pulse60":
+        return add(drone(d, 0.9), pulse(d, 60), tick(d, t0))
+    if label == "pulse90":
+        return add(drone(d, 1.0), pulse(d, 90), tick(d, t0), strings(d, rise=1.0))
+    if label == "riser":
+        return add(drone(d, 1.1), pulse(d, 120) * 1.2, shepard(d), strings(d, rise=3.0) * 1.4, tick(d, t0) * 0.8)
+    raise ValueError(label)
+
+
+SFX = {"buzz": buzz, "impact": impact, "swell": reverse_swell, "ring": ring, "whoosh": whoosh,
+       "step": footstep, "cloth": cloth, "bed": lambda: creak(0.7, 250) * 0.6, "chime": chime, "creak": creak, "breath": breath, "click": click, "squeak": handle_squeak,
        "thud": thud, "slam": lambda: add(thud(1.6), creak(0.4, 300) * 0.5), "light_off": light_off, "riser": riser,
        "stinger": stinger, "creak_low": lambda: creak(1.4, 300)}
 
 
 # ---------------------------------------------------------------- mixing
 
-def mix(events, total, *, beds=(), duck=()):
-    """events: (start s, samples, gain). beds: (start, end, kind, level). duck: (start, end) of full silence."""
-    out = np.zeros(int(total * SR) + SR)
-    for start, end, kind, level in beds:
-        d = end - start
-        x = {"drone": lambda: drone(d, level), "room": lambda: room_tone(d) * level,
-             "heart": lambda: heartbeat(d, level)}[kind]()
+def place(out, start, x, gain=1.0, pan=0.0):
+    """Add mono x to the stereo buffer at start seconds, panned -1 (left) .. 1 (right)."""
+    i = int(start * SR)
+    if i >= len(out):
+        return
+    x = np.asarray(x)[:len(out) - i] * gain
+    out[i:i + len(x), 0] += x * np.sqrt((1 - pan) / 2) * 1.41
+    out[i:i + len(x), 1] += x * np.sqrt((1 + pan) / 2) * 1.41
+
+
+def mix(total, voice, sfx, score, silence=()):
+    """voice/sfx: (start, samples, gain, pan); score: mono music bed. The score ducks under the voice and drops
+    out completely in the silence ranges."""
+    n = int(total * SR)
+    out = np.zeros((n, 2))
+    talk = np.zeros(n)
+    for start, x, gain, pan in voice:
+        place(out, start, x, gain, pan)
         i = int(start * SR)
-        out[i:i + len(x)] += x[:len(out) - i]
-    gate = np.ones(len(out))
-    for a, b in duck:   # everything but later events drops out (the silence before a scare)
-        i, j = int(a * SR), int(b * SR)
-        ramp = min(int(0.15 * SR), j - i)
+        talk[i:i + len(x)] += np.abs(np.asarray(x)[:max(0, n - i)])
+    duck = 1 - 0.55 * np.clip(filt(talk, "lowpass", 4) * 6, 0, 1)
+    gate = np.ones(n)
+    for a, b in silence:
+        i, j = int(a * SR), min(n, int(b * SR))
+        ramp = min(int(0.12 * SR), j - i)
         gate[i:i + ramp] = np.minimum(gate[i:i + ramp], np.linspace(1, 0, ramp))
         gate[i + ramp:j] = 0
-    out *= gate
-    for start, x, gain in events:
-        i = int(start * SR)
-        out[i:i + len(x)] += np.asarray(x)[:len(out) - i] * gain
-    out = out[:int(total * SR)]
+    bed = np.zeros(n)
+    bed[:min(n, len(score))] = score[:n]
+    bed *= duck * gate
+    out[:, 0] += bed
+    out[:, 1] += np.concatenate([np.zeros(int(0.011 * SR)), bed])[:n]     # a little width
+    for start, x, gain, pan in sfx:
+        place(out, start, x, gain, pan)
     out = np.tanh(out * 1.1) / np.tanh(1.1)
     return out / (np.max(np.abs(out)) + 1e-9) * 0.89
 
@@ -255,7 +370,7 @@ def write_wav(path, x):
     import wave
     pcm = (np.clip(x, -1, 1) * 32767).astype("<i2")
     with wave.open(str(path), "wb") as w:
-        w.setnchannels(1)
+        w.setnchannels(x.shape[1] if x.ndim == 2 else 1)
         w.setsampwidth(2)
         w.setframerate(SR)
         w.writeframes(pcm.tobytes())

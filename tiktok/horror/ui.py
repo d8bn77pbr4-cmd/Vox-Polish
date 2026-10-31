@@ -164,9 +164,15 @@ def cctv(layer, label: str, stamp: str, live: bool, blink: bool):
         d.polygon([(SAFE_L, yb + 6), (SAFE_L, yb + 40), (SAFE_L + 28, yb + 23)], fill=(235, 235, 235))
         d.text((SAFE_L + 44, yb), "CLIP", font=f, fill=(235, 235, 235), stroke_width=2, stroke_fill=(0, 0, 0))
     d.text((SAFE_L + 170, yb), stamp, font=f, fill=(235, 235, 235), stroke_width=2, stroke_fill=(0, 0, 0))
-    # corner brackets
-    for cx, cy, sx, sy in ((40, 220, 1, 1), (W - 40, 220, -1, 1), (40, H - 420, 1, -1), (W - 40, H - 420, -1, -1)):
-        d.line([(cx, cy + 60 * sy), (cx, cy), (cx + 60 * sx, cy)], fill=(230, 230, 230), width=5)
+
+
+def card(text: str, alpha: float) -> Image.Image:
+    """Full-frame text on black, e.g. "3 MINUTES EARLIER"."""
+    im = Image.new("RGB", (W, H))
+    d = ImageDraw.Draw(im)
+    a = int(255 * alpha)
+    d.text((SAFE_L + (W - SAFE_L - SAFE_R) / 2, 900), text, font=font("anton", 96), fill=(a, a, a), anchor="mm")
+    return im
 
 
 def title_card(layer, top: str, sub: str, alpha: float):

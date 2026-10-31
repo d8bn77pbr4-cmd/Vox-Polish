@@ -13,7 +13,7 @@ import os
 import sys
 
 import bpy
-from mathutils import Quaternion, Vector
+from mathutils import Matrix, Quaternion, Vector
 
 DEFAULT = {
     "hall_light": False,   # hallway ceiling lamp (also the light under the bedroom door)
@@ -29,6 +29,8 @@ DEFAULT = {
     "phone": "nightstand", # nightstand | door | wardrobe
     "glow": 0.0,           # cold phone light near the camera (lights faces from below)
     "exposure": 0.0,
+    "stick": None,         # your stickman pose (see pose_stickman), None = not in the shot
+    "tilt": 38.0,          # how far the visitor's head leans to the side
 }
 
 
@@ -185,9 +187,9 @@ def visitor(mats):
         "neck": ((0, -0.01, 1.62), (0.05, 0.05)),
         "neck_top": ((0, -0.03, 1.72), (0.042, 0.042)),
         "l_shoulder": ((-0.2, 0, 1.55), (0.055, 0.055)),
-        "l_elbow": ((-0.25, 0.03, 1.13), (0.038, 0.038)),
-        "l_wrist": ((-0.27, -0.01, 0.72), (0.028, 0.022)),
-        "l_finger": ((-0.28, -0.05, 0.50), (0.014, 0.01)),
+        "l_elbow": ((-0.25, 0.09, 1.10), (0.036, 0.036)),
+        "l_wrist": ((-0.27, -0.02, 0.56), (0.026, 0.02)),
+        "l_finger": ((-0.28, -0.07, 0.30), (0.012, 0.009)),
         "l_hip": ((-0.1, 0, 0.94), (0.075, 0.075)),
         "l_knee": ((-0.11, 0.0, 0.5), (0.055, 0.055)),
         "l_ankle": ((-0.11, 0.02, 0.08), (0.038, 0.038)),
@@ -197,12 +199,13 @@ def visitor(mats):
     bones += limbs(("chest", "shoulder", "elbow", "wrist", "finger"), ("pelvis", "hip", "knee", "ankle", "toe"))
     body = skin_figure("vis_body", joints, bones, mats["vis_body"])
     attach(body, root)
-    head = sphere("vis_head", (0, -0.03, 1.86), 0.11, (0.8, 0.95, 1.3), mats["vis_skin"], parent=root)
+    neck = empty("vis_neck", (0, -0.03, 1.72), parent=root)      # the head tilts at an impossible angle
+    head = sphere("vis_head", (0, -0.03, 1.86), 0.11, (0.8, 0.95, 1.3), mats["vis_skin"], parent=neck)
     parts = [body, head]
     for x, z, r in ((-0.038, 1.89, 0.021), (0.04, 1.885, 0.02)):        # sunken eyes, slightly uneven
-        parts.append(sphere("vis_eye", (x, -0.118, z), r, (1.35, 1, 0.8), mats["void"], parent=root, segments=16))
-    parts.append(sphere("vis_mouth", (0.003, -0.122, 1.755), 0.03, (0.55, 0.45, 1.45), mats["void"], parent=root,
-                        segments=16))
+        parts.append(sphere("vis_eye", (x, -0.118, z), r, (1.35, 1, 0.8), mats["void"], parent=neck, segments=16))
+    parts.append(sphere("vis_mouth", (0.003, -0.122, 1.74), 0.03, (0.5, 0.45, 2.2), mats["void"], parent=neck,
+                        segments=16))                                    # a mouth that is too long
     return root, parts
 
 
@@ -242,6 +245,139 @@ def person(mats):
     return root
 
 
+# ---------------------------------------------------------------- you: a white stickman
+
+BODY = {"torso": 0.55, "neck": 0.07, "upper": 0.3, "fore": 0.27, "thigh": 0.43, "shin": 0.42, "shoulder": 0.19,
+        "hip": 0.09, "head": (0.105, 0.11, 0.13)}
+SEGMENTS = {  # name: (radius x, radius y) of the ellipsoid that fills the bone
+    "neck": (0.045, 0.045), "l_upper": (0.05, 0.05), "r_upper": (0.05, 0.05), "l_fore": (0.042, 0.042),
+    "r_fore": (0.042, 0.042), "l_thigh": (0.075, 0.075), "r_thigh": (0.075, 0.075), "l_shin": (0.055, 0.055),
+    "r_shin": (0.055, 0.055), "l_hand": (0.045, 0.022), "r_hand": (0.045, 0.022),
+}
+TRUNK = {"chest": ((0, 0, 0.38), (0.155, 0.095, 0.2)), "belly": ((0, 0, 0.19), (0.12, 0.08, 0.12)),
+         "pelvis": ((0, 0, 0.02), (0.155, 0.1, 0.1))}
+JOINTS = ("l_shoulder", "r_shoulder", "l_elbow", "r_elbow", "l_knee", "r_knee")
+
+
+def stickman(mats):
+    """You: a white art-class mannequin with a cartoon face (eyes with pupils, brows, mouth)."""
+    parts = {}
+    for name in (*SEGMENTS, *TRUNK, *JOINTS, "l_foot", "r_foot"):
+        parts[name] = sphere("you_" + name, (0, 0, 0), 1.0, (1, 1, 1), mats["chalk"])
+    head = empty("you_head", (0, 0, 0))
+    rx, ry, rz = BODY["head"]
+    ball = sphere("you_skull", (0, 0, 0), 1.0, (rx, ry, rz), mats["chalk"], parent=head)
+    surf = lambda x, z: -ry * math.sqrt(max(0.0, 1 - (x / rx) ** 2 - (z / rz) ** 2))
+    eyes, pupils, brows = [], [], []
+    for x in (-0.038, 0.038):
+        rim = sphere("you_eye_rim", (x, surf(x, 0.02) + 0.001, 0.02), 0.031, (1, 0.3, 1.25), mats["ink"], parent=head,
+                     segments=24)
+        e = sphere("you_eye", (x, surf(x, 0.02) - 0.002, 0.02), 0.026, (1, 0.3, 1.25), mats["eye"], parent=head,
+                   segments=24)
+        eyes += [e, rim]
+        pupils.append(sphere("you_pupil", (x * 0.92, surf(x, 0.017) - 0.012, 0.017), 0.011, (1, 0.4, 1.1), mats["ink"],
+                             parent=head, segments=16))
+        bpy.ops.mesh.primitive_cylinder_add(radius=0.0045, depth=0.036, vertices=12, rotation=(0, math.pi / 2, 0),
+                                            location=(x, surf(x, 0.07) + 0.002, 0.07))
+        b = bpy.context.object
+        b.data.materials.append(mats["ink"])
+        attach(b, head)
+        brows.append(b)
+    mouths = {}
+    for kind, pts in (("smile", [(-0.03, -0.045), (0.0, -0.058), (0.03, -0.045)]),
+                      ("flat", [(-0.025, -0.055), (-0.008, -0.05), (0.008, -0.058), (0.025, -0.053)])):
+        curve = bpy.data.curves.new("mouth_" + kind, "CURVE")
+        curve.dimensions, curve.bevel_depth = "3D", 0.0045
+        spl = curve.splines.new("BEZIER")
+        spl.bezier_points.add(len(pts) - 1)
+        for bp, (x, z) in zip(spl.bezier_points, pts):
+            bp.co = (x, surf(x, z) - 0.002, z)
+            bp.handle_left_type = bp.handle_right_type = "AUTO"
+        o = bpy.data.objects.new("you_mouth_" + kind, curve)
+        bpy.context.collection.objects.link(o)
+        curve.materials.append(mats["ink"])
+        attach(o, head)
+        mouths[kind] = o
+    mouths["terrified"] = sphere("you_mouth_o", (0, surf(0, -0.058) + 0.004, -0.058), 0.016, (0.8, 0.3, 1.1),
+                                 mats["ink"], parent=head, segments=16)
+    return {"parts": parts, "head": head, "ball": ball, "eyes": eyes, "pupils": pupils, "brows": brows, "mouths": mouths}
+
+
+def rot(axis, deg):
+    return Matrix.Rotation(math.radians(deg), 4, axis)
+
+
+def pose_stickman(S, spec):
+    """spec: loc (hips), yaw, torso [pitch, roll], head [yaw, pitch], arm_l/arm_r/leg_l/leg_r [forward, side, bend],
+    face smile|flat|terrified. Facing -y before yaw; positive pitch leans forward; l = +x side."""
+    st = S["stick"]
+    objs = [*st["parts"].values(), st["head"], *st["head"].children]
+    show(objs, spec is not None)
+    if spec is None:
+        return None
+    g = lambda k, d: spec.get(k, d)
+    B = BODY
+    H = Vector(g("loc", (0, 0, 0.95)))
+    R0 = rot("Z", g("yaw", 0))
+    tp, troll = g("torso", (0, 0))
+    RT = R0 @ rot("X", tp) @ rot("Y", troll)
+    at = lambda R, v: (R @ Vector(v).to_4d()).to_3d()
+    neck = H + at(RT, (0, 0, B["torso"]))
+    hy, hp = g("head", (0, 0))
+    RH = RT @ rot("Z", hy) @ rot("X", hp)
+    neck_top = neck + at(RH, (0, 0, B["neck"]))
+    center = neck_top + at(RH, (0, 0, B["head"][2] * 0.85))
+    J, bones = {}, {"neck": (neck, neck_top)}
+    for side, sx in (("l", 1), ("r", -1)):
+        shoulder = H + at(RT, (sx * B["shoulder"], 0, B["torso"] * 0.86))
+        fwd, abd, bend = g(f"arm_{side}", (0, 8, 10))
+        RA = RT @ rot("X", -fwd) @ rot("Y", -sx * abd)
+        elbow = shoulder + at(RA, (0, 0, -B["upper"]))
+        RF = RA @ rot("X", -bend)
+        wrist = elbow + at(RF, (0, 0, -B["fore"]))
+        hand_end = wrist + at(RF, (0, 0, -0.1))
+        J[f"{side}_shoulder"], J[f"{side}_elbow"], J[f"{side}_hand"] = shoulder, elbow, (wrist + hand_end) / 2
+        bones[f"{side}_upper"], bones[f"{side}_fore"], bones[f"{side}_hand"] = (shoulder, elbow), (elbow, wrist), \
+            (wrist, hand_end)
+        hip = H + at(R0, (sx * B["hip"], 0, -0.03))
+        fwd, abd, bend = g(f"leg_{side}", (0, 3, 0))
+        RL = R0 @ rot("X", -fwd) @ rot("Y", -sx * abd)
+        knee = hip + at(RL, (0, 0, -B["thigh"]))
+        RS = RL @ rot("X", bend)
+        ankle = knee + at(RS, (0, 0, -B["shin"]))
+        J[f"{side}_knee"], J[f"{side}_ankle"] = knee, ankle
+        bones[f"{side}_thigh"], bones[f"{side}_shin"] = (hip, knee), (knee, ankle)
+        foot = st["parts"][f"{side}_foot"]
+        foot.matrix_world = Matrix.Translation(ankle + at(RS, (0, -0.06, -0.03))) @ RS @ Matrix.Diagonal(
+            (0.045, 0.11, 0.035, 1))
+    for name, (a, b) in bones.items():
+        d = b - a
+        q = Vector((0, 0, 1)).rotation_difference(d.normalized()) if d.length > 1e-6 else Quaternion()
+        rx, ry = SEGMENTS[name]
+        st["parts"][name].matrix_world = (Matrix.Translation((a + b) / 2) @ q.to_matrix().to_4x4()
+                                          @ Matrix.Diagonal((rx, ry, max(d.length * 0.56, 1e-3), 1)))
+    for name, (pos, radii) in TRUNK.items():
+        st["parts"][name].matrix_world = Matrix.Translation(H + at(RT, pos)) @ RT @ Matrix.Diagonal((*radii, 1))
+    for name in JOINTS:
+        r = 0.058 if "shoulder" in name else (0.05 if "knee" in name else 0.043)
+        st["parts"][name].matrix_world = Matrix.Translation(J[name]) @ Matrix.Diagonal((r, r, r, 1))
+    st["head"].matrix_world = Matrix.Translation(center) @ RH
+    face = {"worried": "flat"}.get(g("face", "smile"), g("face", "smile"))
+    for kind, o in st["mouths"].items():
+        show([o], kind == face)
+    scared = face == "terrified"
+    for e in st["eyes"]:
+        e.scale = (1.25, 0.3, 1.5) if scared else (1, 0.3, 1.25)   # eye and its black rim
+    for pu in st["pupils"]:
+        pu.scale = (0.65, 0.4, 0.7) if scared else (1, 0.4, 1.1)
+    for b, sx in zip(st["brows"], (-1, 1)):   # worried brows: inner ends up
+        angle = {"smile": 0, "flat": 18, "terrified": 28}[face]
+        b.rotation_euler = (0, math.pi / 2, 0)
+        b.rotation_euler.rotate_axis("X", math.radians(-sx * angle))
+        b.location.z = 0.07 + (0.012 if scared else 0)
+    return {"r_hand": J["r_hand"], "l_hand": J["l_hand"]}, center
+
+
 # ---------------------------------------------------------------- the apartment
 
 def build():
@@ -267,7 +403,11 @@ def build():
         "void": material("void", (0.0, 0.0, 0.0), 1.0),
         "you": material("you", (0.12, 0.12, 0.13), 0.9),
         "stair": material("stair", (0.18, 0.18, 0.19), 0.8),
+        "chalk": material("chalk", (0.86, 0.86, 0.84), 0.45, emit=(1, 1, 1), strength=0.04),
+        "eye": material("eye", (0.97, 0.97, 0.97), 0.3, emit=(1, 1, 1), strength=0.45),
+        "ink": material("ink", (0.0, 0.0, 0.0), 1.0),
     }
+    M["ink"].use_backface_culling = True
     W, H = M["wall"], 2.6
     # floor and ceilings
     box("floor", -2.2, 8.0, -0.2, 4.9, -0.05, 0, M["floor"])
@@ -380,6 +520,7 @@ def build():
     vis_root, vis_parts = visitor(M)
     hand = visitor_hand(M)
     you = person(M)
+    stick = stickman(M)
     # glow near the camera, infrared light of the hallway camera
     gdata = bpy.data.lights.new("glow", "SPOT")       # your phone's light, pointing where you look
     gdata.color, gdata.spot_size, gdata.spot_blend, gdata.shadow_soft_size = (0.72, 0.84, 1.0), math.radians(85), 0.9, 0.04
@@ -418,7 +559,8 @@ def build():
         "front": front_pivot, "lamp_panel": lamp_panel, "hall_light": hall_light, "hall_fill": hall_fill,
         "glow_mat": M["glow"], "lamp_on": M["lamp_on"], "lamp_off": M["lamp_off"], "phone": phone,
         "screen_tex": tex, "phone_light": phone_light, "vis": vis_root, "vis_parts": vis_parts,
-        "hand": hand, "you": you, "glow": glow, "ir": ir, "strips": [],
+        "hand": hand, "you": you, "glow": glow, "ir": ir, "strips": [], "stick": stick,
+        "neck": bpy.data.objects["vis_neck"],
     }
 
 
@@ -481,14 +623,17 @@ def apply(S, state):
     body = bpy.data.materials["vis_body"].node_tree.nodes["Principled BSDF"].inputs["Base Color"]
     body.default_value = (0.06, 0.06, 0.06, 1) if st["ir"] else (0.012, 0.011, 0.011, 1)
     # figures
-    pose = VISITOR_POSES.get(st["visitor"])
-    show([S["vis"], *S["vis_parts"], *S["vis"].children], bool(pose))
+    v = st["visitor"]
+    pose = (v["loc"], v.get("rot", 0), v.get("lean", 0)) if isinstance(v, dict) else VISITOR_POSES.get(v)
+    show([S["vis"], *S["vis_parts"], *S["vis"].children, S["neck"]], bool(pose))
+    S["vis"].scale = (1.12, 1.12, 1.12)
+    S["neck"].rotation_euler = (0, math.radians(st["tilt"]), 0)
     if pose:
         loc, rz, lean = pose
         S["vis"].location = loc
         S["vis"].rotation_euler = (0, 0, math.radians(rz))
         S["vis"].rotation_euler.rotate_axis("X", math.radians(lean))  # lean towards the face
-    hand_pose = {"in_wardrobe": ((3.03, 0.66, 1.35), (0, 0, math.radians(180)))}.get(st["visitor"])
+    hand_pose = {"in_wardrobe": ((3.03, 0.66, 1.35), (0, 0, math.radians(180)))}.get(v if isinstance(v, str) else None)
     show([S["hand"], *S["hand"].children], bool(hand_pose))
     if hand_pose:
         S["hand"].location, S["hand"].rotation_euler = hand_pose
@@ -520,15 +665,22 @@ def place_phone(S, shot, where):
 
 def render(S, job):
     st = {**DEFAULT, **job.get("state", {})}
-    shot = job["shot"]
-    loc, target, lens = SHOTS[shot]
-    look(S["cam"], loc, target, lens, job.get("roll", 0.0))
+    shot = job.get("shot")
+    c = job.get("camera")
+    loc, target, lens = (c["loc"], c["target"], c.get("lens", 24)) if c else SHOTS[shot]
+    look(S["cam"], loc, target, lens, (c or {}).get("roll", job.get("roll", 0.0)))
     cam = S["cam"].data
     cam.dof.use_dof = bool(job.get("dof"))
     if cam.dof.use_dof:
         cam.dof.focus_distance, cam.dof.aperture_fstop = job["dof"], 1.8
     apply(S, st)
-    if st["screen"]:
+    posed = pose_stickman(S, st["stick"])
+    if st["screen"] and st["phone"] == "hand" and posed:
+        J, center = posed
+        S["phone_light"].data.energy = 0.6
+        S["phone"].location = J["r_hand"] + (center - J["r_hand"]).normalized() * 0.045 + Vector((0, 0, 0.06))
+        S["phone"].rotation_euler = (center - J["r_hand"]).to_track_quat("Z", "Y").to_euler()
+    elif st["screen"]:
         place_phone(S, shot, st["phone"])
     if st["glow"]:
         bpy.context.view_layer.update()
