@@ -34,12 +34,12 @@ reading = {"loc": [2.85, 2.75, 0.95], "yaw": 180, "torso": [6, 0], "head": [0, 3
            "arm_l": [20, 15, 30], "leg_l": [0, 3, 4], "leg_r": [0, 3, 4], "face": "worried"}
 turning = {**reading, "yaw": 0, "head": [0, 4], "arm_r": [40, 10, 70], "face": "worried"}
 facing = {**turning, "face": "terrified", "tremble": True}
-walking_in = {"loc": [3.75, 3.95, 0.95], "yaw": -90, "torso": [4, 0], "head": [0, 2], "arm_l": [-15, 8, 15],
+walking_in = {"loc": [3.7, 3.82, 0.95], "yaw": -90, "torso": [4, 0], "head": [0, 2], "arm_l": [-15, 8, 15],
               "arm_r": [18, 8, 20], "leg_l": [20, 3, 10], "leg_r": [-18, 3, 30], "face": "smile"}
 
 brace_a, brace_b = cam([1.25, 1.45, 1.55], [2.85, 3.3, 1.1], 22), cam([1.45, 1.65, 1.5], [2.85, 3.3, 1.15], 22)
-side_a, side_b = cam([2.05, 3.05, 1.55], [2.85, 3.2, 1.35], 28), cam([2.15, 3.08, 1.55], [2.85, 3.2, 1.35], 28)
-read_a, read_b = ots(reading)
+side_a, side_b = cam([1.55, 2.6, 1.6], [2.85, 3.1, 1.3], 26), cam([1.68, 2.66, 1.58], [2.85, 3.1, 1.32], 26)
+read_a, read_b = ots(reading, side=(0.3, 0, 0.12))       # you face +y here, so your right shoulder is +x
 turn_a, turn_b = cam([2.95, 1.25, 1.5], [2.85, 2.9, 1.35], 26), cam([2.93, 1.45, 1.5], [2.85, 2.9, 1.35], 26)
 back_a, back_b = cam([2.62, 3.25, 1.68], [3.05, 0.5, 1.25], 24), cam([2.66, 3.1, 1.66], [3.05, 0.5, 1.28], 24)
 fear_a, fear_b = face_cam(facing)
@@ -61,7 +61,8 @@ a = {**COMMON, "id": "part2a",
          "read": {"state": in_hand, "dof": 0.42, "anim": anim(3.0, [(0.0, read_a, reading, {}),
                                                                     (1.0, read_b, reading, {})])},
          "cctv_ir": {"cam": "cctv", "state": {"ir": True}, "grade": "ir", "label": "HALLWAY"},
-         "clip_home": {"cam": "cctv", "state": {"hall_light": True, "stick": walking_in, "visitor": "front_behind"},
+         "clip_home": {"cam": "cctv", "state": {"hall_light": True, "stick": walking_in,
+                                                "visitor": {"loc": [4.75, 4.42, 0], "rot": -90, "lean": 6}},
                        "grade": "cctv", "label": "HALLWAY", "clip": "11:58:12 PM"},
          "clip_wait": {"cam": "cctv", "state": {"ir": True, "visitor": "hall_door"}, "grade": "ir",
                        "label": "HALLWAY", "clip": "12:31:40 AM"},

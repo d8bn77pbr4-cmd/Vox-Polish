@@ -155,7 +155,7 @@ def cctv(layer, label: str, stamp: str, live: bool, blink: bool):
     f = font("DejaVuSansMono-Bold.ttf", 38)
     y = SAFE_T + 150
     d.text((SAFE_L, y), f"CAM 01  {label}", font=f, fill=(235, 235, 235), stroke_width=2, stroke_fill=(0, 0, 0))
-    yb = H - SAFE_B - 70
+    yb = y + 56          # right under the camera name, so it never collides with the subtitles
     if live:
         if blink:
             d.ellipse((SAFE_L, yb + 8, SAFE_L + 30, yb + 38), fill=RED)
