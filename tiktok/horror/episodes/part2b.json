@@ -37,6 +37,7 @@
  },
  "shots": {
   "close_in": {
+   "gain": 1.7,
    "anim": {
     "seconds": 4.6,
     "keys": [

@@ -128,7 +128,7 @@ b = {**COMMON, "id": "part2b",
          {"app": "HOMECAM", "when": "now", "title": "Person detected", "body": "Bedroom door"},
          {"app": "HOMECAM", "when": "2m ago", "title": "Person detected", "body": "Hallway"}]}},
      "shots": {
-         "close_in": {"anim": anim(4.6, [
+         "close_in": {"gain": 1.7, "anim": anim(4.6, [
              (0.0, close_a, hiding, {"wardrobe": 45}), (0.25, push(close_a, close_b, 0.25), hiding, {"wardrobe": 45}),
              (0.9, push(close_a, close_b, 0.9), hiding, {"wardrobe": 3}), (1.0, close_b, hiding, {"wardrobe": 2})])},
          "breath": {"anim": anim(4.0, [(0.0, inside_a, hiding, {}), (1.0, inside_b, hiding, {})])},
