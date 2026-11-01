@@ -407,8 +407,11 @@ class Composer:
         if sspec.get("anim"):
             k = 1.0 if spec.get("frame") == "last" else min(1.0, lt / max(0.1, spec.get("anim_dur", b.dur)))
             pos = k * (len(files) - 1)
-            a, frac = int(pos), pos - int(pos)
-            img = shots.frame(name, a) * (1 - frac) + shots.frame(name, min(a + 1, len(files) - 1)) * frac
+            if "keys" in sspec["anim"]:   # rendered at full frame rate: blending would ghost fast motion (trembling)
+                img = shots.frame(name, int(round(pos)))
+            else:                         # few frames stretched over a slow move: blend neighbours for smoothness
+                a, frac = int(pos), pos - int(pos)
+                img = shots.frame(name, a) * (1 - frac) + shots.frame(name, min(a + 1, len(files) - 1)) * frac
         else:
             img = shots.frame(name)
         bright = 1.0

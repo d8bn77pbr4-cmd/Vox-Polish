@@ -119,7 +119,6 @@ close_a, close_b = cam([2.1, 2.3, 1.5], [3.05, 0.4, 1.25], 22), cam([2.25, 2.0, 
 _, h_hide, _ = body(hiding)
 inside_a = cam(h_hide + [0, 0.24, -0.02], h_hide, 18)
 inside_b = cam(h_hide + [0, 0.21, -0.02], h_hide, 18)
-hold_a, hold_b = ots(holding, back=0.3, side=(-0.12, 0.0, 0.1))
 phone_b = {"screen": "notif_door", "phone": "hand"}
 
 b = {**COMMON, "id": "part2b",
@@ -137,8 +136,7 @@ b = {**COMMON, "id": "part2b",
          "slit_open": {"cam": "wardrobe_slit", "state": {"door": 70}, "gain": 1.3},
          "waiting": {"anim": anim(4.0, [(0.0, inside_a, {**hiding, "door": 70}, {"door": 70}),
                                         (1.0, inside_b, frozen, {"door": 70})])},
-         "buzz": {"state": phone_b, "dof": 0.36, "anim": anim(3.4, [
-             (0.0, hold_a, holding, {"door": 70}), (1.0, hold_b, holding, {"door": 70})])},
+         "buzz": {"cam": "wardrobe_slit", "state": {"screen": "notif_door", "phone": "held", "door": 70}, "dof": 0.19},
          "press": {"state": phone_b, "anim": anim(3.6, [
              (0.0, inside_a, holding, {"door": 70}), (0.4, push(inside_a, inside_b, 0.4), pressing, {"door": 70}),
              (1.0, inside_b, pressing, {"door": 70})])},
