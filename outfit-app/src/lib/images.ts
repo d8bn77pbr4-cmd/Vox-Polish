@@ -81,9 +81,10 @@ export function applyMask(canvas: HTMLCanvasElement, mask: Uint8ClampedArray): H
 }
 
 /** Schneidet durchsichtigen Rand weg und erzeugt die Dateien zum Speichern. */
-export async function finalize(canvas: HTMLCanvasElement): Promise<ItemImages & { preview: string }> {
+export async function finalize(canvas: HTMLCanvasElement): Promise<ItemImages & { preview: string; avgHex: string }> {
   const ctx = canvas.getContext('2d')!
-  const bounds = alphaBounds(ctx.getImageData(0, 0, canvas.width, canvas.height).data, canvas.width, canvas.height)
+  const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data
+  const bounds = alphaBounds(pixels, canvas.width, canvas.height)
   let trimmed = canvas
   if (bounds && (bounds.w < canvas.width || bounds.h < canvas.height)) {
     trimmed = makeCanvas(bounds.w, bounds.h)
@@ -95,5 +96,23 @@ export async function finalize(canvas: HTMLCanvasElement): Promise<ItemImages & 
   const thumbCanvas = scaled(trimmed, THUMB_MAX)
   let thumb = await toBlob(thumbCanvas, 'image/webp', 0.85)
   if (thumb.type !== 'image/webp') thumb = await toBlob(thumbCanvas, 'image/png')
-  return { full, thumb, aspect: trimmed.width / trimmed.height, preview: URL.createObjectURL(thumb) }
+  return { full, thumb, aspect: trimmed.width / trimmed.height, preview: URL.createObjectURL(thumb), avgHex: averageHex(pixels) }
+}
+
+/** Durchschnittsfarbe aller sichtbaren Pixel – Ersatz, wenn keine Farbe erkannt wurde. */
+export function averageHex(data: Uint8ClampedArray): string {
+  let r = 0
+  let g = 0
+  let b = 0
+  let n = 0
+  for (let i = 0; i < data.length; i += 16) {
+    if (data[i + 3] < 128) continue
+    r += data[i]
+    g += data[i + 1]
+    b += data[i + 2]
+    n++
+  }
+  if (n === 0) return '#888888'
+  const hex = (v: number) => Math.round(v / n).toString(16).padStart(2, '0')
+  return `#${hex(r)}${hex(g)}${hex(b)}`
 }
