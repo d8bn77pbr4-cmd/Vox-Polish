@@ -19,7 +19,23 @@ export async function loadBitmap(file: Blob): Promise<ImageBitmap> {
   try {
     return await createImageBitmap(file, { imageOrientation: 'from-image' })
   } catch {
+    /* ältere Browser kennen die Option nicht */
+  }
+  try {
+    return await createImageBitmap(file)
+  } catch {
+    /* manche Formate (z. B. HEIC) öffnet nur das <img>-Element */
+  }
+  const url = URL.createObjectURL(file)
+  try {
+    const img = new Image()
+    img.src = url
+    await img.decode()
+    return await createImageBitmap(img)
+  } catch {
     throw new Error('Dieses Bild kann der Browser nicht öffnen.')
+  } finally {
+    URL.revokeObjectURL(url)
   }
 }
 

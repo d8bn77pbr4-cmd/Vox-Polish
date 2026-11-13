@@ -1,7 +1,7 @@
 /// <reference lib="webworker" />
 // Stellt Teile frei – läuft im Hintergrund, damit die App nicht einfriert.
 // „clothes“: erkennt Kleidung an Personen auf dem ganzen Foto. „background“: entfernt den Hintergrund eines Ausschnitts.
-import { env, pipeline, RawImage } from '@huggingface/transformers'
+import { AutoModel, AutoProcessor, env, pipeline, RawImage } from '@huggingface/transformers'
 
 env.allowLocalModels = false
 
@@ -28,11 +28,34 @@ const onProgress = (p: any) => {
 }
 
 let clothes: Promise<any> | null = null
-let background: Promise<any> | null = null
+let background: Promise<{ model: any; processor: any }> | null = null
 const clothesModel = () =>
   (clothes ??= pipeline('image-segmentation', CLOTHES_MODEL, { dtype: 'q8', progress_callback: onProgress } as any))
+// Das Hintergrund-Modell hat keinen fertigen Ablauf in der Bibliothek: Modell und Bildvorbereitung
+// werden einzeln geladen, mit den Einstellungen aus der Modellbeschreibung.
 const backgroundModel = () =>
-  (background ??= pipeline('background-removal', BACKGROUND_MODEL, { dtype: 'q8', progress_callback: onProgress } as any))
+  (background ??= (async () => {
+    const model = await AutoModel.from_pretrained(BACKGROUND_MODEL, {
+      config: { model_type: 'custom' },
+      dtype: 'q8',
+      progress_callback: onProgress,
+    } as any)
+    const processor = await AutoProcessor.from_pretrained(BACKGROUND_MODEL, {
+      config: {
+        do_normalize: true,
+        do_pad: false,
+        do_rescale: true,
+        do_resize: true,
+        image_mean: [0.5, 0.5, 0.5],
+        image_std: [1, 1, 1],
+        feature_extractor_type: 'ImageFeatureExtractor',
+        resample: 2,
+        rescale_factor: 1 / 255,
+        size: { width: 1024, height: 1024 },
+      },
+    } as any)
+    return { model, processor }
+  })())
 
 function toRaw(bitmap: ImageBitmap): RawImage {
   const canvas = new OffscreenCanvas(bitmap.width, bitmap.height)
@@ -60,19 +83,19 @@ self.onmessage = async (event: MessageEvent<CutoutRequest>) => {
       post({ id, kind, labels, map, width: image.width, height: image.height }, [map.buffer])
       return
     }
-    const model = await backgroundModel()
-    const result = await model(image)
-    const cut: RawImage = Array.isArray(result) ? result[0] : result
-    let mask: Uint8ClampedArray | null = null
-    if (cut.channels === 4) {
-      mask = new Uint8ClampedArray(cut.width * cut.height)
-      let visible = 0
-      for (let i = 0; i < mask.length; i++) {
-        mask[i] = cut.data[i * 4 + 3]
-        if (mask[i] > 127) visible++
-      }
-      if (cut.width !== image.width || cut.height !== image.height || visible / mask.length < MIN_COVER) mask = null
+    const { model, processor } = await backgroundModel()
+    const { pixel_values } = await processor(image.clone().rgb())
+    const { output } = await model({ input: pixel_values })
+    // Eine Maske in Modellgröße (hell = Vordergrund), zurück auf die Größe des Ausschnitts gebracht.
+    const found = await RawImage.fromTensor(output[0].mul(255).to('uint8')).resize(image.width, image.height)
+    let mask: Uint8ClampedArray | null = new Uint8ClampedArray(found.width * found.height)
+    const step = found.channels
+    let visible = 0
+    for (let i = 0; i < mask.length; i++) {
+      mask[i] = found.data[i * step]
+      if (mask[i] > 127) visible++
     }
+    if (visible / mask.length < MIN_COVER) mask = null
     post({ id, kind, mask }, mask ? [mask.buffer] : [])
   } catch (err) {
     post({ id, error: err instanceof Error ? err.message : String(err) })

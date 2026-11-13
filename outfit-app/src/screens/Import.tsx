@@ -82,7 +82,8 @@ async function build(photo: Pick<Photo, 'key' | 'work'>, d: Pick<Draft, 'box' | 
     const mask = d.worn ? await fromClothes() : ((await removeBackground(canvas)) ?? (await fromClothes()))
     if (mask) return { images: await finalize(applyMask(canvas, mask)), note: null }
     return plain('Hier ließ sich nichts freistellen – das Teil wird als Ausschnitt gespeichert.')
-  } catch {
+  } catch (err) {
+    console.warn('Freistellen fehlgeschlagen:', err)
     return plain('Freistellen ist gerade nicht verfügbar – das Teil wird als Ausschnitt gespeichert.')
   }
 }

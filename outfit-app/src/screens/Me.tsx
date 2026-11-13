@@ -161,7 +161,7 @@ export function Me({ nav }: { nav: Nav }) {
 
       <section className="panel">
         <div className="panel-head">
-          <h2>Trage-Tagebuch</h2>
+          <h2>Tagebuch</h2>
           <div className="month-nav">
             <button className="icon-btn" onClick={() => shift(-1)} aria-label="Voriger Monat">
               ‹

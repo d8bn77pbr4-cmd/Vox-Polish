@@ -19,6 +19,7 @@ async function main() {
   )
   const shot = (name, full = false) => page.screenshot({ path: `${OUT}/${name}.png`, fullPage: full })
   const tab = (name) => page.getByRole('navigation').getByRole('button', { name }).click()
+  let hips = ''
   const step = async (name, fn) => {
     try {
       await fn()
@@ -60,8 +61,10 @@ async function main() {
   await step('Schrank zeigt Kacheln und filtert', async () => {
     await tab('Schrank')
     await page.locator('.masonry .card').first().waitFor()
-    await page.waitForTimeout(800)
+    await page.waitForTimeout(1500)
     await shot('20-schrank')
+    const broken = await page.locator('.masonry img').evaluateAll((imgs) => imgs.filter((i) => i.getBoundingClientRect().top < innerHeight && !(i.complete && i.naturalWidth > 0)).map((i) => i.alt))
+    if (broken.length) throw new Error('Bilder fehlen: ' + broken.join(', '))
     const all = await page.locator('.masonry .card').count()
     await page.getByRole('button', { name: 'Schuhe' }).click()
     const shoes = await page.locator('.masonry .card').count()
@@ -99,7 +102,8 @@ async function main() {
     await page.locator('.measure-doll svg').waitFor()
     const d = () => page.locator('.measure-doll svg path').nth(7).getAttribute('d')
     const before = await d()
-    await page.getByLabel(/Hüftumfang/).fill('125')
+    hips = (await page.getByLabel(/Hüftumfang/).inputValue()) === '125' ? '110' : '125'
+    await page.getByLabel(/Hüftumfang/).fill(hips)
     await page.getByLabel(/Körpergröße/).fill('160')
     await page.waitForTimeout(900)
     if (before === (await d())) throw new Error('Puppe hat sich nicht verändert')
@@ -115,8 +119,8 @@ async function main() {
     await page.reload()
     await page.getByRole('navigation').waitFor({ timeout: 20000 })
     await tab('Ich')
-    const hips = await page.getByLabel(/Hüftumfang/).inputValue()
-    if (hips !== '125') throw new Error('Hüfte ist ' + hips)
+    const saved = await page.getByLabel(/Hüftumfang/).inputValue()
+    if (saved !== hips) throw new Error('Hüfte ist ' + saved + ' statt ' + hips)
   })
 
   console.log(problems.length ? 'Probleme:\n' + [...new Set(problems)].join('\n') : 'Keine Fehler in der Konsole')
