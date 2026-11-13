@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { colorFamily, hexToHsl, isNeutral, pairHarmony } from './color'
 import { alphaBounds, clampBox, fitSize, maskCoverage, padBox, toPixels } from './crop'
+import { labelsFor, maskFromLabelMap, soften } from './cutout/labels'
 import { dailyOutfit } from './daily'
 import { bodyGeometry, clampMeasurements, DEFAULT_MEASUREMENTS, placement, VIEW } from './doll'
 import { buildAffinity, pairKey, rankOutfits, scoreOutfit, type Ctx } from './generator'
@@ -341,5 +342,43 @@ describe('Puppe', () => {
       expect(q.x).toBeGreaterThanOrEqual(0)
       expect(q.x + q.w).toBeLessThanOrEqual(VIEW.w)
     }
+  })
+})
+
+describe('Freistellen über das Kleidungs-Modell', () => {
+  // 4 × 4 großes Foto: links oben Oberteil (1), rechts unten Hose (2), Rest Hintergrund (0).
+  const lm = {
+    labels: ['', 'Upper-clothes', 'Pants'],
+    map: new Uint8Array([1, 1, 0, 0, 1, 1, 0, 0, 0, 0, 2, 2, 0, 0, 2, 2]),
+    width: 4,
+    height: 4,
+  }
+  const whole = { x: 0, y: 0, w: 1, h: 1 }
+  it('ordnet Kategorien den Bereichen des Modells zu', () => {
+    expect(labelsFor('top', null)).toContain('Upper-clothes')
+    expect(labelsFor('bottom', null)).toEqual(['Pants', 'Skirt'])
+    expect(labelsFor('accessory', 'bag')).toEqual(['Bag'])
+    expect(labelsFor('accessory', 'jewelry')).toEqual([])
+    expect(labelsFor('accessory', null)).toEqual([])
+  })
+  it('schneidet nur das gewünschte Teil aus dem Rahmen', () => {
+    const top = maskFromLabelMap(lm, whole, ['Upper-clothes'], 4, 4)!
+    expect(top[0]).toBeGreaterThan(127) // im Oberteil
+    expect(top[15]).toBe(0) // in der Hose
+    const pants = maskFromLabelMap(lm, { x: 0.5, y: 0.5, w: 0.5, h: 0.5 }, ['Pants'], 8, 8)!
+    expect(pants.every((v) => v === 255)).toBe(true) // Rahmen liegt ganz in der Hose
+  })
+  it('gibt auf, wenn im Rahmen nichts Passendes liegt', () => {
+    expect(maskFromLabelMap(lm, { x: 0.5, y: 0, w: 0.5, h: 0.5 }, ['Upper-clothes'], 8, 8)).toBeNull()
+    expect(maskFromLabelMap(lm, whole, ['Hat'], 4, 4)).toBeNull()
+    expect(maskFromLabelMap(lm, whole, [], 4, 4)).toBeNull()
+    expect(maskFromLabelMap(lm, whole, ['Pants'], 0, 4)).toBeNull()
+  })
+  it('glättet Kanten, ohne die Fläche zu verlieren', () => {
+    const soft = soften(new Uint8ClampedArray([0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255]), 4, 4)
+    expect(soft[1]).toBeGreaterThan(0)
+    expect(soft[1]).toBeLessThan(255)
+    expect(soft[3]).toBe(255)
+    expect(soft[0]).toBe(0)
   })
 })

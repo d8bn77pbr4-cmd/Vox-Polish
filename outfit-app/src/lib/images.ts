@@ -46,6 +46,14 @@ export async function workCopy(file: Blob): Promise<{ blob: Blob; width: number;
   return { blob: await toBlob(canvas, 'image/jpeg', 0.9), width: canvas.width, height: canvas.height }
 }
 
+/** Das ganze Foto, verkleinert – Eingabe für das Kleidungs-Modell. */
+export async function photoCanvas(work: Blob, max = 1024): Promise<HTMLCanvasElement> {
+  const bitmap = await loadBitmap(work)
+  const canvas = scaled(bitmap, max)
+  bitmap.close()
+  return canvas
+}
+
 /** JPEG als Base64 für die Fotoanalyse. */
 export async function analysisImage(work: Blob): Promise<{ data: string; width: number; height: number }> {
   const bitmap = await loadBitmap(work)

@@ -23,12 +23,17 @@ export class AnalyzeError extends Error {
   }
 }
 
-/** Test-Schalter: `localStorage.garderobe.mock = '1'` liefert feste Ergebnisse statt Claude. */
-const mocked = () => {
+/**
+ * Test-Schalter: `localStorage['garderobe.mock']` ersetzt Claude durch feste Ergebnisse –
+ * entweder '1' (Beispiel unten) oder eine JSON-Liste gefundener Teile.
+ */
+function mocked(): DetectedItem[] | null {
   try {
-    return localStorage.getItem('garderobe.mock') === '1'
+    const raw = localStorage.getItem('garderobe.mock')
+    if (!raw) return null
+    return raw.trim().startsWith('[') ? JSON.parse(raw) : MOCK
   } catch {
-    return false
+    return null
   }
 }
 
@@ -69,7 +74,8 @@ const MOCK: DetectedItem[] = [
 
 /** Schickt das Foto an die Analyse und liefert die gefundenen Teile mit geprüften Rahmen. */
 export async function analyzePhoto(work: Blob): Promise<DetectedItem[]> {
-  if (mocked()) return MOCK.map((m) => ({ ...m }))
+  const mock = mocked()
+  if (mock) return mock.map((m) => ({ ...m }))
   const { data: image, width, height } = await analysisImage(work)
   const { data, error } = await supabase.functions.invoke('analyze', { body: { image, width, height } })
   if (error) throw new AnalyzeError(await functionErrorCode(error))

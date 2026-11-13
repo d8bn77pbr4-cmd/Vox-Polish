@@ -5,8 +5,9 @@ import { Sheet } from '../components/Sheet'
 import { analyzePhoto } from '../lib/analyze'
 import { usageToday, type ItemImages } from '../lib/api'
 import { padBox } from '../lib/crop'
-import { onModelProgress, segment } from '../lib/cutout/client'
-import { applyMask, cropFromWork, finalize, workCopy } from '../lib/images'
+import { clothesMap, onModelProgress, removeBackground } from '../lib/cutout/client'
+import { labelsFor, maskFromLabelMap, type LabelMap } from '../lib/cutout/labels'
+import { applyMask, cropFromWork, finalize, photoCanvas, workCopy } from '../lib/images'
 import { ACCESSORY_TYPES, CATEGORIES, isoDate, type Box, type ItemAttrs } from '../lib/types'
 import { useStore } from '../store'
 
@@ -57,21 +58,33 @@ const BLANK: ItemAttrs = {
 let counter = 0
 const newKey = () => `k${++counter}`
 
-/** Schneidet ein Teil aus und stellt es frei. Klappt das Freistellen nicht, bleibt der Ausschnitt. */
-async function build(work: Blob, d: Pick<Draft, 'box' | 'worn' | 'cutout' | 'attrs'>): Promise<{ images: Built; note: string | null }> {
-  if (d.cutout) {
-    try {
-      const canvas = await cropFromWork(work, padBox(d.box))
-      const mask = await segment(canvas, { category: d.attrs.category, accessoryType: d.attrs.accessory_type, worn: d.worn })
-      if (mask) return { images: await finalize(applyMask(canvas, mask)), note: null }
-      const plain = await finalize(await cropFromWork(work, d.box))
-      return { images: plain, note: 'Hier ließ sich nichts freistellen – das Teil wird als Ausschnitt gespeichert.' }
-    } catch {
-      const plain = await finalize(await cropFromWork(work, d.box))
-      return { images: plain, note: 'Freistellen ist gerade nicht verfügbar – das Teil wird als Ausschnitt gespeichert.' }
-    }
+// Das Kleidungs-Modell läuft einmal pro Foto; alle getragenen Teile nutzen dasselbe Ergebnis.
+const clothesCache = new Map<string, Promise<LabelMap>>()
+function clothesOf(photo: Pick<Photo, 'key' | 'work'>): Promise<LabelMap> {
+  let found = clothesCache.get(photo.key)
+  if (!found) {
+    found = photoCanvas(photo.work).then(clothesMap)
+    clothesCache.set(photo.key, found)
   }
-  return { images: await finalize(await cropFromWork(work, d.box)), note: null }
+  return found
+}
+
+/** Schneidet ein Teil aus und stellt es frei. Klappt das Freistellen nicht, bleibt der Ausschnitt. */
+async function build(photo: Pick<Photo, 'key' | 'work'>, d: Pick<Draft, 'box' | 'worn' | 'cutout' | 'attrs'>): Promise<{ images: Built; note: string | null }> {
+  const plain = async (note: string | null) => ({ images: await finalize(await cropFromWork(photo.work, d.box)), note })
+  if (!d.cutout) return plain(null)
+  try {
+    const padded = padBox(d.box)
+    const canvas = await cropFromWork(photo.work, padded)
+    const wanted = labelsFor(d.attrs.category, d.attrs.accessory_type)
+    const fromClothes = async () => (wanted.length ? maskFromLabelMap(await clothesOf(photo), padded, wanted, canvas.width, canvas.height) : null)
+    // Am Körper getragen: nur das Kleidungs-Modell – Hintergrund entfernen würde die ganze Person ausschneiden.
+    const mask = d.worn ? await fromClothes() : ((await removeBackground(canvas)) ?? (await fromClothes()))
+    if (mask) return { images: await finalize(applyMask(canvas, mask)), note: null }
+    return plain('Hier ließ sich nichts freistellen – das Teil wird als Ausschnitt gespeichert.')
+  } catch {
+    return plain('Freistellen ist gerade nicht verfügbar – das Teil wird als Ausschnitt gespeichert.')
+  }
 }
 
 export function Import({ nav, wishlist, setWishlist }: { nav: Nav; wishlist: boolean; setWishlist: (w: boolean) => void }) {
@@ -98,7 +111,7 @@ export function Import({ nav, wishlist, setWishlist }: { nav: Nav; wishlist: boo
   const rebuild = async (photo: Pick<Photo, 'key' | 'work'>, draft: Draft) => {
     patchDraft(photo.key, draft.key, { ...draft, busy: true })
     try {
-      const { images, note } = await build(photo.work, draft)
+      const { images, note } = await build(photo, draft)
       if (draft.images) URL.revokeObjectURL(draft.images.preview)
       patchDraft(photo.key, draft.key, { images, note, busy: false })
     } catch {
@@ -164,6 +177,7 @@ export function Import({ nav, wishlist, setWishlist }: { nav: Nav; wishlist: boo
   }
   const removePhoto = (photo: Photo) => {
     URL.revokeObjectURL(photo.src)
+    clothesCache.delete(photo.key)
     photo.drafts.forEach((d) => d.images && URL.revokeObjectURL(d.images.preview))
     setPhotos((list) => list.filter((p) => p.key !== photo.key))
   }
@@ -195,7 +209,10 @@ export function Import({ nav, wishlist, setWishlist }: { nav: Nav; wishlist: boo
     else {
       store.toast(`${saved} ${saved === 1 ? 'Teil' : 'Teile'} gespeichert`)
       setPhotos((list) => {
-        list.forEach((p) => URL.revokeObjectURL(p.src))
+        list.forEach((p) => {
+          URL.revokeObjectURL(p.src)
+          clothesCache.delete(p.key)
+        })
         return []
       })
       nav.go('wardrobe')

@@ -1,0 +1,13 @@
+const { chromium } = require('playwright')
+;(async () => {
+  const browser = await chromium.launch(process.env.HTTPS_PROXY ? { proxy: { server: process.env.HTTPS_PROXY, bypass: 'localhost,127.0.0.1' } } : {})
+  const page = await (await browser.newContext({ viewport: { width: 390, height: 844 } })).newPage()
+  page.on('console', (m) => console.log('console', m.type(), m.text().slice(0, 300)))
+  page.on('pageerror', (e) => console.log('pageerror', String(e).slice(0, 400)))
+  page.on('requestfailed', (r) => console.log('failed', r.url().slice(0, 140), r.failure()?.errorText))
+  await page.goto(process.env.BASE || 'http://localhost:4173')
+  await page.waitForTimeout(4000)
+  console.log('BODY:', (await page.locator('body').innerText()).slice(0, 300))
+  await page.screenshot({ path: __dirname + '/out/debug.png' })
+  await browser.close()
+})()
