@@ -85,11 +85,16 @@ export function Doll({ nav, doll, setDoll }: { nav: Nav; doll: DollState; setDol
     <div className="page doll-page">
       <header className="page-head">
         <h1>Puppe</h1>
-        {worn.length > 1 && (
-          <span className="pill">
-            <b>{Math.round(scoreOutfit(worn, ctx))}</b> Punkte
-          </span>
-        )}
+        <div className="head-tools">
+          {worn.length > 1 && (
+            <span className="pill">
+              <b>{Math.round(scoreOutfit(worn, ctx))}</b> Punkte
+            </span>
+          )}
+          <button className="btn small" onClick={() => nav.startImport(true)}>
+            + Kauf-Kandidat
+          </button>
+        </div>
       </header>
 
       <div className="doll-stage">
@@ -162,9 +167,6 @@ export function Doll({ nav, doll, setDoll }: { nav: Nav; doll: DollState; setDol
       )}
 
       <div className="rate-row">
-        <button className="btn" onClick={() => nav.startImport(true)}>
-          + Kauf-Kandidat
-        </button>
         <button className="btn grow" disabled={busy || worn.length === 0} onClick={() => save(false)}>
           Speichern
         </button>
