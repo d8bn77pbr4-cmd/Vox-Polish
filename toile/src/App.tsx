@@ -6,6 +6,7 @@ import { PatternView } from './views/PatternView';
 import { Toolbar } from './ui/Toolbar';
 import { StatusBar } from './ui/StatusBar';
 import { GarmentLibrary } from './ui/GarmentLibrary';
+import { ExportDialog } from './ui/ExportDialog';
 import { LookPanel } from './ui/panels/LookPanel';
 import { ParamsPanel } from './ui/panels/ParamsPanel';
 import { SizePanel, AvatarPanel } from './ui/panels/SizePanel';
@@ -76,6 +77,7 @@ export function App() {
     <div className="app" style={!hasProject ? { gridTemplateRows: '1fr' } : undefined}>
       {hasProject ? <><TopBar /><Studio /><StatusBar /></> : <ProjectsView />}
       {dialog === 'library' && <GarmentLibrary onClose={close} />}
+      {dialog === 'export' && <ExportDialog onClose={close} />}
       {toast && <div className="toast">{toast}</div>}
     </div>
   );
