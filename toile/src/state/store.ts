@@ -18,6 +18,7 @@ export interface UiState {
   brush: BrushSettings; color: string;
   simQuality: 'draft' | 'standard' | 'fine'; fitMap: boolean; light: 'studio' | 'day' | 'runway';
   grading: boolean; showSA: boolean; paint3d: boolean; dirty: boolean; toast: string | null; trimType: string;
+  hoverSeam: string | null; symmetric: boolean; dialog: null | 'library' | 'export' | 'help';
 }
 export interface AppState {
   project: Project | null;
@@ -42,7 +43,7 @@ export const defaultUi = (): UiState => ({
   selection: { nodeIds: [] },
   brush: { brush: 'ink', size: 12, opacity: 1, hardness: 0.8, flow: 1, spacing: 0.15, smoothing: 0.5 },
   color: '#1b1b1d', simQuality: 'standard', fitMap: false, light: 'studio', grading: false, showSA: true, paint3d: false,
-  dirty: false, toast: null, trimType: 'button4',
+  dirty: false, toast: null, trimType: 'button4', hoverSeam: null, symmetric: true, dialog: null,
 });
 
 /** Raster undo hook, registered by the render layer. */
