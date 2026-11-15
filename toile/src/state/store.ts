@@ -26,6 +26,8 @@ export interface AppState {
   openProject(p: Project): void;
   closeProject(): void;
   update(label: string, recipe: (d: Project) => void, key?: string): void;
+  /** change without an undo step (e.g. asset ids after saving) */
+  silent(recipe: (d: Project) => void): void;
   undo(): void;
   redo(): void;
   canUndo(): boolean;
@@ -60,6 +62,12 @@ export function createAppStore(): StoreApi<AppState> {
       if (!patches.length) return;
       history.push({ kind: 'patch', label, patches, inverse, key, time: Date.now() });
       set({ project: { ...next, updatedAt: Date.now() }, version: get().version + 1, ui: { ...get().ui, dirty: true } });
+    },
+    silent(recipe) {
+      const cur = get().project;
+      if (!cur) return;
+      const [next] = produceWithPatches(cur, recipe);
+      set({ project: next });
     },
     undo() {
       const e = history.undo();
