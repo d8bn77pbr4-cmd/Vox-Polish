@@ -1,6 +1,6 @@
 # TOILE – digitales Atelier für Schnitt, Material und 3D-Anprobe
 
-Stand: 2026-11-15 · Status: Entwurf zur Freigabe
+Stand: 2026-11-15 · Status: freigegeben am 2026-11-15
 
 > Name: In der Haute Couture ist die *Toile* der Probeschnitt aus Nessel, der auf der
 > Büste geprüft wird, bevor der echte Stoff geschnitten wird. Genau das soll die App sein.
@@ -304,6 +304,11 @@ verschiebbar (Hoodie über Shirt, Gürtel über Hose).
   (Vorderblatt, Seitenteile, Zunge, Fersenkappe) sind Bereiche auf dieser Abwicklung, jeweils
   eigene Design-Fläche, im Editor verschiebbar. Sohle als eigener Körper mit Profilkante,
   Schnürung als Röhren.
+- **Linker und rechter Schuh getrennt gestaltbar:** Standard ist „Paar gekoppelt" (links und
+  rechts teilen alle Ebenen, Motive werden spiegelrichtig übernommen). Per Schalter
+  „Links/Rechts getrennt" bekommt jeder Schuh eigene Ebenen für jedes Schaftteil, die Sohle und
+  die Schnürung; „Von links übernehmen" kopiert den aktuellen Stand auf die andere Seite.
+  Dasselbe Prinzip gilt für alle Teile, die zweimal zugeschnitten werden (Ärmel, Hosenbeine).
 
 ## 10. Ausgabe
 
@@ -401,7 +406,7 @@ Icon-Auswahl, Mikro-Layout der Panels, Farbabstufungen, Standardwerte der Silhou
 - Avatar-Profil (Damen/Herren) wird beim Anlegen eines Looks gewählt, Standard Damen EU 38.
 - Hochgeladene Bilder werden auf max. 4096 px (lange Seite) verkleinert, Texturen je Teil max.
   2048 px – Kompromiss aus Schärfe und iPad-Speicher.
-- Sneaker immer als Paar (links/rechts gespiegelt).
+- Sneaker immer als Paar; links/rechts gekoppelt oder getrennt gestaltbar (Wunsch des Auftraggebers).
 - Teilen mit Freunden über Projektdatei, nicht über Konten.
 
 ## 18. Später (Roadmap)
