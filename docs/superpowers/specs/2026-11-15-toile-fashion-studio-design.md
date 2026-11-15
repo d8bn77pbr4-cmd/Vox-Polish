@@ -256,6 +256,30 @@ Fluss, Abstand, Glättung (Stabilisierung), Druck → Größe/Deckkraft (Apple P
 Pipette, Füllen, Farbkreis (HSB) mit Hex-Eingabe, Projektpalette. Malen direkt auf dem Schnittteil
 **oder direkt auf dem 3D-Modell**.
 
+### 8.4 Bildergalerie (Wunsch des Auftraggebers)
+
+Eine eigene Galerie für alle Bilder, projektübergreifend gespeichert. Bilder kommen hinein über:
+Foto-Mediathek bzw. Dateien des Geräts (auf dem iPad öffnet sich die Fotos-App), mehrere auf einmal;
+Ziehen und Ablegen; Einfügen aus der Zwischenablage (z. B. Bild bei Pinterest kopieren → hier
+einfügen); Bild-Adresse (klappt nur, wenn die Seite es erlaubt – sonst Hinweis: Bild speichern und
+aus der Mediathek holen). Jedes Bild lässt sich mit einem Tipp verwenden als **Stoff** (Rapport),
+**Druck** (platziert), **Muster-Motiv** (Rapport-Arten) oder per Ziehen direkt auf ein Schnittteil
+bzw. auf das Kleidungsstück in 3D legen. Umbenennen, Löschen, Suchen.
+
+### 8.5 Mitgelieferte Grundausstattung
+
+- **Grundfarben:** kuratierte Atelier-Palette (u. a. Optisch Weiß, Ecru, Kreide, Sand, Kamel, Tabak,
+  Schokolade, Bordeaux, Rost, Senf, Salbei, Flaschengrün, Petrol, Marine, Kobalt, Puder, Taupe,
+  Grau meliert, Anthrazit, Schwarz) plus Saison-Paletten; eigene Projektpalette.
+- **Muster:** alle Muster aus 8.2 als fertige Vorlagen in mehreren Farbstellungen.
+- **Ebenen-Vorlagen:** z. B. „Brustdruck mittig", „Rückendruck groß", „Ärmelstreifen",
+  „Saumbordüre".
+- **Zutaten (Trims):** Knöpfe (2- und 4-Loch, Ösenknopf), Druckknöpfe, Nieten, Ösen, Reißverschluss,
+  Kordel mit Endstücken, Webetikett, Patch/Aufnäher. Oberflächen: Metall gold/silber/gunmetal, Horn,
+  Perlmutt, Kunststoff, Holz, Stoff. Größe in mm (Knöpfe auch in Linien, 1 L = 0,635 mm), Farbe,
+  Drehung. Platzierung auf einem Schnittteil (2D) oder direkt am 3D-Modell; in 3D sitzen sie fest
+  auf dem simulierten Stoff. Erscheinen in der Materialliste des Tech Packs.
+
 ## 9. 3D-Anprobe
 
 ### 9.1 Avatar
