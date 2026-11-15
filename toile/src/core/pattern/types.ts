@@ -3,7 +3,7 @@ import type { PathNode } from '../geometry/path';
 import type { Measurements } from '../sizing/measurements';
 
 export type Zone = 'torsoFront' | 'torsoBack' | 'arm' | 'legFront' | 'legBack' | 'head' | 'neck' | 'waist' | 'hem' | 'scarf' | 'none';
-export interface Placement { zone: Zone; angle?: number; wrap?: number; drop?: number; radiusAdd?: number; mode?: 'cyl' | 'sphere' }
+export interface Placement { zone: Zone; angle?: number; wrap?: number; drop?: number; radiusAdd?: number; mode?: 'cyl' | 'sphere' | 'radial' }
 export interface InternalLine { id: string; kind: 'stitch' | 'yoke' | 'pocket' | 'pleat' | 'guide' | 'fold'; pts: Vec2[]; closed?: boolean }
 export interface Notch { id: string; at: string; offset: number; double?: boolean }
 export interface PatternPiece {
@@ -19,7 +19,7 @@ export interface EdgeRef { piece: string; side?: 'L' | 'R'; from: string; to: st
 export interface Seam { id: string; a: EdgeRef; b: EdgeRef; flip?: boolean; ease?: number; kind?: 'join' | 'rib' | 'gather' }
 export interface Pom { id: string; label: string; value: number }
 export interface TemplateOutput { pieces: PatternPiece[]; seams: Seam[]; pom: Pom[] }
-export interface ParamDef { key: string; label: string; min: number; max: number; step: number; unit: 'mm' | 'deg' | '%' | 'n'; group: string; default: number }
+export interface ParamDef { key: string; label: string; min: number; max: number; step: number; unit: 'mm' | 'deg' | '%' | 'n'; group: string; default: number; options?: string[] }
 export interface Silhouette { id: string; name: string; description: string; params: Record<string, number> }
 export type Family = 'top' | 'bottom' | 'accessory';
 export interface GarmentTemplate {
