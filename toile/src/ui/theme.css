@@ -51,7 +51,7 @@ button { font: inherit; color: inherit; }
 .btn.ghost:hover { background: var(--hover); }
 .btn.icon { padding: 5px; width: 30px; height: 30px; }
 .btn.small { padding: 3px 7px; font-size: 12px; }
-.btn.on { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.on, .btn.on:hover:not(:disabled) { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
 .btn.danger:hover { color: var(--bad); }
 .statusbar { display: flex; align-items: center; gap: 16px; padding: 0 12px; border-top: 1px solid var(--line); background: var(--bg2); color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
 .workspace { display: grid; grid-template-columns: 48px 1fr 300px; min-height: 0; }

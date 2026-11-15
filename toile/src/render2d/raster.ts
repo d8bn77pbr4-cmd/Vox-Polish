@@ -9,7 +9,9 @@ const loading = new Set<string>();
 export const dirtyRasters = new Set<string>();
 const listeners = new Set<() => void>();
 export function onRaster(f: () => void) { listeners.add(f); return () => listeners.delete(f); }
-export const notifyRaster = () => listeners.forEach((f) => f());
+let rv = 0;
+export const rasterVersion = () => rv;
+export const notifyRaster = () => { rv++; listeners.forEach((f) => f()); };
 
 export function getRaster(layer: PaintLayer): HTMLCanvasElement {
   let c = rasters.get(layer.id);

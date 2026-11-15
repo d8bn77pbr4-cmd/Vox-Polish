@@ -31,7 +31,7 @@ export function buildBody(mm: Measurements, profile: Profile): Body {
   const ring = (y: number, C: number, k: number, cz = 0): Ring => { const rx = ellipseA(C, k); return { y, cx: 0, cz, rx, rz: rx * k }; };
   const hip = ring(hipY, m('hip'), 0.74, -0.012);
   const rings: Ring[] = [
-    { y: crotchY + 0.015, cx: 0, cz: -0.01, rx: hip.rx * 0.9, rz: hip.rz * 0.8 },
+    { y: crotchY - 0.012, cx: 0, cz: -0.01, rx: hip.rx * 0.97, rz: hip.rz * 0.9 },
     hip,
     ring((hipY + waistY) / 2, (m('hip') + m('waist')) / 2, 0.76, -0.006),
     ring(waistY, m('waist'), 0.78, 0),
@@ -64,7 +64,7 @@ export function buildBody(mm: Measurements, profile: Profile): Body {
     caps.push({ a: W, b: [W[0] + dir[0] * 0.07, W[1] + dir[1] * 0.07, W[2] + 0.005], ra: wristR * 1.2, rb: wristR * 0.9, name: 'hand' + S });
     zones['arm' + S] = { A: J, d: dir, f: [sd * Math.cos(alpha), Math.sin(alpha), 0], kind: 'cyl' };
     // legs
-    const Hj: V3 = [sd * hip.rx * 0.47, crotchY + 0.07, -0.008];
+    const Hj: V3 = [sd * hip.rx * 0.47, crotchY + 0.02, -0.008];
     const ankle: V3 = [sd * (hip.rx * 0.47 + 0.02 * s), 0.085 * s, -0.01];
     const kneeY = 0.285 * H;
     const t = (Hj[1] - kneeY) / (Hj[1] - ankle[1]);

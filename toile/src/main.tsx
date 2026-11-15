@@ -7,9 +7,10 @@ import { appStore } from './state/store';
 import { projectStore, startAutosave } from './state/persistence';
 import { installShortcuts } from './ui/shortcuts';
 import './render2d/raster';
+import { fitApi } from './views/FitView';
 
 registerMaterialPresets(() => MATERIAL_PRESETS);
 startAutosave(appStore, projectStore);
 installShortcuts();
-(window as unknown as { toile: unknown }).toile = { appStore };
+(window as unknown as { toile: unknown }).toile = { appStore, fitApi };
 createRoot(document.getElementById('root')!).render(<App />);

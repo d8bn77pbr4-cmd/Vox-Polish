@@ -11,8 +11,8 @@ import { ParamsPanel } from './ui/panels/ParamsPanel';
 import { SizePanel, AvatarPanel } from './ui/panels/SizePanel';
 import { PropertiesPanel } from './ui/panels/PropertiesPanel';
 import { ChecksPanel } from './ui/panels/ChecksPanel';
-import { Empty } from './ui/common';
 import { DesignView } from './views/DesignView';
+import { FitView } from './views/FitView';
 import { InstancesPanel } from './ui/panels/InstancesPanel';
 import { LayersPanel } from './ui/panels/LayersPanel';
 import { MaterialPanel } from './ui/panels/MaterialPanel';
@@ -47,14 +47,14 @@ function TopBar() {
 function Studio() {
   const ui = useApp((s) => s.ui);
   const ws = ui.workspace;
-  const main = ws === 'schnitt' ? <PatternView /> : ws === 'design' ? <DesignView /> : <Empty>Anprobe</Empty>;
+  const main = ws === 'schnitt' ? <PatternView /> : ws === 'design' ? <DesignView /> : <FitView />;
   const showSplit = ui.split && ws !== 'anprobe';
   return (
     <div className={'workspace' + (ws === 'anprobe' ? ' no-tools' : '')}>
       {ws !== 'anprobe' && <Toolbar ws={ws === 'design' ? 'design' : 'schnitt'} />}
       <div className="stage">
         <div className="pane">{main}</div>
-        {showSplit && <div className="pane"><Empty>Anprobe</Empty></div>}
+        {showSplit && <div className="pane"><FitView /></div>}
       </div>
       <aside className="sidebar">
         <LookPanel />

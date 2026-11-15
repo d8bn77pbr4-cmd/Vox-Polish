@@ -63,6 +63,7 @@ export class Cloth {
         const mn = mx * n[0] + my * n[1] + mz * n[2];
         q[k] += (mx - mn * n[0]) * fr; q[k + 1] += (my - mn * n[1]) * fr; q[k + 2] += (mz - mn * n[2]) * fr;
       }
+      if (p[k + 1] < 0.002) p[k + 1] = 0.002;
     }
   }
   step(frameDt = 1 / 60) {
@@ -100,6 +101,7 @@ export class Cloth {
       // final tightening of seams for a clean result
       for (let k = 0; k < 20; k++) { this.sew(0); this.solve(this.setup.stretch); this.sew(0); this.collide(); }
       for (let k = 0; k < 30; k++) this.sew(0);
+      this.collide();
       this.vel.fill(0);
     }
   }
