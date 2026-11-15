@@ -24,7 +24,7 @@ export interface Silhouette { id: string; name: string; description: string; par
 export type Family = 'top' | 'bottom' | 'accessory';
 export interface GarmentTemplate {
   id: string; category: string; family: Family; name: string; kind: 'cloth' | 'belt' | 'sneaker';
-  silhouettes: Silhouette[]; params: ParamDef[]; defaultMaterial: string; ribMaterial?: string;
+  silhouettes: Silhouette[]; params: ParamDef[]; defaultMaterial: string; ribMaterial?: string; pieceMaterials?: Record<string, string>;
   gradeKeys: { x: keyof Measurements; y: keyof Measurements };
   build(m: Measurements, p: Record<string, number>): TemplateOutput;
 }

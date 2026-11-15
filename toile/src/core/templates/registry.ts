@@ -1,6 +1,7 @@
 import type { GarmentTemplate } from '../pattern/types';
 import { TOP_TEMPLATES } from './tops';
 import { BOTTOM_TEMPLATES } from './bottoms';
+import { ACCESSORY_TEMPLATES } from './accessories';
 
 export const CATEGORIES: { id: string; name: string; family: 'top' | 'bottom' | 'accessory' }[] = [
   { id: 'tshirt', name: 'T-Shirt', family: 'top' }, { id: 'longsleeve', name: 'Longsleeve', family: 'top' },
@@ -13,7 +14,7 @@ export const CATEGORIES: { id: string; name: string; family: 'top' | 'bottom' | 
   { id: 'belt', name: 'Gürtel', family: 'accessory' }, { id: 'sneaker', name: 'Sneaker', family: 'accessory' },
 ];
 
-export const TEMPLATES: GarmentTemplate[] = [...TOP_TEMPLATES, ...BOTTOM_TEMPLATES];
+export const TEMPLATES: GarmentTemplate[] = [...TOP_TEMPLATES, ...BOTTOM_TEMPLATES, ...ACCESSORY_TEMPLATES];
 
 export function getTemplate(id: string): GarmentTemplate {
   const t = TEMPLATES.find((x) => x.id === id);
