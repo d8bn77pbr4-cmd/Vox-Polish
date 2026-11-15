@@ -69,3 +69,20 @@ export function Dialog({ title, onClose, children, foot, narrow }: { title: stri
 }
 
 export function Empty({ children }: { children: ReactNode }) { return <div className="empty"><div>{children}</div></div>; }
+
+/** Procreate-style vertical slider. */
+export function VSlider({ value, min, max, onChange, height = 150 }: { value: number; min: number; max: number; onChange: (v: number) => void; height?: number }) {
+  const t = (value - min) / (max - min);
+  const set = (e: React.PointerEvent<HTMLDivElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    const k = Math.min(1, Math.max(0, 1 - (e.clientY - r.top) / r.height));
+    onChange(min + k * (max - min));
+  };
+  return (
+    <div style={{ position: 'relative', width: 22, height, borderRadius: 11, background: 'var(--bg2)', border: '1px solid var(--line2)', cursor: 'ns-resize', touchAction: 'none' }}
+      onPointerDown={(e) => { e.currentTarget.setPointerCapture(e.pointerId); set(e); }} onPointerMove={(e) => e.buttons && set(e)}>
+      <div style={{ position: 'absolute', left: 3, right: 3, bottom: 3, height: `calc(${t * 100}% - ${t * 6}px)`, borderRadius: 8, background: 'rgba(216,195,160,.35)' }} />
+      <div style={{ position: 'absolute', left: 1, right: 1, bottom: `calc(${t * 100}% - ${t * 20}px)`, height: 18, borderRadius: 9, background: 'var(--accent)' }} />
+    </div>
+  );
+}

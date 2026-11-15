@@ -7,6 +7,8 @@ import type { SizeSpec } from '../core/sizing/charts';
 import { appStore } from './store';
 
 const S = () => appStore.getState();
+/** deep copy that also works on immer drafts */
+const dclone = <T,>(x: T): T => JSON.parse(JSON.stringify(x));
 export const gOf = (d: Project, id: string) => d.garments.find((g) => g.id === id)!;
 export const activeGarment = (): Garment | undefined => { const s = S(); return s.project?.garments.find((g) => g.id === s.ui.garmentId); };
 
@@ -31,7 +33,7 @@ export function removeGarment(id: string) {
   S().setUi({ garmentId: p.garments[0]?.id ?? null, instanceKey: null, layerId: null });
 }
 export function duplicateGarment(id: string) {
-  S().update('Kleidungsstück duplizieren', (d) => { const g = gOf(d, id); d.garments.push({ ...structuredClone(g), id: uid('g_'), name: g.name + ' (Kopie)' }); });
+  S().update('Kleidungsstück duplizieren', (d) => { const g = gOf(d, id); d.garments.push({ ...dclone(g), id: uid('g_'), name: g.name + ' (Kopie)' }); });
 }
 export function setGarmentField<K extends keyof Garment>(id: string, key: K, value: Garment[K], label = 'Ändern') {
   S().update(label, (d) => { (gOf(d, id) as Garment)[key] = value; }, `${id}:${String(key)}`);
@@ -55,11 +57,11 @@ export function editPiece(gid: string, pieceId: string, fn: (p: PatternPiece) =>
     const res = resolveGarment(g);
     if (g.baseMeasurements && JSON.stringify(g.baseMeasurements) !== JSON.stringify(res.m)) {
       // re-base stored geometry to the current size so the edit happens on what the user sees
-      for (const k of Object.keys(g.overrides)) g.overrides[k] = structuredClone(res.pieces.find((p) => p.id === k)!);
-      g.custom = g.custom.map((c) => structuredClone(res.pieces.find((p) => p.id === c.id)!));
+      for (const k of Object.keys(g.overrides)) g.overrides[k] = dclone(res.pieces.find((p) => p.id === k)!);
+      g.custom = g.custom.map((c) => dclone(res.pieces.find((p) => p.id === c.id)!));
     }
     g.baseMeasurements = res.m;
-    const cur = structuredClone(res.pieces.find((p) => p.id === pieceId)!);
+    const cur = dclone(res.pieces.find((p) => p.id === pieceId)!);
     const ci = g.custom.findIndex((c) => c.id === pieceId);
     if (ci >= 0) g.custom[ci] = fn(cur); else g.overrides[pieceId] = fn(cur);
     ensureSurfaces(g);

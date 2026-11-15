@@ -12,6 +12,14 @@ import { SizePanel, AvatarPanel } from './ui/panels/SizePanel';
 import { PropertiesPanel } from './ui/panels/PropertiesPanel';
 import { ChecksPanel } from './ui/panels/ChecksPanel';
 import { Empty } from './ui/common';
+import { DesignView } from './views/DesignView';
+import { InstancesPanel } from './ui/panels/InstancesPanel';
+import { LayersPanel } from './ui/panels/LayersPanel';
+import { MaterialPanel } from './ui/panels/MaterialPanel';
+import { GalleryPanel } from './ui/panels/GalleryPanel';
+import { TrimsPanel } from './ui/panels/TrimsPanel';
+import { BrushPanel } from './ui/panels/BrushPanel';
+import { ColorsPanel } from './ui/panels/ColorsPanel';
 
 const TABS: { id: Workspace; label: string }[] = [{ id: 'schnitt', label: 'Schnitt' }, { id: 'design', label: 'Design' }, { id: 'anprobe', label: 'Anprobe' }];
 
@@ -39,7 +47,7 @@ function TopBar() {
 function Studio() {
   const ui = useApp((s) => s.ui);
   const ws = ui.workspace;
-  const main = ws === 'schnitt' ? <PatternView /> : ws === 'design' ? <Empty>Design</Empty> : <Empty>Anprobe</Empty>;
+  const main = ws === 'schnitt' ? <PatternView /> : ws === 'design' ? <DesignView /> : <Empty>Anprobe</Empty>;
   const showSplit = ui.split && ws !== 'anprobe';
   return (
     <div className={'workspace' + (ws === 'anprobe' ? ' no-tools' : '')}>
@@ -50,6 +58,7 @@ function Studio() {
       </div>
       <aside className="sidebar">
         <LookPanel />
+        {ws === 'design' && <><InstancesPanel /><LayersPanel />{(ui.tool === 'brush' || ui.tool === 'eraser') && <BrushPanel />}<GalleryPanel /><MaterialPanel /><TrimsPanel /><ColorsPanel /></>}
         {ws === 'schnitt' && <><PropertiesPanel /><ParamsPanel /><SizePanel /><ChecksPanel /><AvatarPanel /></>}
         {ws === 'anprobe' && <><SizePanel /><AvatarPanel /></>}
       </aside>

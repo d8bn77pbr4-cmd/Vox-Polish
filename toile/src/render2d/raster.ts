@@ -31,10 +31,12 @@ export function getRaster(layer: PaintLayer): HTMLCanvasElement {
   return c;
 }
 export function newPaintFrame(f: RasterFrame): RasterFrame { return { ...f }; }
-export function cloneRasterInto(srcId: string, dstId: string) {
-  const s = rasters.get(srcId); if (!s) return;
+export function cloneRasterInto(srcId: string, dstId: string, mirror: boolean) {
+  const s = rasters.get(srcId); if (!s || typeof document === 'undefined') return;
   const d = document.createElement('canvas'); d.width = s.width; d.height = s.height;
-  d.getContext('2d')!.drawImage(s, 0, 0); rasters.set(dstId, d); dirtyRasters.add(dstId);
+  const g = d.getContext('2d')!;
+  if (mirror) { g.translate(d.width, 0); g.scale(-1, 1); }
+  g.drawImage(s, 0, 0); rasters.set(dstId, d); dirtyRasters.add(dstId);
 }
 
 rasterHooks.apply = (layerId, rect, data) => {
